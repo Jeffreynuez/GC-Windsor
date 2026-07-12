@@ -1,0 +1,22 @@
+{
+  "eyebrow": "The Gallery",
+  "title": "Worn well",
+  "items": [
+    { "src": "CDN:gcwindsor/photos/circle-of-knots-1", "span": "wide", "alt": "The full GC Windsor colour range" },
+    { "src": "CDN:gcwindsor/photos/holding-something-special", "span": "tall", "alt": "A GC knot, held to camera" },
+    { "src": "CDN:gcwindsor/photos/gc-red-flower", "span": "std", "alt": "Red GC knot on a bromeliad" },
+    { "src": "CDN:gcwindsor/photos-2/gc-windsor-finals-13", "span": "std", "alt": "GC Windsor, worn" },
+    { "src": "CDN:gcwindsor/photos/gold-gc-eldredge-on-tree", "span": "tall", "alt": "Gold GC Eldredge knot" },
+    { "src": "CDN:gcwindsor/photos/walk-of-the-boss", "span": "wide", "alt": "GC Windsor on the move" },
+    { "src": "CDN:gcwindsor/photos/gc-knots-clover", "span": "std", "alt": "GC knots arranged in a clover" },
+    { "src": "CDN:gcwindsor/photos-2/gc-windsor-finals-21", "span": "std", "alt": "GC Windsor detail" },
+    { "src": "CDN:gcwindsor/photos/a-gc-knot-that-stands-out", "span": "wide", "alt": "A GC knot that stands out" },
+    { "src": "CDN:gcwindsor/photos/gc-knot-in-green-glass", "span": "std", "alt": "GC knot in green glass" },
+    { "src": "CDN:gcwindsor/photos/stand-tall", "span": "tall", "alt": "Stand tall" },
+    { "src": "CDN:gcwindsor/photos-2/gc-windsor-finals-26", "span": "std", "alt": "GC Windsor, studio" },
+    { "src": "CDN:gcwindsor/photos/red-box-gc-windsor", "span": "std", "alt": "The GC Windsor box" },
+    { "src": "CDN:gcwindsor/photos/bartend", "span": "wide", "alt": "GC Windsor, after hours" },
+    { "src": "CDN:gcwindsor/photos/gold-and-white-gc-eldredge-held-up", "span": "std", "alt": "Gold and white GC Eldredge" },
+    { "src": "CDN:gcwindsor/photos-2/gc-windsor-finals-31", "span": "std", "alt": "GC Windsor, finished" }
+  ]
+}

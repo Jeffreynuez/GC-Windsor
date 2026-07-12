@@ -1,0 +1,152 @@
+{
+  "global": {
+    "brand": "G.C. WINDSOR",
+    "seoTitle": "G.C Windsor | Contemporary Neckties & Men's Accessories",
+    "seoDesc": "An authentic, unique and innovative way to reinvent the necktie. Separate the knot from the tie, then mix and match freely.",
+    "logo": "CDN:gcwindsor/logo/gc-windsor-gold-logo-no-background-1",
+    "emblem": "CDN:gcwindsor/logo/gc-windsor-gold-logo",
+    "tagline": "The knot, reinvented. One tie, endless looks.",
+    "email": "info@gcwindsor.com",
+    "instagramHandle": "@GCWINDSOR",
+    "nav": [
+      { "label": "Home", "href": "/" },
+      { "label": "Shop", "href": "/shop" },
+      { "label": "About", "href": "/about" },
+      { "label": "Contact", "href": "/contact" }
+    ],
+    "social": [
+      { "label": "Instagram", "icon": "instagram", "href": "https://www.instagram.com/gcwindsor/" },
+      { "label": "Facebook", "icon": "facebook", "href": "https://www.facebook.com/GcWindsor/" },
+      { "label": "X", "icon": "x", "href": "https://twitter.com/gcwindsor1" },
+      { "label": "TikTok", "icon": "tiktok", "href": "https://www.tiktok.com/tag/gcwindsor" }
+    ],
+    "footerCols": [
+      { "heading": "Shop", "links": [
+        { "label": "The Collection", "href": "/shop" },
+        { "label": "The Customizer", "href": "/#customize" }
+      ]},
+      { "heading": "The House", "links": [
+        { "label": "Our story", "href": "/about" },
+        { "label": "The founder", "href": "/about#founder" },
+        { "label": "Contact", "href": "/contact" }
+      ]}
+    ],
+    "copyright": "© 2026 GC Windsor LLC. All rights reserved."
+  },
+
+  "home": {
+    "seoTitle": "G.C Windsor | Contemporary Neckties & Men's Accessories",
+    "seoDesc": "An authentic, unique and innovative way to reinvent the necktie.",
+
+    "hero": {
+      "video": "CDN:gcwindsor/video/hero-promo-1080",
+      "videoMobile": "CDN:gcwindsor/video/hero-promo-720",
+      "poster": "CDN:gcwindsor/video/hero-poster",
+      "cue": "Scroll"
+    },
+
+    "positioning": {
+      "eyebrow": "The G.C. Windsor",
+      "title": "The G.C. Windsor",
+      "sub": "An authentic, unique and innovative way to reinvent the necktie.",
+      "lead": "G.C. Windsor introduces a complete evolution to the traditional necktie. A product that sacrifices nothing and only adds to its original design.",
+      "ctaLabel": "Customize yours",
+      "ctaHref": "#customize"
+    },
+
+    "split": {
+      "eyebrow": "The idea",
+      "title": "Finally elevating the tie game to new heights",
+      "lead": "A pre-tied knot. A separate tie. Together in seconds, apart just as fast — so a single tie becomes a wardrobe. Change the knot without touching the collar.",
+      "ctaLabel": "Learn more",
+      "ctaHref": "/about",
+      "image": "CDN:gcwindsor/photos/3-peice-mid-focus"
+    },
+
+    "shop": {
+      "eyebrow": "The Collection",
+      "title": "Signature sets",
+      "ctaLabel": "Shop all",
+      "ctaHref": "/shop"
+    },
+
+    "founder": {
+      "eyebrow": "The Founder",
+      "quote": "If one word would come to mind to describe myself, it would be passion.",
+      "bio": "I'm passionate about most things revolving around art and fashion. As an artist throughout my life, I have honed my skills to create just about anything I set my mind to. The moment I was able to pair my artistic skills with my love for fashion, my passion grew to an unwavering force.",
+      "ctaLabel": "Learn more",
+      "ctaHref": "/about",
+      "artwork": "CDN:gcwindsor/logo/gc-windsor-gold-logo-no-background-1"
+    },
+
+    "newsletter": {
+      "eyebrow": "Subscribe",
+      "title": "Join the house",
+      "lead": "Sign up with your email address to receive news and updates.",
+      "buttonLabel": "Sign up",
+      "fine": "We respect your privacy.",
+      "accessKey": ""
+    },
+
+    "contactCta": {
+      "eyebrow": "Get in touch",
+      "title": "Let's talk",
+      "ctaLabel": "Contact us",
+      "ctaHref": "/contact",
+      "image": "CDN:gcwindsor/photos/circle-of-knots-2"
+    }
+  },
+
+  "shop": {
+    "seoTitle": "Shop | G.C Windsor",
+    "seoDesc": "The GC Windsor collection — six signature knot and tie combinations.",
+    "eyebrow": "The Collection",
+    "title": "Signature sets",
+    "lead": "Every set pairs two GC Knots with a GC Tie. Mix them freely — the knot comes off without untying a thing.",
+    "hero": "CDN:gcwindsor/photos/gc-out-doors-line-up"
+  },
+
+  "about": {
+    "seoTitle": "About | Unleashing Innovation in Men's Fashion",
+    "seoDesc": "Authenticity, quality and efficiency — the three factors behind the hand crafted GC Windsor knot and tie.",
+    "eyebrow": "About",
+    "title": "Authenticity, quality and efficiency.",
+    "lead": "These are the three main factors behind the hand crafted, high quality and elegantly designed GC Windsor Knot and Tie.",
+    "hero": "CDN:gcwindsor/photos-2/gc-windsor-finals-13",
+    "ctaLabel": "Browse our shop",
+    "ctaHref": "/shop",
+
+    "story": {
+      "eyebrow": "Our story",
+      "title": "It began with a pair of scissors.",
+      "body": [
+        "Just about every invention begins with a quirky idea and the GC Windsor is no exception. After thinking thoroughly of where that idea could lead, I had my eureka moment. What if you could separate the knot from the necktie?",
+        "I took that idea back to my home where I initiated the root of my plan. With a pair of scissors and two of my precious neckties, I went ahead and knotted one of them into a pristine double Windsor. Without hesitation I cut the knot out and placed it next to my other tie. From that moment on, a feeling I could never forget sprouted inside me. A passion so ferocious grew within me that I pushed myself to learn how to sew, to the point of mastering the craft.",
+        "All of my hard work paid off with my mother's teachings, culminating into the product that we have here today — a complete evolution to the traditional necktie. A product that sacrifices nothing and only adds to its original design. I look forward to what the future holds for the GC Windsor."
+      ],
+      "image": "CDN:gcwindsor/photos/gc-knot-in-the-rough"
+    },
+
+    "founder": {
+      "eyebrow": "The Founder",
+      "name": "Jeffrey De La Nuez",
+      "bio": "I am a hard-working, proud American/Dominican from Florida. My sense of direction and mental fortitude are my strongest traits. This drive of mine will help me turn GC Windsor into a company that will stand the test of time. With my ideals, this company will become a staple of American innovation and eventually stand next to the giants of the fashion industry.",
+      "portrait": "CDN:gcwindsor/founder/david-solo-01",
+      "filmLabel": "Watch the film",
+      "film": "CDN:gcwindsor/video/interview-1080",
+      "filmPoster": "CDN:gcwindsor/photos-2/gc-windsor-finals-21"
+    }
+  },
+
+  "contact": {
+    "seoTitle": "Contact | Men's accessories & Neckties",
+    "seoDesc": "Get in touch with GC Windsor.",
+    "eyebrow": "Contact",
+    "title": "Get in touch",
+    "lead": "Please fill out the form below and we will get back as soon as possible.",
+    "buttonLabel": "Submit",
+    "accessKey": "",
+    "instagramTitle": "Join us on Instagram",
+    "hero": "CDN:gcwindsor/photos/gc-solo"
+  }
+}

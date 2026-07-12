@@ -1,0 +1,131 @@
+{
+  "salesPaused": true,
+  "currency": "usd",
+  "shippingNote": "Flat $10 shipping. Ships from Florida.",
+  "sizes": [
+    { "id": "regular", "label": "Regular", "spec": "47\" · fits 5'4\" – 5'10\"" },
+    { "id": "tall", "label": "Tall", "spec": "52\" · fits 5'10\" – 6'4\"" }
+  ],
+  "items": [
+    {
+      "id": "black-and-gold",
+      "name": "Black and Gold GC Windsor Combo",
+      "slug": "black-and-gold-gc-windsor-combo",
+      "price": 95,
+      "sku": "SQ7298022",
+      "status": "coming-soon",
+      "contents": "1× Solid Black GC Knot, 1× Black and Gold GC Knot, 1× Black GC Tie",
+      "blurb": "The house signature. A solid black knot and a black-and-gold, on a black band.",
+      "image": "CDN:gcwindsor/products/black-and-gold-double-combo",
+      "gallery": [
+        "CDN:gcwindsor/products/black-and-gold-double-combo",
+        "CDN:gcwindsor/photos/black-and-gold-single",
+        "CDN:gcwindsor/photos/gold-and-black-duet"
+      ],
+      "knot": "k-black-gold",
+      "tie": "t-black",
+      "stripePriceIdRegular": "",
+      "stripePriceIdTall": ""
+    },
+    {
+      "id": "gold-and-black",
+      "name": "Gold & Black GC Windsor Combo",
+      "slug": "gold-black-gc-windsor-combo",
+      "price": 95,
+      "sku": "SQ7298022-G",
+      "status": "coming-soon",
+      "contents": "1× Solid Gold GC Knot, 1× Gold & Black GC Knot, 1× Black GC Tie",
+      "blurb": "Liquid gold against black. The knot that catches the light.",
+      "image": "CDN:gcwindsor/products/gold-and-black-double-combo",
+      "gallery": [
+        "CDN:gcwindsor/products/gold-and-black-double-combo",
+        "CDN:gcwindsor/photos/gold-single",
+        "CDN:gcwindsor/photos/gold-single-angle"
+      ],
+      "knot": "k-gold-black",
+      "tie": "t-black",
+      "stripePriceIdRegular": "",
+      "stripePriceIdTall": ""
+    },
+    {
+      "id": "navy-and-gold",
+      "name": "Navy & Gold GC Windsor Combo",
+      "slug": "navy-gold-gc-windsor-combo",
+      "price": 95,
+      "sku": "SQ4705807",
+      "status": "coming-soon",
+      "contents": "1× Solid Navy GC Knot, 1× Navy & Gold GC Knot, 1× Navy GC Tie",
+      "blurb": "Deep navy silk with a gold edge. Quiet, and impossible to miss.",
+      "image": "CDN:gcwindsor/products/navy-blue-and-gold-double-combo",
+      "gallery": [
+        "CDN:gcwindsor/products/navy-blue-and-gold-double-combo",
+        "CDN:gcwindsor/photos/gc-out-doors-line-up"
+      ],
+      "knot": "k-blue-gold",
+      "tie": "t-blue",
+      "stripePriceIdRegular": "",
+      "stripePriceIdTall": ""
+    },
+    {
+      "id": "red-and-black",
+      "name": "Red & Black GC Windsor Combo",
+      "slug": "red-black-gc-windsor-combo",
+      "price": 95,
+      "sku": "SQ3751353",
+      "status": "coming-soon",
+      "contents": "1× Solid Red GC Knot, 1× Red & Black GC Knot, 1× Black GC Tie",
+      "blurb": "Crimson silk, cut with black. The best-seller.",
+      "image": "CDN:gcwindsor/products/red-and-black-double-combo",
+      "gallery": [
+        "CDN:gcwindsor/products/red-and-black-double-combo",
+        "CDN:gcwindsor/photos/red-double",
+        "CDN:gcwindsor/photos/red-tripple",
+        "CDN:gcwindsor/photos/gc-red-flower"
+      ],
+      "knot": "k-red-black",
+      "tie": "t-black",
+      "stripePriceIdRegular": "",
+      "stripePriceIdTall": ""
+    },
+    {
+      "id": "lavender-and-black",
+      "name": "Lavender & Black GC Windsor Combo",
+      "slug": "lavender-black-gc-windsor-combo",
+      "price": 95,
+      "sku": "SQ9193578",
+      "status": "coming-soon",
+      "contents": "1× Solid Lavender GC Knot, 1× Lavender & Black GC Knot, 1× Black GC Tie",
+      "blurb": "Violet silk. For the man who does not ask permission.",
+      "image": "CDN:gcwindsor/products/lavender-and-black-combo",
+      "gallery": [
+        "CDN:gcwindsor/products/lavender-and-black-combo",
+        "CDN:gcwindsor/photos/violet-single",
+        "CDN:gcwindsor/photos/violet-triple",
+        "CDN:gcwindsor/photos/purple-gc-eldredge"
+      ],
+      "knot": "k-violet-black",
+      "tie": "t-violet",
+      "stripePriceIdRegular": "",
+      "stripePriceIdTall": ""
+    },
+    {
+      "id": "silver-and-black",
+      "name": "Silver & Black GC Windsor Combo",
+      "slug": "silver-black-gc-windsor-combo",
+      "price": 95,
+      "sku": "SQ7550661",
+      "status": "coming-soon",
+      "contents": "1× Solid Silver GC Knot, 1× Black & Silver GC Knot, 1× Black GC Tie",
+      "blurb": "Brushed silver on black. Formal, without the fuss.",
+      "image": "CDN:gcwindsor/products/silver-and-black-combo",
+      "gallery": [
+        "CDN:gcwindsor/products/silver-and-black-combo",
+        "CDN:gcwindsor/photos/3-peice-front-focus"
+      ],
+      "knot": "k-black-silver",
+      "tie": "t-silver",
+      "stripePriceIdRegular": "",
+      "stripePriceIdTall": ""
+    }
+  ]
+}
