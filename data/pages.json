@@ -4,6 +4,7 @@
     "seoTitle": "G.C Windsor | Contemporary Neckties & Men's Accessories",
     "seoDesc": "An authentic, unique and innovative way to reinvent the necktie. Separate the knot from the tie, then mix and match freely.",
     "logo": "CDN:gcwindsor/logo/gc-windsor-gold-logo-no-background-1",
+    "navLogo": "CDN:gcwindsor/logo/gc-windsor-gold-logo-name",
     "emblem": "CDN:gcwindsor/logo/gc-windsor-gold-logo",
     "tagline": "The knot, reinvented. One tie, endless looks.",
     "email": "info@gcwindsor.com",
@@ -76,7 +77,7 @@
       "bio": "I'm passionate about most things revolving around art and fashion. As an artist throughout my life, I have honed my skills to create just about anything I set my mind to. The moment I was able to pair my artistic skills with my love for fashion, my passion grew to an unwavering force.",
       "ctaLabel": "Learn more",
       "ctaHref": "/about",
-      "artwork": "CDN:gcwindsor/logo/gc-windsor-gold-logo-no-background-1"
+      "artwork": "CDN:gcwindsor/logo/rooster"
     },
 
     "newsletter": {
@@ -131,7 +132,7 @@
       "eyebrow": "The Founder",
       "name": "Jeffrey De La Nuez",
       "bio": "I am a hard-working, proud American/Dominican from Florida. My sense of direction and mental fortitude are my strongest traits. This drive of mine will help me turn GC Windsor into a company that will stand the test of time. With my ideals, this company will become a staple of American innovation and eventually stand next to the giants of the fashion industry.",
-      "portrait": "CDN:gcwindsor/founder/david-solo-01",
+      "portrait": "CDN:gcwindsor/photos/walk-of-the-boss",
       "filmLabel": "Watch the film",
       "film": "CDN:gcwindsor/video/interview-1080",
       "filmPoster": "CDN:gcwindsor/photos-2/gc-windsor-finals-21"

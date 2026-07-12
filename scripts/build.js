@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* GC Windsor — data-driven renderer for the standalone JRD CMS.
+/* GC Windsor - data-driven renderer for the standalone JRD CMS.
    Content: data/*.json (edited via https://jrd-animation-cms.vercel.app/admin).
    Layout: this file. Design tokens: data/theme.json -> assets/css/theme.css.
    Stamps data-edit="<file>#<dot.path>" on text leaves and
@@ -35,6 +35,50 @@ const vid = (u, t) => {
   return VID + (t || 'q_auto') + '/' + u.slice(4) + '.mp4';
 };
 
+/* ---------- ambient parallax motifs ----------
+   The gold rooster mark, drifting behind sections at different speeds.
+   Decorative only: aria-hidden, and main.js skips them under
+   prefers-reduced-motion. Positions are deliberate, not random. */
+const AMB = {
+  positioning: [
+    { s: 120, css: 'width:520px;top:-120px;right:-180px;opacity:.05' },
+    { s: -80, css: 'width:340px;bottom:-90px;left:-140px;opacity:.04' }
+  ],
+  elevate: [
+    { s: 140, css: 'width:600px;top:-160px;left:-200px;opacity:.05' },
+    { s: -90, css: 'width:300px;bottom:-60px;right:8%;opacity:.035' }
+  ],
+  customize: [
+    { s: 150, css: 'width:760px;top:-220px;right:-260px;opacity:.08' },
+    { s: -100, css: 'width:440px;bottom:-150px;left:-170px;opacity:.06' }
+  ],
+  shop: [
+    { s: 130, css: 'width:560px;top:-140px;right:-190px;opacity:.045' }
+  ],
+  gallery: [
+    { s: 110, css: 'width:480px;top:-130px;left:-170px;opacity:.04' },
+    { s: -95, css: 'width:360px;bottom:-100px;right:-120px;opacity:.035' }
+  ],
+  newsletter: [
+    { s: 125, css: 'width:520px;top:-150px;right:-170px;opacity:.05' }
+  ],
+  story: [
+    { s: 135, css: 'width:560px;top:-150px;right:-200px;opacity:.05' },
+    { s: -85, css: 'width:320px;bottom:-80px;left:-120px;opacity:.04' }
+  ],
+  pagehero: [
+    { s: 100, css: 'width:520px;top:-120px;right:-160px;opacity:.10' }
+  ]
+};
+function amb(key) {
+  const set = AMB[key];
+  if (!set) return '';
+  const src = img('CDN:gcwindsor/logo/rooster', 'f_auto,q_auto,w_800');
+  return set.map(a =>
+    `<img class="amb" src="${src}" alt="" aria-hidden="true" loading="lazy" data-amb data-speed="${a.s}" style="${a.css}">`
+  ).join('');
+}
+
 /* editor stamps */
 const ed = p => ` data-edit="pages.json#${p}"`;
 const edf = (file, p) => ` data-edit="${file}#${p}"`;
@@ -52,7 +96,7 @@ function buildTheme() {
   let root = '';
   for (const k in theme) root += `  --${k}: ${theme[k]};\n`;
   out('assets/css/theme.css',
-    '/* GENERATED from data/theme.json — edit via /admin -> Theme. Do not hand-edit. */\n:root {\n' + root + '}\n');
+    '/* GENERATED from data/theme.json - edit via /admin -> Theme. Do not hand-edit. */\n:root {\n' + root + '}\n');
 }
 
 /* ---------- shared chrome ---------- */
@@ -87,9 +131,9 @@ const foot = () => `${footerHTML()}
   brand: G.brand,
   salesPaused: products.salesPaused,
   customizer: {
-    base: img(swapper.base, 'f_auto,q_auto,w_1600'),
-    knots: swapper.knots.map(k => ({ id: k.id, name: k.name, colors: k.colors, img: img(k.img, 'f_auto,q_auto,w_1600') })),
-    ties: swapper.ties.map(t => ({ id: t.id, name: t.name, colors: t.colors, img: img(t.img, 'f_auto,q_auto,w_1600') })),
+    base: img(swapper.base, 'f_auto,q_auto,w_1800'),
+    knots: swapper.knots.map(k => ({ id: k.id, name: k.name, colors: k.colors, img: img(k.img, 'f_auto,q_auto,w_1800') })),
+    ties: swapper.ties.map(t => ({ id: t.id, name: t.name, colors: t.colors, img: img(t.img, 'f_auto,q_auto,w_1800') })),
     defaultKnot: swapper.defaultKnot,
     defaultTie: swapper.defaultTie,
     products: products.items.map(p => ({ id: p.id, slug: p.slug, knot: p.knot, tie: p.tie, name: p.name }))
@@ -108,7 +152,9 @@ function navHTML(page) {
   return `<header class="nav" data-nav>
   <div class="nav__inner">
     <nav class="nav__group nav__group--left">${left}</nav>
-    <a class="nav__brand" href="/"${ed('global.brand')}>${esc(G.brand)}</a>
+    <a class="nav__brand" href="/" aria-label="${esc(G.brand)}">
+      <img class="nav__logo" src="${img(G.navLogo, 'f_auto,q_auto,w_640')}" alt="${esc(G.brand)}">
+    </a>
     <div class="nav__group nav__group--right">${right}
       <a class="nav__cart" href="/shop" aria-label="Cart" data-cart></a>
     </div>
@@ -138,16 +184,25 @@ function footerHTML() {
 </footer>`;
 }
 
-/* a reusable product card */
+/* a reusable product card - images are shown WHOLE (c_fit), never cropped */
 function card(p, i) {
   const paused = products.salesPaused || p.status === 'coming-soon';
-  const foot = paused
+  const body = paused
     ? `<span class="card__name"${edf('products.json', `items.${i}.name`)}>${esc(p.name)}</span><span class="badge">Coming soon</span>`
     : `<span class="card__name"${edf('products.json', `items.${i}.name`)}>${esc(p.name)}</span><span class="card__price">$${esc(p.price)}</span>`;
   return `<a class="card reveal" href="/product/${esc(p.slug)}"${edi('products.json', 'items', i)}>
-  <div class="card__media">${paused ? '<span class="badge badge--onmedia">Coming soon</span>' : ''}<img src="${img(p.image, 'f_auto,q_auto,w_900,c_fill,ar_4:5')}" alt="${esc(p.name)}" loading="lazy"></div>
-  <div class="card__body">${foot}</div>
+  <div class="card__media">${paused ? '<span class="badge badge--onmedia">Coming soon</span>' : ''}<img src="${img(p.image, 'f_auto,q_auto,w_1000,c_fit')}" alt="${esc(p.name)}" loading="lazy"></div>
+  <div class="card__body">${body}</div>
 </a>`;
+}
+
+/* Web3Forms-style form opener; falls back to a local "thank you" when no key is set. */
+function formOpen(key, subject) {
+  if (!key) return `<form class="news__form" data-demo>`;
+  return `<form class="news__form" action="https://api.web3forms.com/submit" method="POST">
+      <input type="hidden" name="access_key" value="${esc(key)}">
+      <input type="hidden" name="subject" value="${esc(subject)}">
+      <input type="checkbox" name="botcheck" style="display:none">`;
 }
 
 /* ---------- HOME ---------- */
@@ -174,6 +229,7 @@ function buildHome() {
 </section>
 
 <section id="positioning" class="section">
+  ${amb('positioning')}
   <div class="wrap posn">
     <div class="reveal">
       <p class="eyebrow"${ed('home.positioning.eyebrow')}>${esc(H.positioning.eyebrow)}</p>
@@ -188,6 +244,7 @@ function buildHome() {
 </section>
 
 <section id="elevate" class="section on-alt">
+  ${amb('elevate')}
   <div class="wrap split">
     <div class="split__copy reveal">
       <p class="eyebrow"${ed('home.split.eyebrow')}>${esc(H.split.eyebrow)}</p>
@@ -201,31 +258,40 @@ function buildHome() {
   </div>
 </section>
 
-<section id="customize" class="section cz" data-customizer>
+<section id="customize" class="section cz on-dark" data-customizer>
+  ${amb('customize')}
   <div class="wrap">
     <div class="cz__head reveal">
       <p class="eyebrow eyebrow--center"${edf('swapper.json', 'eyebrow')}>${esc(swapper.eyebrow)}</p>
       <h2 class="script cz__title"${edf('swapper.json', 'title')}>${esc(swapper.title)}</h2>
       <p class="lead cz__intro"${edf('swapper.json', 'intro')}>${esc(swapper.intro)}</p>
     </div>
-    <div class="cz__grid">
-      <div class="cz__stage reveal" data-cz-stage></div>
-      <div class="cz__controls reveal" data-delay="1">
+
+    <div class="cz__picker reveal">
+      <div class="cz__pick">
         <div class="cz__rowlabel"><span class="k"${edf('swapper.json', 'knotsLabel')}>${esc(swapper.knotsLabel)}</span><span class="v" data-cz-knotname></span></div>
         <div class="cz__row" data-cz-knots>${sw(swapper.knots, 'knot', 'swapper.json')}</div>
+      </div>
+      <div class="cz__pick">
         <div class="cz__rowlabel"><span class="k"${edf('swapper.json', 'tiesLabel')}>${esc(swapper.tiesLabel)}</span><span class="v" data-cz-tiename></span></div>
         <div class="cz__row" data-cz-ties>${sw(swapper.ties, 'tie', 'swapper.json')}</div>
-        <div class="cz__combo">
-          <p class="now">Your combination</p>
-          <p class="name" data-cz-combo></p>
-          <a class="btn btn--gold btn--ondark" data-cz-cta href="/shop"><span${edf('swapper.json', 'ctaLabel')}>${esc(swapper.ctaLabel)}</span> <span class="arw-slot"></span></a>
-        </div>
       </div>
+    </div>
+
+    <div class="cz__grid">
+      <div class="cz__stage reveal" data-cz-stage></div>
+      <aside class="cz__panel reveal" data-delay="1">
+        <p class="now">Your combination</p>
+        <p class="name" data-cz-combo></p>
+        <a class="btn btn--gold btn--ondark btn--block" data-cz-cta href="/shop"><span${edf('swapper.json', 'ctaLabel')}>${esc(swapper.ctaLabel)}</span> <span class="arw-slot"></span></a>
+        <p class="cz__count">${swapper.knots.length} knots &times; ${swapper.ties.length} ties<br><em>${swapper.knots.length * swapper.ties.length} combinations.</em></p>
+      </aside>
     </div>
   </div>
 </section>
 
 <section id="shop" class="section">
+  ${amb('shop')}
   <div class="wrap">
     <div class="prod-head reveal">
       <div>
@@ -239,7 +305,7 @@ function buildHome() {
 </section>
 
 <section id="founder" class="section founder on-dark">
-  <img class="founder__art" src="${img(H.founder.artwork, 'f_auto,q_auto,w_1000')}" alt="" aria-hidden="true">
+  <img class="founder__art" src="${img(H.founder.artwork, 'f_auto,q_auto,w_1100')}" alt="" aria-hidden="true" data-amb data-speed="70">
   <div class="wrap">
     <div class="founder__inner reveal">
       <p class="eyebrow"${ed('home.founder.eyebrow')}>${esc(H.founder.eyebrow)}</p>
@@ -251,21 +317,23 @@ function buildHome() {
 </section>
 
 <section id="gallery" class="section on-alt">
+  ${amb('gallery')}
   <div class="wrap">
     <div class="reveal" style="margin-bottom:var(--sp-5)">
       <p class="eyebrow"${edf('gallery.json', 'eyebrow')}>${esc(gallery.eyebrow)}</p>
       <h2 class="display display--sm" style="margin-top:16px"${edf('gallery.json', 'title')}>${esc(gallery.title)}</h2>
     </div>
-    <div class="mosaic reveal" data-gallery>${gallery.items.map((g, i) => `<div class="mtile${g.span === 'tall' ? ' mtile--tall' : g.span === 'wide' ? ' mtile--wide' : ''}" data-lb="${i}" data-full="${img(g.src, 'f_auto,q_auto,w_1800')}"${edi('gallery.json', 'items', i)}><img src="${img(g.src, 'f_auto,q_auto,w_800')}" alt="${esc(g.alt)}" loading="lazy"></div>`).join('')}</div>
+    <div class="mosaic reveal" data-gallery>${gallery.items.map((g, i) => `<div class="mtile${g.span === 'tall' ? ' mtile--tall' : g.span === 'wide' ? ' mtile--wide' : ''}" data-lb="${i}" data-full="${img(g.src, 'f_auto,q_auto,w_1800')}"${edi('gallery.json', 'items', i)}><img src="${img(g.src, 'f_auto,q_auto,w_900')}" alt="${esc(g.alt)}" loading="lazy"></div>`).join('')}</div>
   </div>
 </section>
 
 <section id="newsletter" class="section">
+  ${amb('newsletter')}
   <div class="wrap news reveal">
     <p class="eyebrow eyebrow--center"${ed('home.newsletter.eyebrow')}>${esc(H.newsletter.eyebrow)}</p>
     <h2 class="display display--sm" style="margin-top:16px"${ed('home.newsletter.title')}>${esc(H.newsletter.title)}</h2>
     <p class="lead" style="margin:16px auto 0"${ed('home.newsletter.lead')}>${esc(H.newsletter.lead)}</p>
-    ${formOpen(H.newsletter.accessKey, 'GC Windsor — newsletter signup')}
+    ${formOpen(H.newsletter.accessKey, 'GC Windsor - newsletter signup')}
       <div class="field"><label>First name</label><input type="text" name="first_name" autocomplete="given-name"></div>
       <div class="field"><label>Last name</label><input type="text" name="last_name" autocomplete="family-name"></div>
       <div class="field"><label>Email</label><input type="email" name="email" required autocomplete="email"></div>
@@ -276,7 +344,9 @@ function buildHome() {
 </section>
 
 <section id="contact-cta" class="cta-bleed">
-  <img class="cta-bleed__img" src="${img(H.contactCta.image, 'f_auto,q_auto,w_1920')}" alt="" loading="lazy">
+  <div class="cta-bleed__media" data-parallax>
+    <img class="cta-bleed__img" src="${img(H.contactCta.image, 'f_auto,q_auto,w_1920')}" alt="" loading="lazy">
+  </div>
   <div class="cta-bleed__scrim"></div>
   <div class="cta-bleed__inner reveal">
     <p class="eyebrow eyebrow--center" style="color:var(--gold-light)"${ed('home.contactCta.eyebrow')}>${esc(H.contactCta.eyebrow)}</p>
@@ -288,29 +358,28 @@ function buildHome() {
   out('index.html', html);
 }
 
-/* Web3Forms-style form opener; falls back to a local "thank you" when no key is set. */
-function formOpen(key, subject) {
-  const cls = 'news__form';
-  if (!key) return `<form class="${cls}" data-demo>`;
-  return `<form class="${cls}" action="https://api.web3forms.com/submit" method="POST">
-      <input type="hidden" name="access_key" value="${esc(key)}">
-      <input type="hidden" name="subject" value="${esc(subject)}">
-      <input type="checkbox" name="botcheck" class="hidden" style="display:none">`;
+/* ---------- a shared page hero ---------- */
+function pageHero(o, prefix, short) {
+  return `<section class="page-hero${short ? ' page-hero--short' : ''}">
+  ${amb('pagehero')}
+  <div class="page-hero__media" data-parallax>
+    <img class="page-hero__img" src="${img(o.hero, 'f_auto,q_auto,w_1920')}" alt="">
+  </div>
+  <div class="page-hero__scrim"></div>
+  <div class="page-hero__inner">
+    <p class="eyebrow eyebrow--center" style="color:var(--gold-light)"${ed(prefix + '.eyebrow')}>${esc(o.eyebrow)}</p>
+    <h1 class="display display--sm"${ed(prefix + '.title')}>${esc(o.title)}</h1>
+  </div>
+</section>`;
 }
 
 /* ---------- SHOP ---------- */
 function buildShop() {
   const S = pages.shop;
-  const html = head({ title: S.seoTitle, desc: S.seoDesc }, '/shop') + `
-<section class="page-hero">
-  <img class="page-hero__img" src="${img(S.hero, 'f_auto,q_auto,w_1920')}" alt="">
-  <div class="page-hero__scrim"></div>
-  <div class="page-hero__inner">
-    <p class="eyebrow eyebrow--center" style="color:var(--gold-light)"${ed('shop.eyebrow')}>${esc(S.eyebrow)}</p>
-    <h1 class="display display--sm"${ed('shop.title')}>${esc(S.title)}</h1>
-  </div>
-</section>
+  const html = head({ title: S.seoTitle, desc: S.seoDesc }, '/shop')
+    + pageHero(S, 'shop', false) + `
 <section class="section">
+  ${amb('shop')}
   <div class="wrap">
     <p class="lead reveal" style="max-width:720px;margin-bottom:var(--sp-5)"${ed('shop.lead')}>${esc(S.lead)}</p>
     <div class="grid-3">${products.items.map(card).join('')}</div>
@@ -324,7 +393,7 @@ function buildShop() {
 function buildProducts() {
   products.items.forEach((p, i) => {
     const paused = products.salesPaused || p.status === 'coming-soon';
-    const thumbs = p.gallery.map((g, j) => `<button class="pdp__thumb${j === 0 ? ' is-active' : ''}" data-pdp-thumb type="button"><img src="${img(g, 'f_auto,q_auto,w_200,c_fill,ar_1:1')}" data-full="${img(g, 'f_auto,q_auto,w_1400')}" alt=""></button>`).join('');
+    const thumbs = p.gallery.map((g, j) => `<button class="pdp__thumb${j === 0 ? ' is-active' : ''}" data-pdp-thumb type="button"><img src="${img(g, 'f_auto,q_auto,w_300,c_pad,ar_1:1,b_auto')}" data-full="${img(g, 'f_auto,q_auto,w_1600,c_fit')}" alt=""></button>`).join('');
     const sizes = products.sizes.map((s, j) => `<button type="button" class="size${j === 0 ? ' is-active' : ''}" data-size="${esc(s.id)}"><span class="size__label">${esc(s.label)}</span><span class="size__spec">${esc(s.spec)}</span></button>`).join('');
 
     const buy = paused
@@ -337,15 +406,15 @@ function buildProducts() {
            </form>
          </div>`
       : `<div class="pdp__buy">
-           <div class="qty"><button data-qty-dec type="button" aria-label="Less">−</button><span data-qty-val>1</span><button data-qty-inc type="button" aria-label="More">+</button></div>
+           <div class="qty"><button data-qty-dec type="button" aria-label="Less">&minus;</button><span data-qty-val>1</span><button data-qty-inc type="button" aria-label="More">+</button></div>
            <button class="btn btn--solid btn--block" data-checkout="${esc(p.id)}" type="button">Add to cart</button>
          </div>`;
 
-    const html = head({ title: p.name + ' — G.C Windsor', desc: p.blurb }, '/shop') + `
+    const html = head({ title: p.name + ' - G.C Windsor', desc: p.blurb }, '/shop') + `
 <section class="section pdp" data-pdp data-product="${esc(p.id)}">
   <div class="wrap pdp__grid">
     <div class="pdp__media">
-      <div class="pdp__main" data-pdp-main><img src="${img(p.gallery[0], 'f_auto,q_auto,w_1400')}" alt="${esc(p.name)}"></div>
+      <div class="pdp__main" data-pdp-main><img src="${img(p.gallery[0], 'f_auto,q_auto,w_1600,c_fit')}" alt="${esc(p.name)}"></div>
       <div class="pdp__thumbs">${thumbs}</div>
     </div>
     <div class="pdp__info">
@@ -364,9 +433,10 @@ function buildProducts() {
   </div>
 </section>
 <section class="section on-alt">
+  ${amb('shop')}
   <div class="wrap">
     <div class="prod-head reveal"><div><p class="eyebrow">More sets</p><h2 class="display display--sm" style="margin-top:16px">You may also like</h2></div></div>
-    <div class="grid-3">${products.items.filter(x => x.id !== p.id).slice(0, 3).map((x) => card(x, products.items.indexOf(x))).join('')}</div>
+    <div class="grid-3">${products.items.filter(x => x.id !== p.id).slice(0, 3).map(x => card(x, products.items.indexOf(x))).join('')}</div>
   </div>
 </section>
 ` + foot();
@@ -378,17 +448,11 @@ function buildProducts() {
 function buildAbout() {
   const A = pages.about;
   const story = A.story.body.map((para, i) => `<p class="lead"${ed(`about.story.body.${i}`)}>${esc(para)}</p>`).join('');
-  const html = head({ title: A.seoTitle, desc: A.seoDesc }, '/about') + `
-<section class="page-hero">
-  <img class="page-hero__img" src="${img(A.hero, 'f_auto,q_auto,w_1920')}" alt="">
-  <div class="page-hero__scrim"></div>
-  <div class="page-hero__inner">
-    <p class="eyebrow eyebrow--center" style="color:var(--gold-light)"${ed('about.eyebrow')}>${esc(A.eyebrow)}</p>
-    <h1 class="display display--sm"${ed('about.title')}>${esc(A.title)}</h1>
-  </div>
-</section>
+  const html = head({ title: A.seoTitle, desc: A.seoDesc }, '/about')
+    + pageHero(A, 'about', false) + `
 
 <section class="section">
+  ${amb('positioning')}
   <div class="wrap" style="max-width:820px;text-align:center">
     <p class="lead reveal"${ed('about.lead')}>${esc(A.lead)}</p>
     <div class="reveal" style="margin-top:2rem"><a class="btn btn--gold" href="${esc(A.ctaHref)}"><span${ed('about.ctaLabel')}>${esc(A.ctaLabel)}</span> <span class="arw-slot"></span></a></div>
@@ -396,6 +460,7 @@ function buildAbout() {
 </section>
 
 <section class="section on-alt">
+  ${amb('story')}
   <div class="wrap split">
     <div class="split__copy reveal">
       <p class="eyebrow"${ed('about.story.eyebrow')}>${esc(A.story.eyebrow)}</p>
@@ -409,9 +474,9 @@ function buildAbout() {
 </section>
 
 <section id="founder" class="section founder on-dark">
-  <img class="founder__art" src="${img(pages.home.founder.artwork, 'f_auto,q_auto,w_1000')}" alt="" aria-hidden="true">
+  <img class="founder__art" src="${img(pages.home.founder.artwork, 'f_auto,q_auto,w_1100')}" alt="" aria-hidden="true" data-amb data-speed="70">
   <div class="wrap founder__split">
-    <div class="founder__portrait reveal"><img src="${img(A.founder.portrait, 'f_auto,q_auto,w_900')}" alt="${esc(A.founder.name)}" loading="lazy"></div>
+    <div class="founder__portrait reveal"><img src="${img(A.founder.portrait, 'f_auto,q_auto,w_1000')}" alt="${esc(A.founder.name)}" loading="lazy"></div>
     <div class="founder__inner reveal" data-delay="1">
       <p class="eyebrow"${ed('about.founder.eyebrow')}>${esc(A.founder.eyebrow)}</p>
       <h2 class="display display--sm"${ed('about.founder.name')}>${esc(A.founder.name)}</h2>
@@ -427,20 +492,14 @@ function buildAbout() {
 /* ---------- CONTACT ---------- */
 function buildContact() {
   const C = pages.contact;
-  const html = head({ title: C.seoTitle, desc: C.seoDesc }, '/contact') + `
-<section class="page-hero page-hero--short">
-  <img class="page-hero__img" src="${img(C.hero, 'f_auto,q_auto,w_1920')}" alt="">
-  <div class="page-hero__scrim"></div>
-  <div class="page-hero__inner">
-    <p class="eyebrow eyebrow--center" style="color:var(--gold-light)"${ed('contact.eyebrow')}>${esc(C.eyebrow)}</p>
-    <h1 class="display display--sm"${ed('contact.title')}>${esc(C.title)}</h1>
-  </div>
-</section>
+  const html = head({ title: C.seoTitle, desc: C.seoDesc }, '/contact')
+    + pageHero(C, 'contact', true) + `
 
 <section class="section">
+  ${amb('newsletter')}
   <div class="wrap news reveal">
     <p class="lead" style="margin-bottom:2rem"${ed('contact.lead')}>${esc(C.lead)}</p>
-    ${formOpen(C.accessKey, 'GC Windsor — contact form')}
+    ${formOpen(C.accessKey, 'GC Windsor - contact form')}
       <div class="field"><label>First name</label><input type="text" name="first_name" required></div>
       <div class="field"><label>Last name</label><input type="text" name="last_name" required></div>
       <div class="field"><label>Email</label><input type="email" name="email" required></div>
@@ -452,6 +511,7 @@ function buildContact() {
 </section>
 
 <section class="section on-alt">
+  ${amb('gallery')}
   <div class="wrap" style="text-align:center">
     <p class="eyebrow eyebrow--center"${ed('contact.instagramTitle')}>${esc(C.instagramTitle)}</p>
     <h2 class="display display--sm" style="margin-top:12px"><a href="${esc(G.social[0].href)}" target="_blank" rel="noopener"${ed('global.instagramHandle')}>${esc(G.instagramHandle)}</a></h2>
@@ -467,4 +527,4 @@ buildShop();
 buildProducts();
 buildAbout();
 buildContact();
-console.log('\n✓ GC Windsor build complete —', products.items.length, 'products,', gallery.items.length, 'gallery items,', swapper.knots.length, 'knots ×', swapper.ties.length, 'ties =', swapper.knots.length * swapper.ties.length, 'combinations');
+console.log('\nOK - GC Windsor build complete:', products.items.length, 'products,', gallery.items.length, 'gallery items,', swapper.knots.length, 'knots x', swapper.ties.length, 'ties =', swapper.knots.length * swapper.ties.length, 'combinations');

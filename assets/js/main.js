@@ -74,27 +74,58 @@
         '<img class="cz__base" data-cz-base alt="" src="' + (cfg.base || '') + '">' +
         '<img class="cz__layer" data-cz-tie-a alt=""><img class="cz__layer" data-cz-tie-b alt="">' +
         '<img class="cz__layer" data-cz-knot-a alt=""><img class="cz__layer" data-cz-knot-b alt="">' +
-        '<span class="cz__spinner" data-cz-spin></span>' +
+        '<span class="cz__gleam" data-cz-gleam></span>' +
       '</div>';
 
-    /* two <img> per part; crossfade by toggling .is-on */
-    function swap(partA, partB, src) {
+    var gleam = $('[data-cz-gleam]', stage);
+
+    /* Run the gold gleam across the frame, in step with the wipe. */
+    function runGleam() {
+      if (reduceMotion || !gleam) return;
+      gleam.classList.remove('is-running');
+      void gleam.offsetWidth;               // force reflow so the animation restarts
+      gleam.classList.add('is-running');
+    }
+
+    /* Two <img> per part. The incoming one is revealed LEFT-TO-RIGHT by a
+       travelling clip-path edge; the outgoing one fades out behind it. */
+    function swap(partA, partB, src, animate) {
       var a = $(partA, stage), b = $(partB, stage);
+      if (!src) { a.classList.remove('is-on', 'is-off'); b.classList.remove('is-on', 'is-off'); return; }
+
       var incoming = a.classList.contains('is-on') ? b : a;
       var outgoing = a.classList.contains('is-on') ? a : b;
-      if (!src) { a.classList.remove('is-on'); b.classList.remove('is-on'); return; }
+      if (incoming.getAttribute('src') === src && incoming.classList.contains('is-on')) return;
+
       var probe = new Image();
       probe.onload = function () {
         incoming.src = src;
-        incoming.classList.add('is-on');
+
+        if (!animate || reduceMotion) {
+          incoming.classList.add('is-on');
+          incoming.classList.remove('is-off');
+          outgoing.classList.remove('is-on', 'is-off');
+          return;
+        }
+
+        /* reset the incoming layer to a closed wipe, then open it next frame */
+        incoming.classList.remove('is-on', 'is-off');
+        void incoming.offsetWidth;
         outgoing.classList.remove('is-on');
+        outgoing.classList.add('is-off');    /* holds, then fades behind the wipe */
+
+        requestAnimationFrame(function () {
+          incoming.classList.add('is-on');
+        });
       };
       probe.src = src;
     }
 
-    function apply() {
-      swap('[data-cz-knot-a]', '[data-cz-knot-b]', state.knot.img);
-      swap('[data-cz-tie-a]', '[data-cz-tie-b]', state.tie.img);
+    function apply(kind) {
+      var animate = !!kind;                       /* no wipe on first paint */
+      if (!kind || kind === 'knot') swap('[data-cz-knot-a]', '[data-cz-knot-b]', state.knot.img, animate);
+      if (!kind || kind === 'tie') swap('[data-cz-tie-a]', '[data-cz-tie-b]', state.tie.img, animate);
+      if (animate) runGleam();
       var kn = $('[data-cz-knotname]', root), tn = $('[data-cz-tiename]', root), cb = $('[data-cz-combo]', root);
       if (kn) kn.textContent = state.knot.name;
       if (tn) tn.textContent = state.tie.name;
@@ -115,10 +146,11 @@
         var kind = b.getAttribute('data-sw');
         var id = b.getAttribute('data-id');
         var list = kind === 'knot' ? cfg.knots : cfg.ties;
+        if (state[kind].id === id) return;
         state[kind] = byId(list, id);
         $all('[data-sw="' + kind + '"]', root).forEach(function (s) { s.classList.remove('is-active'); });
         b.classList.add('is-active');
-        apply();
+        apply(kind);
       });
     });
 
@@ -169,20 +201,36 @@
   }
 
   function initParallax() {
-    var layers = $all('[data-parallax] img');
-    if (reduceMotion || !layers.length) return;
+    var layers = $all('[data-parallax] img');   /* photography — moves as a % of its own height */
+    var motifs = $all('[data-amb]');            /* the rooster marks — move in px, by data-speed */
+    if (reduceMotion || (!layers.length && !motifs.length)) return;
+
     var ticking = false;
     function update() {
       var vh = window.innerHeight;
+
       layers.forEach(function (img) {
         var r = img.parentElement.getBoundingClientRect();
-        if (r.bottom < 0 || r.top > vh) return;
-        var progress = (r.top + r.height / 2 - vh / 2) / vh;
+        if (r.bottom < -200 || r.top > vh + 200) return;
+        var progress = (r.top + r.height / 2 - vh / 2) / vh;   /* -0.5 .. 0.5 */
         img.style.transform = 'translateY(' + (progress * -9).toFixed(2) + '%)';
       });
+
+      motifs.forEach(function (m) {
+        var host = m.closest('section') || m.parentElement;
+        var r = host.getBoundingClientRect();
+        if (r.bottom < -400 || r.top > vh + 400) return;
+        var speed = parseFloat(m.getAttribute('data-speed') || '100');
+        var progress = (r.top + r.height / 2 - vh / 2) / vh;
+        var shiftY = progress * -(speed / 100) * 90;           /* px */
+        var base = m.classList.contains('founder__art') ? ' translateY(-50%)' : '';
+        m.style.transform = 'translate3d(0,' + shiftY.toFixed(1) + 'px,0)' + base;
+      });
+
       ticking = false;
     }
     window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
     update();
   }
 

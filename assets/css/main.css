@@ -534,3 +534,219 @@ button { font-family: inherit; }
   .pdp__notify { grid-template-columns: 1fr; }
   .page-hero { min-height: 42vh; }
 }
+
+/* =====================================================================
+   PASS 2 — z-order, nav, ambient parallax, the enlarged Customizer,
+   and uncropped product photography.
+   ===================================================================== */
+
+/* --- STACKING ORDER (the missing --z-* tokens were the root cause of
+       the nav sliding under sections and the film playing behind images) --- */
+.section, .hero, .founder, .cta-bleed, .page-hero { position: relative; z-index: 1; }
+.nav      { z-index: var(--z-nav); }
+.menu     { z-index: var(--z-menu); }
+.lightbox { z-index: var(--z-lightbox); }
+
+/* --- NAV: taller, centred logo image, translucent on scroll --- */
+.nav {
+  height: var(--nav-h);
+  background: transparent;
+  backdrop-filter: none;
+  border-bottom: 1px solid transparent;
+}
+.nav.is-solid {
+  background: var(--nav-bg);                 /* rgba(0,0,0,.55) — drops opacity */
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  border-bottom-color: var(--gold-hair);
+}
+.nav__brand { justify-self: center; display: flex; align-items: center; }
+.nav__logo {
+  height: 46px; width: auto; display: block;
+  transition: height var(--dur) var(--ease), opacity var(--dur) var(--ease);
+}
+.nav.is-solid .nav__logo { height: 38px; opacity: .92; }
+.nav__link { font-size: 11.5px; }
+
+/* --- AMBIENT PARALLAX MOTIFS (the gold rooster, drifting) --- */
+.amb {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  will-change: transform;
+  filter: saturate(115%);
+}
+.section > .wrap, .page-hero__inner { position: relative; z-index: 1; }
+.section { overflow: hidden; }        /* keep the motifs from causing sideways scroll */
+
+/* --- full-bleed media wrappers so parallax has something to move --- */
+.page-hero__media, .cta-bleed__media {
+  position: absolute; inset: -8% 0; overflow: hidden; z-index: 0;
+}
+.page-hero__media img, .cta-bleed__media img {
+  width: 100%; height: 100%; object-fit: cover; will-change: transform;
+}
+.page-hero__scrim, .cta-bleed__scrim { z-index: 1; }
+.page-hero__inner, .cta-bleed__inner { z-index: 2; }
+
+/* --- FOUNDER: the rooster mark --- */
+.founder__art {
+  position: absolute; top: 50%; right: -6%; transform: translateY(-50%);
+  width: min(48vw, 620px); height: auto; opacity: .5; z-index: 0;
+  pointer-events: none; will-change: transform;
+}
+.founder__inner, .founder__split { position: relative; z-index: 2; }
+@media (max-width: 860px) { .founder__art { opacity: .22; right: -25%; width: 90vw; } }
+
+/* =====================================================================
+   THE CUSTOMIZER — v2
+   Swatch rows moved ABOVE the stage; the stage is now the hero of the
+   section; the combination panel is a compact column on the right.
+   ===================================================================== */
+.cz { background: var(--black); color: var(--bg); }
+.cz .eyebrow { color: var(--gold); }
+.cz .lead { color: rgba(255,255,255,.62); }
+.cz__head { text-align: center; margin-bottom: var(--sp-5); }
+.cz__title { color: var(--bg); margin-top: 6px; }
+.cz__intro { margin: 14px auto 0; max-width: 560px; }
+
+/* the two picker rows, side by side above the stage */
+.cz__picker {
+  display: grid; grid-template-columns: 2fr 1fr; gap: var(--sp-5);
+  padding-bottom: var(--sp-4); margin-bottom: var(--sp-4);
+  border-bottom: 1px solid rgba(255,255,255,.10);
+}
+.cz__rowlabel {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  margin-bottom: 14px;
+}
+.cz__rowlabel .k {
+  font-size: var(--fs-eyebrow); text-transform: uppercase;
+  letter-spacing: var(--ls-eyebrow); color: var(--gold);
+}
+.cz__rowlabel .v {
+  font-size: var(--fs-eyebrow); text-transform: uppercase;
+  letter-spacing: var(--ls-eyebrow); color: rgba(255,255,255,.55);
+}
+.cz__row { display: flex; flex-wrap: wrap; gap: 14px; overflow: visible; margin-bottom: 0; padding-bottom: 0; }
+
+/* swatches */
+.sw { background: none; border: 0; padding: 0; cursor: pointer; position: relative; line-height: 0; }
+.sw__dot {
+  display: block; width: 34px; height: 34px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.28);
+  box-shadow: inset 0 2px 6px rgba(255,255,255,.18), inset 0 -3px 8px rgba(0,0,0,.4);
+  transition: transform var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+.sw:hover .sw__dot { transform: scale(1.12); border-color: var(--gold-light); }
+.sw.is-active .sw__dot {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px var(--black), 0 0 0 3px var(--gold),
+              inset 0 2px 6px rgba(255,255,255,.18), inset 0 -3px 8px rgba(0,0,0,.4);
+}
+
+/* stage + compact panel */
+.cz__grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: var(--sp-5); align-items: stretch; }
+.cz__stage { position: relative; }
+.cz__frame {
+  position: relative; width: 100%; aspect-ratio: 3 / 2;
+  overflow: hidden; background: #0d0d0d;
+  border: 1px solid rgba(255,255,255,.08);
+}
+.cz__frame > img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+}
+.cz__base { opacity: 1 !important; }
+
+/* the LEFT-TO-RIGHT WIPE: the incoming layer is revealed by a travelling edge,
+   with a soft gold gleam riding along it. */
+.cz__layer {
+  opacity: 0;
+  clip-path: inset(0 100% 0 0);
+}
+.cz__layer.is-on {
+  opacity: 1;
+  clip-path: inset(0 0 0 0);
+  transition: clip-path var(--dur-wipe) var(--ease), opacity .12s linear;
+}
+.cz__layer.is-off {
+  opacity: 1;
+  clip-path: inset(0 0 0 0);
+  transition: opacity .45s var(--ease) .18s;
+  opacity: 0;
+}
+.cz__gleam {
+  position: absolute; top: 0; bottom: 0; width: 140px; z-index: 5;
+  pointer-events: none; opacity: 0;
+  background: linear-gradient(90deg, transparent, rgba(201,162,39,.30) 45%, rgba(255,255,255,.5) 55%, transparent);
+  mix-blend-mode: screen;
+}
+.cz__gleam.is-running {
+  animation: czgleam var(--dur-wipe) var(--ease);
+}
+@keyframes czgleam {
+  0%   { opacity: 0;  transform: translateX(-140px); }
+  12%  { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { opacity: 0;  transform: translateX(calc(100% + 100vw)); }
+}
+
+.cz__panel {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: var(--sp-4); border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.02);
+}
+.cz__panel .now {
+  font-size: var(--fs-eyebrow); text-transform: uppercase;
+  letter-spacing: var(--ls-eyebrow); color: var(--gold); margin-bottom: 12px;
+}
+.cz__panel .name {
+  font-family: var(--font-display); font-style: italic; font-weight: 300;
+  text-transform: uppercase; letter-spacing: .06em; line-height: 1.25;
+  font-size: 1.3rem; color: var(--bg); margin-bottom: var(--sp-4);
+}
+.cz__count {
+  margin-top: var(--sp-3); font-size: var(--fs-small);
+  color: rgba(255,255,255,.42); line-height: 1.7;
+  text-transform: uppercase; letter-spacing: .14em;
+}
+.cz__count em { font-style: normal; color: var(--gold); }
+
+@media (max-width: 1024px) {
+  .cz__picker { grid-template-columns: 1fr; gap: var(--sp-4); }
+  .cz__grid { grid-template-columns: 1fr; }
+  .cz__panel { padding: var(--sp-3); }
+}
+@media (max-width: 560px) {
+  .sw__dot { width: 30px; height: 30px; }
+  .cz__row { gap: 10px; }
+}
+
+/* =====================================================================
+   PRODUCT PHOTOGRAPHY — show the WHOLE image (the shots are 16:9
+   landscape; the old 4:5 crop was cutting the ties in half).
+   ===================================================================== */
+.card__media { aspect-ratio: 4 / 3; background: var(--bg-alt); display: grid; place-items: center; padding: 0; }
+.card__media img { width: 100%; height: 100%; object-fit: contain; }
+.on-alt .card__media { background: var(--bg); }
+
+.pdp__main { aspect-ratio: 4 / 3; background: var(--bg-alt); display: grid; place-items: center; }
+.pdp__main img { width: 100%; height: 100%; object-fit: contain; }
+.pdp__thumb img { object-fit: contain; }
+
+/* the gallery mosaic keeps cover — those are lifestyle shots, made to be cropped */
+
+/* --- small elegance passes --- */
+.card__body { align-items: flex-start; }
+.card__name { line-height: 1.5; }
+.badge--onmedia { backdrop-filter: blur(6px); background: rgba(0,0,0,.42); border: 1px solid var(--gold-hair); color: var(--gold-light); }
+.hero__cue { z-index: 3; }
+a, button { -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; scroll-padding-top: var(--nav-h); }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .amb, .founder__art { display: none; }
+  .cz__layer, .cz__layer.is-on { transition: opacity .2s linear; clip-path: none; }
+}

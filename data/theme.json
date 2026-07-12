@@ -41,5 +41,11 @@
   "sp-7": "6rem",
   "ease": "cubic-bezier(.16, 1, .3, 1)",
   "dur": ".6s",
-  "dur-fast": ".28s"
+  "dur-fast": ".28s",
+  "dur-wipe": ".75s",
+  "nav-h": "88px",
+  "nav-bg": "rgba(0,0,0,0.55)",
+  "z-nav": "100",
+  "z-menu": "200",
+  "z-lightbox": "300"
 }
