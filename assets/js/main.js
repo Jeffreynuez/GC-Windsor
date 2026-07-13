@@ -64,10 +64,33 @@
     var root = $('[data-customizer]');
     if (!root || !GCW.customizer) return;
     var cfg = GCW.customizer;
-    var byId = function (arr, id) { for (var i = 0; i < arr.length; i++) if (arr[i].id === id) return arr[i]; return arr[0]; };
+    var types = cfg.types || [];
+    if (!types.length) return;
 
-    var state = { knot: byId(cfg.knots, cfg.defaultKnot), tie: byId(cfg.ties, cfg.defaultTie) };
+    var typeById = {};
+    types.forEach(function (t) { typeById[t.id] = t; });
+    var typeIndex = function (t) { return types.indexOf(t); };
+    function partKeyOf(typeKey) { return typeKey.replace(/s$/, ''); }   /* 'knots' -> 'knot' */
+    function firstAvailable(t) { for (var i = 0; i < t.designs.length; i++) if (t.designs[i].status === 'available') return t.designs[i]; return t.designs[0]; }
+    function designById(t, id) { for (var i = 0; i < t.designs.length; i++) if (t.designs[i].id === id) return t.designs[i]; return null; }
+    function colorById(d, id) { if (!d || !d.colors) return null; for (var i = 0; i < d.colors.length; i++) if (d.colors[i].id === id) return d.colors[i]; return null; }
+    function swatchBg(cols) {
+      if (!cols || !cols.length) return '#333';
+      if (cols.length === 1) return cols[0];
+      return 'linear-gradient(135deg, ' + cols[0] + ' 0 50%, ' + cols[1] + ' 50% 100%)';
+    }
 
+    /* state per type: selDesignId = tab currently shown; appDesignId/appColorId
+       = what is actually applied to the model (always an AVAILABLE design). */
+    var state = {};
+    types.forEach(function (t) {
+      var avail = firstAvailable(t);
+      var defId = t.id === 'knots' ? cfg.defaultKnotColor : cfg.defaultTieColor;
+      var col = colorById(avail, defId) || (avail.colors && avail.colors[0]) || null;
+      state[t.id] = { selDesignId: avail.id, appDesignId: avail.id, appColorId: col ? col.id : null };
+    });
+
+    /* ---- stage: base + two <img> per part + gleam + horizontal-blur filters ---- */
     var stage = $('[data-cz-stage]', root);
     stage.innerHTML =
       '<div class="cz__frame">' +
@@ -75,23 +98,48 @@
         '<img class="cz__layer" data-cz-tie-a alt=""><img class="cz__layer" data-cz-tie-b alt="">' +
         '<img class="cz__layer" data-cz-knot-a alt=""><img class="cz__layer" data-cz-knot-b alt="">' +
         '<span class="cz__gleam" data-cz-gleam></span>' +
-      '</div>';
+      '</div>' +
+      '<svg class="cz__filters" width="0" height="0" aria-hidden="true" focusable="false">' +
+        '<filter id="czBlurKnot" x="-30%" y="-10%" width="160%" height="120%"><feGaussianBlur data-cz-blur="knot" in="SourceGraphic" stdDeviation="0 0"></feGaussianBlur></filter>' +
+        '<filter id="czBlurTie" x="-30%" y="-10%" width="160%" height="120%"><feGaussianBlur data-cz-blur="tie" in="SourceGraphic" stdDeviation="0 0"></feGaussianBlur></filter>' +
+      '</svg>';
 
     var gleam = $('[data-cz-gleam]', stage);
+    var MAXBLUR = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cz-blur-max')) || 16;
+    var PART = {
+      knot: { a: '[data-cz-knot-a]', b: '[data-cz-knot-b]', filter: 'url(#czBlurKnot)', blur: stage.querySelector('[data-cz-blur="knot"]') },
+      tie:  { a: '[data-cz-tie-a]',  b: '[data-cz-tie-b]',  filter: 'url(#czBlurTie)',  blur: stage.querySelector('[data-cz-blur="tie"]') }
+    };
 
-    /* Run the gold gleam across the frame, in step with the wipe. */
     function runGleam() {
       if (reduceMotion || !gleam) return;
       gleam.classList.remove('is-running');
-      void gleam.offsetWidth;               // force reflow so the animation restarts
+      void gleam.offsetWidth;
       gleam.classList.add('is-running');
     }
+    function setBlur(node, px) { if (node) node.setAttribute('stdDeviation', (px > 0 ? px.toFixed(2) : '0') + ' 0'); }
+    function txOf(el) {
+      var t = getComputedStyle(el).transform;
+      if (!t || t === 'none') return 0;
+      var m = t.match(/matrix\(([^)]+)\)/);
+      if (m) { var p = m[1].split(','); return Math.abs(parseFloat(p[4]) || 0); }
+      var m3 = t.match(/matrix3d\(([^)]+)\)/);
+      if (m3) { var q = m3[1].split(','); return Math.abs(parseFloat(q[12]) || 0); }
+      return 0;
+    }
+    function resetLayer(el) {
+      el.classList.remove('is-on', 'is-anim');
+      el.style.transition = ''; el.style.transform = ''; el.style.opacity = ''; el.style.filter = '';
+    }
 
-    /* Two <img> per part. The incoming one is revealed LEFT-TO-RIGHT by a
-       travelling clip-path edge; the outgoing one fades out behind it. */
-    function swap(partA, partB, src, animate) {
-      var a = $(partA, stage), b = $(partB, stage);
-      if (!src) { a.classList.remove('is-on', 'is-off'); b.classList.remove('is-on', 'is-off'); return; }
+    /* the incoming layer slides in from the LEFT and settles pixel-exact; the
+       outgoing layer slides out to the RIGHT and fades — same direction, like a
+       card pushed from a slot. The incoming layer carries a horizontal motion
+       blur that peaks at velocity and resolves to zero as it lands. */
+    function swap(partKey, src, animate) {
+      var P = PART[partKey];
+      var a = $(P.a, stage), b = $(P.b, stage);
+      if (!src) { resetLayer(a); resetLayer(b); setBlur(P.blur, 0); return; }
 
       var incoming = a.classList.contains('is-on') ? b : a;
       var outgoing = a.classList.contains('is-on') ? a : b;
@@ -102,59 +150,254 @@
         incoming.src = src;
 
         if (!animate || reduceMotion) {
+          resetLayer(outgoing);
+          incoming.classList.remove('is-anim');
+          incoming.style.transition = ''; incoming.style.transform = ''; incoming.style.opacity = ''; incoming.style.filter = '';
           incoming.classList.add('is-on');
-          incoming.classList.remove('is-off');
-          outgoing.classList.remove('is-on', 'is-off');
           return;
         }
 
-        /* reset the incoming layer to a closed wipe, then open it next frame */
-        incoming.classList.remove('is-on', 'is-off');
+        incoming.classList.add('is-on'); incoming.classList.remove('is-anim');
+        incoming.style.transition = 'none'; incoming.style.opacity = '1';
+        incoming.style.transform = 'translateX(-100%)'; incoming.style.filter = P.filter;
+
+        outgoing.classList.add('is-on'); outgoing.classList.remove('is-anim');
+        outgoing.style.transition = 'none'; outgoing.style.opacity = '1'; outgoing.style.transform = 'translateX(0)'; outgoing.style.filter = '';
+
         void incoming.offsetWidth;
-        outgoing.classList.remove('is-on');
-        outgoing.classList.add('is-off');    /* holds, then fades behind the wipe */
+        setBlur(P.blur, MAXBLUR);
 
         requestAnimationFrame(function () {
-          incoming.classList.add('is-on');
+          incoming.classList.add('is-anim'); incoming.style.transition = ''; incoming.style.transform = 'translateX(0)';
+          outgoing.classList.add('is-anim'); outgoing.style.transition = ''; outgoing.style.transform = 'translateX(100%)'; outgoing.style.opacity = '0';
+
+          var frameW = incoming.getBoundingClientRect().width || 1;
+          var running = true;
+          (function tick() {
+            if (!running) return;
+            setBlur(P.blur, (txOf(incoming) / frameW) * MAXBLUR);   /* blur tracks distance from rest */
+            requestAnimationFrame(tick);
+          })();
+
+          var done = function (e) {
+            if (e.propertyName !== 'transform') return;
+            outgoing.removeEventListener('transitionend', done);
+            running = false; setBlur(P.blur, 0);
+            incoming.style.filter = ''; incoming.classList.remove('is-anim');
+            resetLayer(outgoing);
+          };
+          outgoing.addEventListener('transitionend', done);
         });
       };
       probe.src = src;
     }
 
-    function apply(kind) {
-      var animate = !!kind;                       /* no wipe on first paint */
-      if (!kind || kind === 'knot') swap('[data-cz-knot-a]', '[data-cz-knot-b]', state.knot.img, animate);
-      if (!kind || kind === 'tie') swap('[data-cz-tie-a]', '[data-cz-tie-b]', state.tie.img, animate);
+    /* ---- paint the model from applied state ---- */
+    function applyStage(onlyPart) {
+      var animate = !!onlyPart;
+      types.forEach(function (t) {
+        var pk = partKeyOf(t.id);
+        if (onlyPart && onlyPart !== pk) return;
+        var st = state[t.id];
+        var d = designById(t, st.appDesignId);
+        var c = colorById(d, st.appColorId);
+        swap(pk, c ? c.img : null, animate);
+      });
       if (animate) runGleam();
-      var kn = $('[data-cz-knotname]', root), tn = $('[data-cz-tiename]', root), cb = $('[data-cz-combo]', root);
-      if (kn) kn.textContent = state.knot.name;
-      if (tn) tn.textContent = state.tie.name;
-      if (cb) cb.textContent = state.knot.name + ' knot · ' + state.tie.name + ' tie';
+      updatePanel();
+    }
 
-      /* point the CTA at the closest matching product, if there is one */
+    function updatePanel() {
+      var kt = typeById['knots'], tt = typeById['ties'];
+      var ks = state['knots'], ts = state['ties'];
+      var kd = designById(kt, ks.appDesignId), kc = colorById(kd, ks.appColorId);
+      var td = designById(tt, ts.appDesignId), tc = colorById(td, ts.appColorId);
+      var kn = $('[data-cz-knotname]', root), tn = $('[data-cz-tiename]', root);
+      var cb = $('[data-cz-combo]', root), cnt = $('[data-cz-count]', root);
+      if (kn) kn.textContent = kc ? kc.name : '';
+      if (tn) tn.textContent = tc ? tc.name : '';
+      if (cb) cb.textContent =
+        (kd ? kd.label : '') + ' · ' + (kc ? kc.name : '') + ' knot — ' +
+        (td ? td.label : '') + ' · ' + (tc ? tc.name : '') + ' tie';
+
+      if (cnt) {
+        var knotN = availColorCount(kt), tieN = availColorCount(tt);
+        cnt.innerHTML = '<em>' + (knotN * tieN) + '</em> combinations available today — more designs coming.';
+      }
+
       var cta = $('[data-cz-cta]', root);
       if (cta && cfg.products) {
-        var exact = cfg.products.filter(function (p) { return p.knot === state.knot.id && p.tie === state.tie.id; })[0];
-        var near = cfg.products.filter(function (p) { return p.knot === state.knot.id; })[0];
+        var exact = cfg.products.filter(function (p) { return p.knot === ks.appColorId && p.tie === ts.appColorId; })[0];
+        var near = cfg.products.filter(function (p) { return p.knot === ks.appColorId; })[0];
         var hit = exact || near;
         cta.setAttribute('href', hit ? '/product/' + hit.slug : '/shop');
       }
     }
+    function availColorCount(t) {
+      var n = 0;
+      t.designs.forEach(function (d) { if (d.status === 'available') n += (d.colors ? d.colors.length : 0); });
+      return n;
+    }
 
-    $all('[data-sw]', root).forEach(function (b) {
-      b.addEventListener('click', function () {
-        var kind = b.getAttribute('data-sw');
-        var id = b.getAttribute('data-id');
-        var list = kind === 'knot' ? cfg.knots : cfg.ties;
-        if (state[kind].id === id) return;
-        state[kind] = byId(list, id);
-        $all('[data-sw="' + kind + '"]', root).forEach(function (s) { s.classList.remove('is-active'); });
-        b.classList.add('is-active');
-        apply(kind);
+    /* ---- render level-2 tabs + level-3 colours (data-driven, any count) ---- */
+    function renderType(t) {
+      renderTabs(t);
+      renderOpts(t);
+    }
+    function renderTabs(t) {
+      var el = root.querySelector('[data-cz-designs="' + t.id + '"]');
+      var st = state[t.id];
+      el.innerHTML = '';
+      t.designs.forEach(function (d, di) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'cz__tab' + (d.status !== 'available' ? ' cz__tab--soon' : '') + (d.id === st.selDesignId ? ' is-active' : '');
+        b.setAttribute('data-design', d.id);
+        b.setAttribute('data-edit-item', 'swapper.json#types.' + typeIndex(t) + '.designs#' + di);
+        b.innerHTML = '<span class="cz__tab-l">' + d.label + '</span>' +
+          (d.status !== 'available' ? '<span class="cz__tab-soon">Soon</span>' : '');
+        b.addEventListener('click', function () { selectDesign(t.id, d.id); });
+        el.appendChild(b);
       });
+    }
+    function renderOpts(t) {
+      var el = root.querySelector('[data-cz-colors="' + t.id + '"]');
+      var st = state[t.id];
+      var d = designById(t, st.selDesignId);
+      el.innerHTML = '';
+
+      if (!d || d.status !== 'available') {
+        var soon = document.createElement('div');
+        soon.className = 'cz__soon';
+        soon.innerHTML =
+          '<span class="cz__soon-k">Coming soon</span>' +
+          '<span class="cz__soon-n">' + (d ? d.label : '') + '</span>' +
+          '<span class="cz__soon-note">A new ' + (t.id === 'knots' ? 'knot' : 'tie') + ' for the house — join the list to hear first.</span>';
+        el.appendChild(soon);
+        return;
+      }
+
+      var di = t.designs.indexOf(d);
+      var row = document.createElement('div');
+      row.className = 'cz__row';
+      d.colors.forEach(function (c, ci) {
+        var active = (c.id === st.appColorId && st.selDesignId === st.appDesignId);
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'sw' + (active ? ' is-active' : '');
+        b.setAttribute('data-color', c.id);
+        b.setAttribute('aria-label', c.name);
+        b.setAttribute('data-edit-item', 'swapper.json#types.' + typeIndex(t) + '.designs.' + di + '.colors#' + ci);
+        b.innerHTML = '<span class="sw__dot" style="background:' + swatchBg(c.colors) + '"></span><span class="sw__tip">' + c.name + '</span>';
+        b.addEventListener('click', function () { selectColor(t.id, c.id); });
+        row.appendChild(b);
+      });
+      el.appendChild(row);
+    }
+
+    function selectDesign(typeKey, designId) {
+      var t = typeById[typeKey], st = state[typeKey];
+      st.selDesignId = designId;
+      var d = designById(t, designId);
+      if (d && d.status === 'available') {
+        var keep = colorById(d, st.appColorId);
+        var col = keep || d.colors[0];
+        var changed = (st.appDesignId !== designId) || (st.appColorId !== (col ? col.id : null));
+        st.appDesignId = designId;
+        st.appColorId = col ? col.id : null;
+        renderType(t);
+        if (changed) applyStage(partKeyOf(typeKey)); else updatePanel();
+      } else {
+        renderType(t);   /* coming-soon teaser; the model does not change */
+      }
+    }
+    function selectColor(typeKey, colorId) {
+      var st = state[typeKey];
+      if (st.appColorId === colorId && st.selDesignId === st.appDesignId) return;  /* clicking the active swatch does nothing */
+      st.appColorId = colorId;
+      st.appDesignId = st.selDesignId;
+      renderOpts(typeById[typeKey]);
+      applyStage(partKeyOf(typeKey));
+    }
+
+    types.forEach(renderType);
+    applyStage();
+  }
+
+  /* ---- gallery: a horizontal scrolling strip (tiles are server-rendered) ---- */
+  function initGalleryStrip() {
+    var strip = $('[data-gallery-strip]');
+    if (!strip) return;
+    var track = $('[data-gstrip-track]', strip);
+    if (!track) return;
+    var prev = $('[data-gstrip-prev]');
+    var next = $('[data-gstrip-next]');
+    if (prev) prev.innerHTML = ICONS.chevL;
+    if (next) next.innerHTML = ICONS.chevR;
+
+    function step() {
+      var tile = track.querySelector('.gtile');
+      var g = parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap) || 16;
+      return tile ? tile.getBoundingClientRect().width + g : track.clientWidth * 0.8;
+    }
+    function updateArrows() {
+      if (!prev || !next) return;
+      var max = track.scrollWidth - track.clientWidth - 2;
+      prev.disabled = track.scrollLeft <= 2;
+      next.disabled = track.scrollLeft >= max;
+    }
+    function page(dir) {
+      var n = Math.max(1, Math.round((track.clientWidth / step()) * 0.85));
+      track.scrollBy({ left: dir * step() * n, behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+    if (prev) prev.addEventListener('click', function () { page(-1); });
+    if (next) next.addEventListener('click', function () { page(1); });
+
+    var raf = 0;
+    track.addEventListener('scroll', function () {
+      if (!raf) raf = requestAnimationFrame(function () { updateArrows(); raf = 0; });
+    }, { passive: true });
+
+    track.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') { e.preventDefault(); page(1); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); page(-1); }
     });
 
-    apply();
+    /* vertical wheel intent scrolls the strip horizontally */
+    track.addEventListener('wheel', function (e) {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) { track.scrollLeft += e.deltaY; e.preventDefault(); }
+    }, { passive: false });
+
+    /* pointer drag, with click-suppression so a drag never opens the lightbox */
+    var down = false, startX = 0, startLeft = 0, moved = 0;
+    track.addEventListener('pointerdown', function (e) {
+      if (e.button !== undefined && e.button !== 0) return;
+      down = true; moved = 0; startX = e.clientX; startLeft = track.scrollLeft;
+      if (track.setPointerCapture) { try { track.setPointerCapture(e.pointerId); } catch (x) {} }
+    });
+    track.addEventListener('pointermove', function (e) {
+      if (!down) return;
+      var dx = e.clientX - startX;
+      if (Math.abs(dx) > 3) track.classList.add('is-drag');
+      moved = Math.max(moved, Math.abs(dx));
+      track.scrollLeft = startLeft - dx;
+    });
+    function end() {
+      if (!down) return;
+      down = false;
+      track.classList.remove('is-drag');
+      if (moved > 6) {
+        var kill = function (ev) { ev.stopPropagation(); ev.preventDefault(); track.removeEventListener('click', kill, true); };
+        track.addEventListener('click', kill, true);
+        setTimeout(function () { track.removeEventListener('click', kill, true); }, 0);
+      }
+      updateArrows();
+    }
+    track.addEventListener('pointerup', end);
+    track.addEventListener('pointercancel', end);
+
+    window.addEventListener('resize', updateArrows, { passive: true });
+    updateArrows();
   }
 
   /* ---- gallery lightbox (tiles are server-rendered) ---- */
@@ -201,9 +444,14 @@
   }
 
   function initParallax() {
-    var layers = $all('[data-parallax] img');   /* photography — moves as a % of its own height */
-    var motifs = $all('[data-amb]');            /* the rooster marks — move in px, by data-speed */
+    var layers = $all('[data-parallax] img');   /* photography + full-bleed — moves as a % of its own height */
+    var motifs = $all('[data-amb]');            /* rooster marks + founder emblem — move in px, by data-speed */
     if (reduceMotion || (!layers.length && !motifs.length)) return;
+
+    /* travel strengths are tokens on :root, so the CMS theme controls them */
+    var cs = getComputedStyle(document.documentElement);
+    var MEDIA = parseFloat(cs.getPropertyValue('--parallax-media')) || 18;   /* % of image height */
+    var MOTIF = parseFloat(cs.getPropertyValue('--parallax-motif')) || 1.8;  /* multiplier */
 
     var ticking = false;
     function update() {
@@ -211,18 +459,19 @@
 
       layers.forEach(function (img) {
         var r = img.parentElement.getBoundingClientRect();
-        if (r.bottom < -200 || r.top > vh + 200) return;
-        var progress = (r.top + r.height / 2 - vh / 2) / vh;   /* -0.5 .. 0.5 */
-        img.style.transform = 'translateY(' + (progress * -9).toFixed(2) + '%)';
+        if (r.bottom < -300 || r.top > vh + 300) return;
+        var p = (r.top + r.height / 2 - vh / 2) / vh;   /* -0.5 .. 0.5 across the viewport */
+        if (p > 0.5) p = 0.5; else if (p < -0.5) p = -0.5;
+        img.style.transform = 'translate3d(0,' + (p * -MEDIA).toFixed(2) + '%,0)';
       });
 
       motifs.forEach(function (m) {
         var host = m.closest('section') || m.parentElement;
         var r = host.getBoundingClientRect();
-        if (r.bottom < -400 || r.top > vh + 400) return;
+        if (r.bottom < -500 || r.top > vh + 500) return;
         var speed = parseFloat(m.getAttribute('data-speed') || '100');
-        var progress = (r.top + r.height / 2 - vh / 2) / vh;
-        var shiftY = progress * -(speed / 100) * 90;           /* px */
+        var p = (r.top + r.height / 2 - vh / 2) / vh;
+        var shiftY = p * -(speed / 100) * 120 * MOTIF;           /* px — layers move at clearly different depths */
         var base = m.classList.contains('founder__art') ? ' translateY(-50%)' : '';
         m.style.transform = 'translate3d(0,' + shiftY.toFixed(1) + 'px,0)' + base;
       });
@@ -341,6 +590,7 @@
     initNav();
     initCustomizer();
     initLightbox();
+    initGalleryStrip();
     initPDP();
     initFilm();
     initForms();

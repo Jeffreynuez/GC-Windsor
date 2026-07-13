@@ -1,33 +1,62 @@
 {
   "eyebrow": "The Customizer",
   "title": "Customize to your hearts content",
-  "intro": "Pick a knot. Pick a tie. See the combination live — the way you would actually wear it.",
+  "intro": "Pick a knot. Pick a tie. See the combination live - the way you would actually wear it.",
   "base": "CDN:gcwindsor/swapper/main",
-  "defaultKnot": "k-gold-black",
-  "defaultTie": "t-black",
+  "defaultKnotColor": "k-gold-black",
+  "defaultTieColor": "t-black",
   "ctaLabel": "Shop this combination",
-  "knotsLabel": "GC Knots",
-  "tiesLabel": "GC Ties",
-  "knots": [
-    { "id": "k-black",        "name": "Black",          "colors": ["#0a0a0a"],           "img": "CDN:gcwindsor/swapper/knots/black" },
-    { "id": "k-black-gold",   "name": "Black & Gold",   "colors": ["#0a0a0a", "#c9a227"], "img": "CDN:gcwindsor/swapper/knots/black-and-gold" },
-    { "id": "k-black-silver", "name": "Black & Silver", "colors": ["#0a0a0a", "#c9ccd1"], "img": "CDN:gcwindsor/swapper/knots/black-and-silver" },
-    { "id": "k-blue",         "name": "Navy",           "colors": ["#1c3f8f"],           "img": "CDN:gcwindsor/swapper/knots/blue" },
-    { "id": "k-blue-gold",    "name": "Navy & Gold",    "colors": ["#1c3f8f", "#c9a227"], "img": "CDN:gcwindsor/swapper/knots/blue-and-gold" },
-    { "id": "k-gold",         "name": "Gold",           "colors": ["#c9a227"],           "img": "CDN:gcwindsor/swapper/knots/gold" },
-    { "id": "k-gold-black",   "name": "Gold & Black",   "colors": ["#c9a227", "#0a0a0a"], "img": "CDN:gcwindsor/swapper/knots/gold-and-black" },
-    { "id": "k-red",          "name": "Red",            "colors": ["#b31220"],           "img": "CDN:gcwindsor/swapper/knots/red" },
-    { "id": "k-red-black",    "name": "Red & Black",    "colors": ["#b31220", "#0a0a0a"], "img": "CDN:gcwindsor/swapper/knots/red-and-black" },
-    { "id": "k-silver",       "name": "Silver",         "colors": ["#c9ccd1"],           "img": "CDN:gcwindsor/swapper/knots/silver" },
-    { "id": "k-violet",       "name": "Lavender",       "colors": ["#5b2a86"],           "img": "CDN:gcwindsor/swapper/knots/violet" },
-    { "id": "k-violet-black", "name": "Lavender & Black","colors": ["#5b2a86", "#0a0a0a"], "img": "CDN:gcwindsor/swapper/knots/violet-and-black" }
-  ],
-  "ties": [
-    { "id": "t-black",  "name": "Black",    "colors": ["#0a0a0a"], "img": "CDN:gcwindsor/swapper/ties/black" },
-    { "id": "t-blue",   "name": "Navy",     "colors": ["#1c3f8f"], "img": "CDN:gcwindsor/swapper/ties/blue" },
-    { "id": "t-gold",   "name": "Gold",     "colors": ["#c9a227"], "img": "CDN:gcwindsor/swapper/ties/gold" },
-    { "id": "t-red",    "name": "Red",      "colors": ["#b31220"], "img": "CDN:gcwindsor/swapper/ties/red" },
-    { "id": "t-silver", "name": "Silver",   "colors": ["#c9ccd1"], "img": "CDN:gcwindsor/swapper/ties/silver" },
-    { "id": "t-violet", "name": "Lavender", "colors": ["#5b2a86"], "img": "CDN:gcwindsor/swapper/ties/violet" }
+  "soonLabel": "Coming soon",
+  "soonNote": "A new design, arriving soon. Join the house below and you will be the first to see it.",
+
+  "types": [
+    {
+      "id": "knots",
+      "label": "GC Knots",
+      "designs": [
+        {
+          "id": "eldredge",
+          "label": "Eldredge Knot",
+          "status": "available",
+          "colors": [
+            { "id": "k-black",        "name": "Black",            "colors": ["#0a0a0a"],            "img": "CDN:gcwindsor/swapper/knots/black" },
+            { "id": "k-black-gold",   "name": "Black & Gold",     "colors": ["#0a0a0a", "#c9a227"], "img": "CDN:gcwindsor/swapper/knots/black-and-gold" },
+            { "id": "k-black-silver", "name": "Black & Silver",   "colors": ["#0a0a0a", "#c9ccd1"], "img": "CDN:gcwindsor/swapper/knots/black-and-silver" },
+            { "id": "k-blue",         "name": "Navy",             "colors": ["#1c3f8f"],            "img": "CDN:gcwindsor/swapper/knots/blue" },
+            { "id": "k-blue-gold",    "name": "Navy & Gold",      "colors": ["#1c3f8f", "#c9a227"], "img": "CDN:gcwindsor/swapper/knots/blue-and-gold" },
+            { "id": "k-gold",         "name": "Gold",             "colors": ["#c9a227"],            "img": "CDN:gcwindsor/swapper/knots/gold" },
+            { "id": "k-gold-black",   "name": "Gold & Black",     "colors": ["#c9a227", "#0a0a0a"], "img": "CDN:gcwindsor/swapper/knots/gold-and-black" },
+            { "id": "k-red",          "name": "Red",              "colors": ["#b31220"],            "img": "CDN:gcwindsor/swapper/knots/red" },
+            { "id": "k-red-black",    "name": "Red & Black",      "colors": ["#b31220", "#0a0a0a"], "img": "CDN:gcwindsor/swapper/knots/red-and-black" },
+            { "id": "k-silver",       "name": "Silver",           "colors": ["#c9ccd1"],            "img": "CDN:gcwindsor/swapper/knots/silver" },
+            { "id": "k-violet",       "name": "Lavender",         "colors": ["#5b2a86"],            "img": "CDN:gcwindsor/swapper/knots/violet" },
+            { "id": "k-violet-black", "name": "Lavender & Black", "colors": ["#5b2a86", "#0a0a0a"], "img": "CDN:gcwindsor/swapper/knots/violet-and-black" }
+          ]
+        },
+        { "id": "double-windsor", "label": "Double Windsor", "status": "coming-soon", "colors": [] },
+        { "id": "flame",          "label": "Flame Knot",     "status": "coming-soon", "colors": [] }
+      ]
+    },
+    {
+      "id": "ties",
+      "label": "GC Ties",
+      "designs": [
+        {
+          "id": "solid",
+          "label": "Solid",
+          "status": "available",
+          "colors": [
+            { "id": "t-black",  "name": "Black",    "colors": ["#0a0a0a"], "img": "CDN:gcwindsor/swapper/ties/black" },
+            { "id": "t-blue",   "name": "Navy",     "colors": ["#1c3f8f"], "img": "CDN:gcwindsor/swapper/ties/blue" },
+            { "id": "t-gold",   "name": "Gold",     "colors": ["#c9a227"], "img": "CDN:gcwindsor/swapper/ties/gold" },
+            { "id": "t-red",    "name": "Red",      "colors": ["#b31220"], "img": "CDN:gcwindsor/swapper/ties/red" },
+            { "id": "t-silver", "name": "Silver",   "colors": ["#c9ccd1"], "img": "CDN:gcwindsor/swapper/ties/silver" },
+            { "id": "t-violet", "name": "Lavender", "colors": ["#5b2a86"], "img": "CDN:gcwindsor/swapper/ties/violet" }
+          ]
+        },
+        { "id": "pinstripe", "label": "Pin Stripe", "status": "coming-soon", "colors": [] },
+        { "id": "pattern",   "label": "Pattern",    "status": "coming-soon", "colors": [] }
+      ]
+    }
   ]
 }

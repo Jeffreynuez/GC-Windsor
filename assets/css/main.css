@@ -216,12 +216,49 @@ button { font-family: inherit; }
 .hero { position: relative; height: 100svh; min-height: 560px; background: var(--black); overflow: hidden; }
 .hero__media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .hero__scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 55%, rgba(0,0,0,.7) 100%); }
-.hero__cue { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); color: rgba(255,255,255,.7); display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 2; }
-.hero__cue span { font-size: 10px; text-transform: uppercase; letter-spacing: 0.3em; }
-.hero__cue .line { width: 1px; height: 44px; background: linear-gradient(var(--gold), transparent); }
+/* change 1 — a deliberate, elegant invitation to scroll: letter-spaced label,
+   a gold hairline that draws downward on a loop, a soft dark halo behind it. */
+.hero__cue {
+  position: absolute; left: 50%; bottom: 34px; transform: translateX(-50%);
+  z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 15px;
+  padding: 20px 30px 14px; text-align: center; color: #fff;
+}
+.hero__cue::before {
+  content: ''; position: absolute; left: 50%; top: 52%; transform: translate(-50%,-50%);
+  width: 250px; height: 200px; z-index: -1; pointer-events: none;
+  background: radial-gradient(58% 58% at 50% 45%, rgba(0,0,0,.55), rgba(0,0,0,0) 72%);
+}
+.hero__cue-label {
+  font-family: var(--font-sans); font-weight: 300; font-size: 12px;
+  text-transform: uppercase; letter-spacing: 0.42em; text-indent: 0.42em; color: #fff;
+  transition: color var(--dur-fast) var(--ease);
+}
+.hero__cue-rail {
+  position: relative; width: 1px; height: var(--cue-rail-h);
+  background: rgba(255,255,255,.22); overflow: hidden;
+}
+.hero__cue-draw {
+  position: absolute; left: 0; top: 0; width: 1px; height: 46%;
+  background: linear-gradient(180deg, transparent, var(--gold-light) 45%, var(--gold));
+}
+.hero__cue-chev {
+  width: 9px; height: 9px; margin-top: -9px;
+  border-right: 1px solid var(--gold-light); border-bottom: 1px solid var(--gold-light);
+  transform: rotate(45deg); opacity: .9;
+}
+.hero__cue:hover .hero__cue-label { color: var(--gold-light); }
 @media (prefers-reduced-motion: no-preference) {
-  .hero__cue .line { animation: cuepulse 2.6s var(--ease) infinite; transform-origin: top; }
-  @keyframes cuepulse { 0%,100% { opacity: .4; transform: scaleY(.6); } 50% { opacity: 1; transform: scaleY(1); } }
+  .hero__cue-draw { animation: cuedraw var(--cue-dur) var(--ease) infinite; }
+  .hero__cue-chev { animation: cuechev var(--cue-dur) var(--ease) infinite; }
+  @keyframes cuedraw {
+    0%   { transform: translateY(-100%); }
+    62%  { transform: translateY(232%); }
+    100% { transform: translateY(232%); }
+  }
+  @keyframes cuechev {
+    0%,100% { opacity: .35; transform: rotate(45deg) translate(-2px,-2px); }
+    55%     { opacity: 1;   transform: rotate(45deg) translate(0,0); }
+  }
 }
 
 /* --- Positioning statement (magazine spread) --- */
@@ -237,7 +274,7 @@ button { font-family: inherit; }
 .split--flip .split__copy { order: 2; }
 .split__copy > * + * { margin-top: var(--sp-3); }
 .split__media { position: relative; aspect-ratio: 4/5; overflow: hidden; }
-.split__media img { position: absolute; inset: -10% 0; width: 100%; height: 120%; object-fit: cover; will-change: transform; }
+.split__media img { position: absolute; inset: -20% 0; width: 100%; height: 140%; object-fit: cover; will-change: transform; }
 
 /* ============================================================
    THE CUSTOMIZER
@@ -297,7 +334,7 @@ button { font-family: inherit; }
   border: 1px solid rgba(255,255,255,0.22); border-radius: 50%; background: none;
   transition: transform var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
 }
-.sw__dot { position: absolute; inset: 4px; border-radius: 50%; }
+.sw__dot { position: static; border-radius: 50%; }
 .sw:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.5); }
 .sw.is-active { border-color: var(--gold); }
 .sw.is-active::after { content: ''; position: absolute; inset: -5px; border: 1px solid var(--gold); border-radius: 50%; }
@@ -374,7 +411,7 @@ button { font-family: inherit; }
 
 /* --- Contact CTA (full-bleed) --- */
 .cta-bleed { position: relative; min-height: 60vh; display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden; color: #fff; }
-.cta-bleed__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cta-bleed__img { position: absolute; inset: -12% 0; width: 100%; height: 124%; object-fit: cover; will-change: transform; }
 .cta-bleed__scrim { position: absolute; inset: 0; background: rgba(0,0,0,.5); }
 .cta-bleed__inner { position: relative; z-index: 2; }
 
@@ -577,6 +614,9 @@ button { font-family: inherit; }
   will-change: transform;
   filter: saturate(115%);
 }
+/* faint ambient rooster motifs drifting behind the light sections (change 5) */
+.amb--tr { top: -8%; right: -7%; width: min(42vw, 560px); opacity: .08; }
+.amb--bl { bottom: -10%; left: -9%; width: min(46vw, 620px); opacity: .07; }
 .section > .wrap, .page-hero__inner { position: relative; z-index: 1; }
 .section { overflow: hidden; }        /* keep the motifs from causing sideways scroll */
 
@@ -591,9 +631,11 @@ button { font-family: inherit; }
 .page-hero__inner, .cta-bleed__inner { z-index: 2; }
 
 /* --- FOUNDER: the rooster mark --- */
+/* change 5 — the gold filigree emblem is now dominant: much larger, bleeding
+   off the right edge, reading as artwork the page scrolls past. */
 .founder__art {
-  position: absolute; top: 50%; right: -6%; transform: translateY(-50%);
-  width: min(48vw, 620px); height: auto; opacity: .5; z-index: 0;
+  position: absolute; top: 50%; right: -8%; transform: translateY(-50%);
+  width: var(--founder-art-w); height: auto; opacity: var(--founder-art-opacity); z-index: 0;
   pointer-events: none; will-change: transform;
 }
 .founder__inner, .founder__split { position: relative; z-index: 2; }
@@ -632,7 +674,10 @@ button { font-family: inherit; }
 .cz__row { display: flex; flex-wrap: wrap; gap: 14px; overflow: visible; margin-bottom: 0; padding-bottom: 0; }
 
 /* swatches */
-.sw { background: none; border: 0; padding: 0; cursor: pointer; position: relative; line-height: 0; }
+/* change 3a — the swatch button shrink-wraps its dot (retiring the stale 40px
+   box + offset legacy ring) so the active ring can be perfectly concentric. */
+.sw { background: none; border: 0; padding: 0; cursor: pointer; position: relative; line-height: 0; width: auto; height: auto; display: inline-flex; }
+.sw.is-active::after { content: none; }
 .sw__dot {
   display: block; width: 34px; height: 34px; border-radius: 50%;
   border: 1px solid rgba(255,255,255,.28);
@@ -640,57 +685,61 @@ button { font-family: inherit; }
   transition: transform var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
 }
 .sw:hover .sw__dot { transform: scale(1.12); border-color: var(--gold-light); }
+/* concentric ring via outline: outline always tracks the dot's box centre and
+   follows its border-radius, so the ring is exactly centred at every size. */
 .sw.is-active .sw__dot {
   border-color: var(--gold);
-  box-shadow: 0 0 0 2px var(--black), 0 0 0 3px var(--gold),
-              inset 0 2px 6px rgba(255,255,255,.18), inset 0 -3px 8px rgba(0,0,0,.4);
+  outline: var(--sw-ring-w) solid var(--gold);
+  outline-offset: var(--sw-ring-gap);
+  box-shadow: inset 0 2px 6px rgba(255,255,255,.18), inset 0 -3px 8px rgba(0,0,0,.4);
 }
 
 /* stage + compact panel */
-.cz__grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: var(--sp-5); align-items: stretch; }
-.cz__stage { position: relative; }
+/* change 3b — the stage is the hero of this section: it breaks out wider than
+   the 1280 grid, the panel stays compact, and the stage height comes ENTIRELY
+   from the 3:2 frame so there are no black letterbox bars above/below. */
+.cz .wrap { max-width: var(--cz-maxw); }
+.cz__grid { display: grid; grid-template-columns: minmax(0, 1fr) var(--cz-panel-w); gap: var(--sp-5); align-items: stretch; }
+.cz__stage { position: relative; aspect-ratio: auto; display: block; background: none; border: 0; align-self: stretch; }
 .cz__frame {
-  position: relative; width: 100%; aspect-ratio: 3 / 2;
+  position: relative; width: 100%; aspect-ratio: 3 / 2;   /* matches the 7010x4674 source */
   overflow: hidden; background: #0d0d0d;
   border: 1px solid rgba(255,255,255,.08);
 }
+/* base + every layer share ONE frame box and fill it identically, so the knot
+   and tie always register on the model, edge to edge, no dead space. */
 .cz__frame > img {
   position: absolute; inset: 0; width: 100%; height: 100%;
   object-fit: cover; object-position: center;
 }
-.cz__base { opacity: 1 !important; }
+.cz__base { opacity: 1 !important; transform: none !important; }
 
-/* the LEFT-TO-RIGHT WIPE: the incoming layer is revealed by a travelling edge,
-   with a soft gold gleam riding along it. */
+/* change 3c — a real TRANSLATE-BASED SWAP. The whole layer travels left->right;
+   the <img> inside is locked to the frame (inset:0, cover) so translateX(0) is
+   pixel-exact on the model. JS pushes the outgoing layer out to the right while
+   the incoming layer slides in from the left, both moving the same direction. */
 .cz__layer {
   opacity: 0;
-  clip-path: inset(0 100% 0 0);
+  transform: translateX(0);
+  will-change: transform, opacity;
 }
-.cz__layer.is-on {
-  opacity: 1;
-  clip-path: inset(0 0 0 0);
-  transition: clip-path var(--dur-wipe) var(--ease), opacity .12s linear;
+.cz__layer.is-on { opacity: 1; }
+.cz__layer.is-anim {
+  transition: transform var(--dur-swap) var(--ease), opacity var(--dur-swap) var(--ease);
 }
-.cz__layer.is-off {
-  opacity: 1;
-  clip-path: inset(0 0 0 0);
-  transition: opacity .45s var(--ease) .18s;
-  opacity: 0;
-}
+/* a soft gold gleam rides across the silk in step with the swap */
 .cz__gleam {
-  position: absolute; top: 0; bottom: 0; width: 140px; z-index: 5;
+  position: absolute; top: 0; bottom: 0; left: 0; width: 26%; z-index: 5;
   pointer-events: none; opacity: 0;
-  background: linear-gradient(90deg, transparent, rgba(201,162,39,.30) 45%, rgba(255,255,255,.5) 55%, transparent);
+  background: linear-gradient(90deg, transparent, rgba(201,162,39,.20) 42%, rgba(255,255,255,.40) 55%, transparent);
   mix-blend-mode: screen;
 }
-.cz__gleam.is-running {
-  animation: czgleam var(--dur-wipe) var(--ease);
-}
+.cz__gleam.is-running { animation: czgleam var(--dur-swap) var(--ease); }
 @keyframes czgleam {
-  0%   { opacity: 0;  transform: translateX(-140px); }
-  12%  { opacity: 1; }
-  88%  { opacity: 1; }
-  100% { opacity: 0;  transform: translateX(calc(100% + 100vw)); }
+  0%   { opacity: 0;  transform: translateX(-120%); }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { opacity: 0;  transform: translateX(460%); }
 }
 
 .cz__panel {
@@ -748,5 +797,280 @@ html { scroll-behavior: smooth; scroll-padding-top: var(--nav-h); }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .amb, .founder__art { display: none; }
-  .cz__layer, .cz__layer.is-on { transition: opacity .2s linear; clip-path: none; }
+  .cz__layer { transition: opacity .2s linear; transform: none !important; }
+  .cz__gleam { display: none; }
+  .hero__cue-draw, .hero__cue-chev { animation: none; }
+  .gstrip__track { scroll-behavior: auto; scroll-snap-type: none; }
+}
+
+/* =====================================================================
+   CHANGE 6 — GALLERY STRIP
+   A single horizontally-scrolling strip (rendered from gallery.json), with
+   snap, drag/touch/keyboard/wheel support and thin gold arrow controls. The
+   last tile is partially visible so it's obvious there's more to drag.
+   ===================================================================== */
+.gstrip__head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-bottom: var(--sp-4); }
+.gstrip__ctrl { display: flex; gap: 10px; }
+.gstrip__arw {
+  width: 52px; height: 52px; display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; border: 1px solid var(--gold-hair); color: var(--gold); cursor: pointer;
+  transition: background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+.gstrip__arw:hover { border-color: var(--gold); background: var(--gold); color: var(--black); }
+.gstrip__arw:disabled { opacity: .3; cursor: default; background: transparent; color: var(--gold); border-color: var(--gold-hair); }
+.gstrip__arw svg { width: 22px; height: 22px; }
+
+.gstrip { position: relative; }
+.gstrip__track {
+  display: flex; gap: var(--gtile-gap);
+  max-width: calc(var(--maxw) + var(--pad-x) * 2);
+  margin-inline: auto; padding: 4px var(--pad-x);
+  overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x mandatory; scroll-padding-inline: var(--pad-x); scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none; cursor: grab;
+}
+.gstrip__track::-webkit-scrollbar { display: none; }
+.gstrip__track.is-drag { cursor: grabbing; scroll-snap-type: none; scroll-behavior: auto; }
+.gstrip__track.is-drag .gtile img { transform: none; }
+.gstrip__track:focus-visible { outline: 1px solid var(--gold); outline-offset: 3px; }
+.gtile {
+  flex: 0 0 var(--gtile-w); height: var(--gtile-h);
+  scroll-snap-align: start; position: relative; overflow: hidden;
+  background: var(--bg); cursor: pointer;
+}
+.gtile img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur) var(--ease); }
+.gtile:hover img { transform: scale(1.04); }
+.gtile::after { content: ''; position: absolute; inset: 0; border: 1px solid transparent; transition: border-color var(--dur-fast) var(--ease); }
+.gtile:hover::after { border-color: var(--gold-hair); }
+.gstrip__more { display: flex; justify-content: center; margin-top: var(--sp-5); }
+@media (max-width: 620px) { .gstrip__ctrl { display: none; } }
+
+/* =====================================================================
+   CHANGE 7 — NEWSLETTER as a deliberate charcoal band with real presence.
+   ===================================================================== */
+#newsletter .news {
+  background: var(--news-panel); color: var(--bg);
+  border: 1px solid var(--gold-hair);
+  max-width: var(--news-maxw); margin-inline: auto;
+  padding: clamp(2.25rem, 5vw, 3.75rem) clamp(1.5rem, 5vw, 4rem);
+}
+#newsletter .eyebrow { color: var(--gold); }
+#newsletter .display { color: var(--bg); }
+#newsletter .lead { color: rgba(255,255,255,.72); margin-inline: auto; }
+#newsletter .news__form { margin-top: var(--sp-5); align-items: end; }
+#newsletter .field label { color: var(--gold-light); font-size: 11px; letter-spacing: .18em; margin-bottom: 12px; }
+#newsletter .field input {
+  height: 54px; padding: 0 16px; color: #fff;
+  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.26);
+  transition: border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+}
+#newsletter .field input::placeholder { color: rgba(255,255,255,.42); }
+#newsletter .field input:focus { border-color: var(--gold); background: rgba(201,162,39,.06); }
+#newsletter .news__submit {
+  height: 54px; background: var(--gold); color: var(--black); border-color: var(--gold); letter-spacing: .16em;
+}
+#newsletter .news__submit:hover { background: var(--gold-light); border-color: var(--gold-light); color: var(--black); }
+#newsletter .news__fine { color: rgba(255,255,255,.62); font-size: var(--fs-small); letter-spacing: .14em; margin-top: var(--sp-4); }
+@media (max-width: 620px) { #newsletter .news { padding-inline: 1.25rem; } }
+
+/* =====================================================================
+   CHANGE 8 — FOOTER scaled up: larger emblem, headings, links & rhythm,
+   with stronger contrast on black.
+   ===================================================================== */
+.footer { padding-block: var(--sp-7) var(--sp-5); }
+.footer__top { gap: var(--sp-6); }
+.footer__logo { height: var(--footer-logo-h); margin-bottom: 22px; }
+.footer__brand { font-size: 24px; }
+.footer__tag { color: rgba(255,255,255,.66); font-size: var(--fs-body); margin-top: 16px; max-width: 34ch; line-height: 1.6; }
+.footer__col h4 { font-size: 13px; letter-spacing: .22em; color: var(--gold-light); margin-bottom: 22px; }
+.footer__col a { color: rgba(255,255,255,.78); font-size: 15px; letter-spacing: .05em; padding: 9px 0; }
+.footer__col a:hover { color: var(--gold-light); }
+.footer__bar { margin-top: var(--sp-6); padding-top: var(--sp-4); }
+.footer__copy { color: rgba(255,255,255,.62); font-size: var(--fs-small); letter-spacing: .16em; }
+.social a { width: 44px; height: 44px; color: rgba(255,255,255,.82); }
+.social a:hover { color: var(--gold-light); }
+
+/* =====================================================================
+   PASS 3 — NAV LOGO, IMAGE FITS, BUTTON CENTRING, LIGHT NEWSLETTER, AND
+   THE THREE-LEVEL CUSTOMIZER (type → design → colour).
+   ===================================================================== */
+
+/* --- 1: nav centre wordmark (bar chrome/scroll behaviour already tokenised) --- */
+.nav__brand { justify-self: center; display: flex; align-items: center; }
+.nav__logo { height: 46px; width: auto; display: block; transition: height var(--dur) var(--ease), opacity var(--dur) var(--ease); }
+.nav.is-solid .nav__logo { height: 38px; }
+
+/* --- 2: "The idea" photo shown whole (16:9 source), breathing, no hard crop --- */
+.split__media--full { position: relative; aspect-ratio: auto; overflow: visible; background: transparent; }
+.split__media--full img { position: static; inset: auto; width: 100%; height: auto; object-fit: contain; transform: none; will-change: auto; }
+
+/* --- 3: collection cards — full 16:9 product, contained, never sliced --- */
+.card__media { aspect-ratio: 16 / 9; }
+.card__media img { object-fit: contain; }
+
+/* --- 6: optically centre the label (+arrow) group despite trailing tracking --- */
+.btn { justify-content: center; text-indent: var(--ls-button); }
+.badge { display: inline-block; text-indent: 0.22em; }
+
+/* --- 5: newsletter — prominent, but on the LIGHT ground (no black slab) --- */
+#newsletter .news {
+  background: var(--bg-alt); color: var(--ink);
+  border: 1px solid var(--gold-hair); border-top: 2px solid var(--gold);
+  max-width: var(--news-maxw); margin-inline: auto;
+  padding: clamp(2.5rem, 5vw, 4rem) clamp(1.5rem, 5vw, 4rem);
+}
+#newsletter .eyebrow { color: var(--muted); }
+#newsletter .display { color: var(--ink); }
+#newsletter .lead { color: var(--muted); margin-inline: auto; }
+#newsletter .news__form { margin-top: var(--sp-5); align-items: end; }
+#newsletter .field label { color: var(--ink); font-size: 11px; letter-spacing: .18em; font-weight: 400; margin-bottom: 12px; }
+#newsletter .field input {
+  height: 54px; padding: 0 16px; color: var(--ink);
+  background: var(--bg); border: 1px solid rgba(26,26,26,.28);
+  transition: border-color var(--dur-fast) var(--ease);
+}
+#newsletter .field input::placeholder { color: rgba(26,26,26,.4); }
+#newsletter .field input:focus { border-color: var(--gold); }
+#newsletter .news__submit {
+  height: 54px; background: var(--gold); color: var(--black); border-color: var(--gold); letter-spacing: .16em; font-weight: 400;
+}
+#newsletter .news__submit:hover { background: var(--gold-deep); border-color: var(--gold-deep); color: #fff; }
+#newsletter .news__fine { color: var(--muted); font-size: var(--fs-small); letter-spacing: .14em; margin-top: var(--sp-4); }
+
+/* --- 7: THE CUSTOMIZER — model stays largest; picker + panel in a compact column --- */
+.cz__grid { display: grid; grid-template-columns: minmax(0, 1fr) var(--cz-side-w); gap: var(--sp-5); align-items: start; }
+.cz__stage { align-self: stretch; }
+.cz__side { display: flex; flex-direction: column; gap: var(--sp-4); }
+.cz__picker { display: flex; flex-direction: column; gap: var(--sp-4); }
+.cz__pick { display: block; }
+.cz__rowlabel { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.cz__rowlabel .k { font-size: var(--fs-eyebrow); text-transform: uppercase; letter-spacing: var(--ls-eyebrow); color: var(--gold); }
+.cz__rowlabel .v { font-size: var(--fs-eyebrow); text-transform: uppercase; letter-spacing: var(--ls-eyebrow); color: rgba(255,255,255,.55); }
+
+/* 7c level 2 — design tabs (an elegant tier with a gold active underline) */
+.cz__tabs { display: flex; flex-wrap: wrap; gap: 22px; margin-bottom: var(--sp-3); border-bottom: 1px solid rgba(255,255,255,.12); }
+.cz__tab {
+  background: none; border: 0; padding: 0 0 10px; margin: 0; cursor: pointer; position: relative;
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--font-sans); font-weight: 300; font-size: 12px; text-transform: uppercase; letter-spacing: .16em;
+  color: rgba(255,255,255,.6); transition: color var(--dur-fast) var(--ease);
+}
+.cz__tab::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: var(--gold); transform: scaleX(0); transform-origin: left; transition: transform var(--dur-fast) var(--ease); }
+.cz__tab:hover { color: #fff; }
+.cz__tab.is-active { color: var(--gold-light); }
+.cz__tab.is-active::after { transform: scaleX(1); }
+.cz__tab-soon { font-size: 8px; letter-spacing: .16em; color: var(--gold); border: 1px solid var(--gold-hair); padding: 2px 5px; line-height: 1; }
+.cz__tab--soon { color: rgba(255,255,255,.52); }
+.cz__tab--soon:hover { color: var(--gold-light); }
+
+/* 7a level 3 — colours: a clean flex row, items never shrink or overlap */
+.cz__opts { min-height: 40px; }
+.cz__row { display: flex; flex-wrap: wrap; gap: 14px; }
+.sw { flex: 0 0 auto; background: none; border: 0; padding: 0; margin: 0; cursor: pointer; position: relative; line-height: 0; display: inline-flex; }
+.sw.is-active::after { content: none; }
+.sw__dot {
+  display: block; width: 34px; height: 34px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.28);
+  box-shadow: inset 0 2px 6px rgba(255,255,255,.18), inset 0 -3px 8px rgba(0,0,0,.4);
+  transition: transform var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+.sw:hover .sw__dot { transform: scale(1.12); border-color: var(--gold-light); }
+/* concentric ring via outline — always centred, follows the border-radius */
+.sw.is-active .sw__dot { border-color: var(--gold); outline: var(--sw-ring-w) solid var(--gold); outline-offset: var(--sw-ring-gap); }
+
+/* 7c coming-soon — an enticing teaser, not a greyed-out field */
+.cz__soon { display: flex; flex-direction: column; gap: 6px; padding: 16px 18px; border: 1px solid var(--gold-hair); background: linear-gradient(180deg, rgba(201,162,39,.07), rgba(201,162,39,0)); }
+.cz__soon-k { font-size: var(--fs-eyebrow); text-transform: uppercase; letter-spacing: var(--ls-eyebrow); color: var(--gold); }
+.cz__soon-n { font-family: var(--font-display); font-style: italic; font-weight: 300; text-transform: uppercase; letter-spacing: .06em; font-size: 1.2rem; color: var(--bg); }
+.cz__soon-note { font-size: var(--fs-small); color: rgba(255,255,255,.6); letter-spacing: .04em; line-height: 1.6; }
+
+/* combination panel */
+.cz__panel { display: flex; flex-direction: column; padding: var(--sp-4); border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.02); }
+.cz__panel .now { font-size: var(--fs-eyebrow); text-transform: uppercase; letter-spacing: var(--ls-eyebrow); color: var(--gold); margin: 0 0 10px; }
+.cz__panel .name { font-family: var(--font-display); font-style: italic; font-weight: 300; text-transform: uppercase; letter-spacing: .05em; line-height: 1.3; font-size: 1.1rem; color: var(--bg); margin: 0 0 var(--sp-3); }
+.cz__count { margin-top: var(--sp-3); font-size: var(--fs-small); color: rgba(255,255,255,.45); line-height: 1.7; text-transform: uppercase; letter-spacing: .12em; }
+.cz__count em { font-style: normal; color: var(--gold); }
+
+/* 7b stage: fills the 3:2 frame; motion-blur filter host is invisible */
+.cz__filters { position: absolute; width: 0; height: 0; overflow: hidden; }
+.cz__layer { will-change: transform, opacity, filter; }
+
+@media (max-width: 1024px) {
+  .cz__grid { grid-template-columns: 1fr; }
+  .cz__side { max-width: 640px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cz__layer { filter: none !important; }
+}
+
+/* =====================================================================
+   PASS 3 - repo integration on top of the Claude Design revision.
+   ===================================================================== */
+
+/* --- PRODUCT PHOTOGRAPHY: always show the WHOLE product.
+       The combo shots are 1920x1080 landscape; any cover-crop slices the tie. --- */
+.card__media {
+  aspect-ratio: 4 / 3;
+  background: var(--bg-alt);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.card__media img { width: 100%; height: 100%; object-fit: contain !important; }
+.on-alt .card__media { background: var(--bg); }
+.pdp__main { aspect-ratio: 4 / 3; background: var(--bg-alt); display: grid; place-items: center; }
+.pdp__main img { width: 100%; height: 100%; object-fit: contain !important; }
+.pdp__thumb img { object-fit: contain !important; }
+
+/* --- THE BLACK GC MARK: a large, low-opacity watermark that parallaxes
+       behind the LIGHT sections (the gold rooster carries the dark ones). --- */
+.mark {
+  position: absolute;
+  width: var(--mark-w);
+  height: auto;
+  opacity: var(--mark-opacity);
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  will-change: transform;
+}
+.mark--tr { top: -14%; right: -14%; }
+.mark--bl { bottom: -16%; left: -14%; }
+.mark--tl { top: -14%; left: -14%; }
+.mark--br { bottom: -16%; right: -14%; }
+.on-dark .mark, .cz .mark, .founder .mark { display: none; }   /* dark sections use the gold rooster */
+
+@media (max-width: 860px) {
+  .mark { width: 120vw; opacity: calc(var(--mark-opacity) * 0.7); }
+}
+
+/* --- CONTACT: the form now wears the same panel as the newsletter --- */
+.news--wide { max-width: 1080px; }
+.news__form--contact { grid-template-columns: repeat(2, 1fr); }
+.news__form--contact .field--full { grid-column: 1 / -1; }
+.news__form--contact .news__submit { grid-column: 1 / -1; justify-self: center; min-width: 220px; }
+.news__form textarea {
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  resize: vertical;
+  transition: border-color var(--dur-fast) var(--ease);
+}
+.news__form textarea:focus { outline: none; border-color: var(--gold); }
+
+@media (max-width: 720px) {
+  .news__form--contact { grid-template-columns: 1fr; }
+}
+
+/* --- page-hero headings use the script face now --- */
+.page-hero__inner .script { color: var(--bg); }
+
+/* --- reduced motion: kill every ambient layer --- */
+@media (prefers-reduced-motion: reduce) {
+  .mark, .amb, .founder__art { display: none; }
 }

@@ -12,6 +12,7 @@
     "nav": [
       { "label": "Home", "href": "/" },
       { "label": "Shop", "href": "/shop" },
+      { "label": "Gallery", "href": "/gallery" },
       { "label": "About", "href": "/about" },
       { "label": "Contact", "href": "/contact" }
     ],
@@ -29,6 +30,7 @@
       { "heading": "The House", "links": [
         { "label": "Our story", "href": "/about" },
         { "label": "The founder", "href": "/about#founder" },
+        { "label": "Gallery", "href": "/gallery" },
         { "label": "Contact", "href": "/contact" }
       ]}
     ],

@@ -4,6 +4,7 @@
   "pages": [
     ["index.html", "Home"],
     ["shop.html", "Shop"],
+    ["gallery.html", "Gallery"],
     ["about.html", "About"],
     ["contact.html", "Contact"]
   ],
@@ -195,36 +196,58 @@
             { "k": "eyebrow", "l": "Eyebrow" },
             { "k": "title", "l": "Heading (script face)" },
             { "k": "intro", "l": "Intro copy", "type": "area" },
-            { "k": "knotsLabel", "l": "Knots row label" },
-            { "k": "tiesLabel", "l": "Ties row label" },
             { "k": "ctaLabel", "l": "Button label" },
+            { "k": "soonLabel", "l": "Coming-soon chip label" },
+            { "k": "soonNote", "l": "Coming-soon note", "type": "area" },
             { "k": "base", "l": "Base photo (model)", "type": "media" },
-            { "k": "defaultKnot", "l": "Default knot id" },
-            { "k": "defaultTie", "l": "Default tie id" }
+            { "k": "defaultKnotColor", "l": "Default knot colour id" },
+            { "k": "defaultTieColor", "l": "Default tie colour id" }
           ]
         },
         {
-          "bt": "GC Knots",
+          "bt": "GC Knots - designs",
           "kind": "arr",
-          "path": "knots",
-          "titleField": "name",
-          "thumbField": "img",
+          "path": "types.0.designs",
+          "titleField": "label",
           "fields": [
-            { "k": "id", "l": "ID (used by products — do not reuse)" },
-            { "k": "name", "l": "Name" },
-            { "k": "img", "l": "Layer PNG (transparent)", "type": "media" }
+            { "k": "id", "l": "ID (do not reuse)" },
+            { "k": "label", "l": "Design name" },
+            { "k": "status", "l": "Status", "type": "select", "opts": ["available", "coming-soon"] }
           ]
         },
         {
-          "bt": "GC Ties",
+          "bt": "GC Knots - Eldredge colours",
           "kind": "arr",
-          "path": "ties",
+          "path": "types.0.designs.0.colors",
           "titleField": "name",
           "thumbField": "img",
           "fields": [
-            { "k": "id", "l": "ID (used by products — do not reuse)" },
-            { "k": "name", "l": "Name" },
-            { "k": "img", "l": "Layer PNG (transparent)", "type": "media" }
+            { "k": "id", "l": "ID (products reference this - do not reuse)" },
+            { "k": "name", "l": "Colour name" },
+            { "k": "img", "l": "Layer PNG (transparent, 7010x4674)", "type": "media" }
+          ]
+        },
+        {
+          "bt": "GC Ties - designs",
+          "kind": "arr",
+          "path": "types.1.designs",
+          "titleField": "label",
+          "fields": [
+            { "k": "id", "l": "ID (do not reuse)" },
+            { "k": "label", "l": "Design name" },
+            { "k": "status", "l": "Status", "type": "select", "opts": ["available", "coming-soon"] }
+          ]
+        },
+        {
+          "bt": "GC Ties - Solid colours",
+          "kind": "arr",
+          "path": "types.1.designs.0.colors",
+          "titleField": "name",
+          "thumbField": "img",
+          "fields": [
+            { "k": "id", "l": "ID (products reference this - do not reuse)" },
+            { "k": "name", "l": "Colour name" },
+            { "k": "img", "l": "Layer PNG (transparent, 7010x4674)", "type": "media" }
           ]
         }
       ]
@@ -285,12 +308,27 @@
       "file": "gallery.json",
       "blocks": [
         {
-          "bt": "Section copy",
+          "bt": "Home strip",
           "kind": "obj",
           "path": "",
           "fields": [
             { "k": "eyebrow", "l": "Eyebrow" },
-            { "k": "title", "l": "Heading" }
+            { "k": "title", "l": "Heading (script face)" },
+            { "k": "moreLabel", "l": "'See more' button label" },
+            { "k": "stripCount", "l": "How many images in the home strip" }
+          ]
+        },
+        {
+          "bt": "Gallery page",
+          "kind": "obj",
+          "path": "page",
+          "fields": [
+            { "k": "seoTitle", "l": "SEO title" },
+            { "k": "seoDesc", "l": "SEO description", "type": "area" },
+            { "k": "eyebrow", "l": "Eyebrow" },
+            { "k": "title", "l": "Heading" },
+            { "k": "lead", "l": "Intro copy", "type": "area" },
+            { "k": "hero", "l": "Hero image", "type": "media" }
           ]
         },
         {

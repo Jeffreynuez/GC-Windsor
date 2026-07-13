@@ -42,10 +42,38 @@
   "ease": "cubic-bezier(.16, 1, .3, 1)",
   "dur": ".6s",
   "dur-fast": ".28s",
-  "dur-wipe": ".75s",
-  "nav-h": "88px",
+
+  "nav-h": "78px",
   "nav-bg": "rgba(0,0,0,0.55)",
   "z-nav": "100",
   "z-menu": "200",
-  "z-lightbox": "300"
+  "z-lightbox": "300",
+
+  "cue-rail-h": "62px",
+  "cue-dur": "2.4s",
+
+  "dur-swap": "0.72s",
+  "cz-maxw": "1440px",
+  "cz-panel-w": "250px",
+  "cz-side-w": "380px",
+  "cz-blur-max": "18",
+  "sw-ring-w": "1px",
+  "sw-ring-gap": "3px",
+
+  "gtile-w": "clamp(260px, 30vw, 420px)",
+  "gtile-h": "clamp(300px, 42vw, 520px)",
+  "gtile-gap": "16px",
+
+  "founder-art-w": "min(78vw, 980px)",
+  "founder-art-opacity": "0.62",
+  "parallax-media": "20",
+  "parallax-motif": "1.9",
+
+  "news-maxw": "980px",
+  "news-panel": "#141414",
+
+  "footer-logo-h": "104px",
+
+  "mark-opacity": "0.05",
+  "mark-w": "min(70vw, 900px)"
 }

@@ -4,7 +4,10 @@
    Layout: this file. Design tokens: data/theme.json -> assets/css/theme.css.
    Stamps data-edit="<file>#<dot.path>" on text leaves and
    data-edit-item="<file>#<arr>#<idx>" on array-item roots for the visual editor
-   (see the ?edit=1 bridge at the bottom of assets/js/main.js). */
+   (see the ?edit=1 bridge at the bottom of assets/js/main.js).
+
+   NOTE: keep this file pure ASCII. The Cowork sandbox mount mangles non-ASCII
+   bytes and produces phantom syntax errors. Use HTML entities in output. */
 'use strict';
 const fs = require('fs'), path = require('path');
 const ROOT = path.join(__dirname, '..');
@@ -35,50 +38,6 @@ const vid = (u, t) => {
   return VID + (t || 'q_auto') + '/' + u.slice(4) + '.mp4';
 };
 
-/* ---------- ambient parallax motifs ----------
-   The gold rooster mark, drifting behind sections at different speeds.
-   Decorative only: aria-hidden, and main.js skips them under
-   prefers-reduced-motion. Positions are deliberate, not random. */
-const AMB = {
-  positioning: [
-    { s: 120, css: 'width:520px;top:-120px;right:-180px;opacity:.05' },
-    { s: -80, css: 'width:340px;bottom:-90px;left:-140px;opacity:.04' }
-  ],
-  elevate: [
-    { s: 140, css: 'width:600px;top:-160px;left:-200px;opacity:.05' },
-    { s: -90, css: 'width:300px;bottom:-60px;right:8%;opacity:.035' }
-  ],
-  customize: [
-    { s: 150, css: 'width:760px;top:-220px;right:-260px;opacity:.08' },
-    { s: -100, css: 'width:440px;bottom:-150px;left:-170px;opacity:.06' }
-  ],
-  shop: [
-    { s: 130, css: 'width:560px;top:-140px;right:-190px;opacity:.045' }
-  ],
-  gallery: [
-    { s: 110, css: 'width:480px;top:-130px;left:-170px;opacity:.04' },
-    { s: -95, css: 'width:360px;bottom:-100px;right:-120px;opacity:.035' }
-  ],
-  newsletter: [
-    { s: 125, css: 'width:520px;top:-150px;right:-170px;opacity:.05' }
-  ],
-  story: [
-    { s: 135, css: 'width:560px;top:-150px;right:-200px;opacity:.05' },
-    { s: -85, css: 'width:320px;bottom:-80px;left:-120px;opacity:.04' }
-  ],
-  pagehero: [
-    { s: 100, css: 'width:520px;top:-120px;right:-160px;opacity:.10' }
-  ]
-};
-function amb(key) {
-  const set = AMB[key];
-  if (!set) return '';
-  const src = img('CDN:gcwindsor/logo/rooster', 'f_auto,q_auto,w_800');
-  return set.map(a =>
-    `<img class="amb" src="${src}" alt="" aria-hidden="true" loading="lazy" data-amb data-speed="${a.s}" style="${a.css}">`
-  ).join('');
-}
-
 /* editor stamps */
 const ed = p => ` data-edit="pages.json#${p}"`;
 const edf = (file, p) => ` data-edit="${file}#${p}"`;
@@ -90,6 +49,20 @@ const swapper = D('swapper.json');
 const gallery = D('gallery.json');
 const theme = D('theme.json');
 const G = pages.global;
+
+/* ---------- ambient parallax layers ----------
+   amb()  = the gold rooster mark, for DARK / photographic sections.
+   mark() = the large black GC logo, a low-opacity watermark for LIGHT sections.
+   Both are decorative, aria-hidden, driven by main.js [data-amb] and killed
+   under prefers-reduced-motion. */
+const ROOSTER = 'CDN:gcwindsor/logo/rooster';
+const BLACKMARK = 'CDN:gcwindsor/logo/gcw-logo-black-3x';
+
+const amb = (pos, speed) =>
+  `<img class="amb amb--${pos}" data-amb data-speed="${speed}" src="${img(ROOSTER, 'f_auto,q_auto,w_900')}" alt="" aria-hidden="true" loading="lazy">`;
+
+const mark = (pos, speed) =>
+  `<img class="mark mark--${pos}" data-amb data-speed="${speed}" src="${img(BLACKMARK, 'f_auto,q_auto,w_1200')}" alt="" aria-hidden="true" loading="lazy">`;
 
 /* ---------- theme compiler: theme.json -> assets/css/theme.css ---------- */
 function buildTheme() {
@@ -126,20 +99,39 @@ const head = (seo, page) => `<!DOCTYPE html>
 <body data-page="${page}">
 ${navHTML(page)}`;
 
-const foot = () => `${footerHTML()}
-<script>window.GCW=${JSON.stringify({
+/* window.GCW: everything the client needs, with CDN paths already expanded. */
+const gcw = () => JSON.stringify({
   brand: G.brand,
   salesPaused: products.salesPaused,
   customizer: {
-    base: img(swapper.base, 'f_auto,q_auto,w_1800'),
-    knots: swapper.knots.map(k => ({ id: k.id, name: k.name, colors: k.colors, img: img(k.img, 'f_auto,q_auto,w_1800') })),
-    ties: swapper.ties.map(t => ({ id: t.id, name: t.name, colors: t.colors, img: img(t.img, 'f_auto,q_auto,w_1800') })),
-    defaultKnot: swapper.defaultKnot,
-    defaultTie: swapper.defaultTie,
+    base: img(swapper.base, 'f_auto,q_auto,w_1600'),
+    defaultKnotColor: swapper.defaultKnotColor,
+    defaultTieColor: swapper.defaultTieColor,
+    soonLabel: swapper.soonLabel,
+    soonNote: swapper.soonNote,
+    types: swapper.types.map(t => ({
+      id: t.id,
+      label: t.label,
+      designs: t.designs.map(d => ({
+        id: d.id,
+        label: d.label,
+        status: d.status,
+        colors: (d.colors || []).map(c => ({
+          id: c.id, name: c.name, colors: c.colors,
+          img: img(c.img, 'f_auto,q_auto,w_1600')
+        }))
+      }))
+    })),
     products: products.items.map(p => ({ id: p.id, slug: p.slug, knot: p.knot, tie: p.tie, name: p.name }))
   },
-  film: { src: vid(pages.about.founder.film), poster: img(pages.about.founder.filmPoster, 'f_auto,q_auto,w_1600') }
-})}</script>
+  film: {
+    src: vid(pages.about.founder.film),
+    poster: img(pages.about.founder.filmPoster, 'f_auto,q_auto,w_1600')
+  }
+});
+
+const foot = () => `${footerHTML()}
+<script>window.GCW=${gcw()}</script>
 <script src="/assets/js/main.js"></script>
 </body>
 </html>`;
@@ -152,9 +144,7 @@ function navHTML(page) {
   return `<header class="nav" data-nav>
   <div class="nav__inner">
     <nav class="nav__group nav__group--left">${left}</nav>
-    <a class="nav__brand" href="/" aria-label="${esc(G.brand)}">
-      <img class="nav__logo" src="${img(G.navLogo, 'f_auto,q_auto,w_640')}" alt="${esc(G.brand)}">
-    </a>
+    <a class="nav__brand" href="/" aria-label="GC Windsor home"><img class="nav__logo" src="${img(G.navLogo, 'f_auto,q_auto,w_600')}" alt="GC Windsor"></a>
     <div class="nav__group nav__group--right">${right}
       <a class="nav__cart" href="/shop" aria-label="Cart" data-cart></a>
     </div>
@@ -170,7 +160,7 @@ function footerHTML() {
   <div class="wrap">
     <div class="footer__top">
       <div class="footer__brandcol">
-        <img class="footer__logo" src="${img(G.emblem, 'f_auto,q_auto,w_220')}" alt="GC Windsor emblem">
+        <img class="footer__logo" src="${img(G.emblem, 'f_auto,q_auto,w_400')}" alt="GC Windsor emblem">
         <div class="footer__brand"${ed('global.brand')}>${esc(G.brand)}</div>
         <p class="footer__tag"${ed('global.tagline')}>${esc(G.tagline)}</p>
       </div>
@@ -184,7 +174,8 @@ function footerHTML() {
 </footer>`;
 }
 
-/* a reusable product card - images are shown WHOLE (c_fit), never cropped */
+/* Product card. The combo photos are 1920x1080 LANDSCAPE - always shown WHOLE
+   (c_fit + object-fit:contain). Never crop a product. */
 function card(p, i) {
   const paused = products.salesPaused || p.status === 'coming-soon';
   const body = paused
@@ -196,25 +187,54 @@ function card(p, i) {
 </a>`;
 }
 
-/* Web3Forms-style form opener; falls back to a local "thank you" when no key is set. */
-function formOpen(key, subject) {
-  if (!key) return `<form class="news__form" data-demo>`;
-  return `<form class="news__form" action="https://api.web3forms.com/submit" method="POST">
+/* Web3Forms opener; falls back to a local "thank you" when no key is set. */
+function formOpen(key, subject, cls) {
+  const c = cls || 'news__form';
+  if (!key) return `<form class="${c}" data-demo>`;
+  return `<form class="${c}" action="https://api.web3forms.com/submit" method="POST">
       <input type="hidden" name="access_key" value="${esc(key)}">
       <input type="hidden" name="subject" value="${esc(subject)}">
       <input type="checkbox" name="botcheck" style="display:none">`;
 }
 
+/* The newsletter block - reused on the home page and the gallery page. */
+function newsletter() {
+  const N = pages.home.newsletter;
+  return `<section id="newsletter" class="section">
+  <div class="wrap news reveal">
+    <p class="eyebrow eyebrow--center"${ed('home.newsletter.eyebrow')}>${esc(N.eyebrow)}</p>
+    <h2 class="display display--sm" style="margin-top:16px"${ed('home.newsletter.title')}>${esc(N.title)}</h2>
+    <p class="lead" style="margin:16px auto 0"${ed('home.newsletter.lead')}>${esc(N.lead)}</p>
+    ${formOpen(N.accessKey, 'GC Windsor - newsletter signup')}
+      <div class="field"><label>First name</label><input type="text" name="first_name" autocomplete="given-name"></div>
+      <div class="field"><label>Last name</label><input type="text" name="last_name" autocomplete="family-name"></div>
+      <div class="field"><label>Email</label><input type="email" name="email" required autocomplete="email"></div>
+      <button class="btn btn--solid news__submit" type="submit"${ed('home.newsletter.buttonLabel')}>${esc(N.buttonLabel)}</button>
+    </form>
+    <p class="news__fine"${ed('home.newsletter.fine')}>${esc(N.fine)}</p>
+  </div>
+</section>`;
+}
+
+/* A shared page hero, with parallax and a rooster motif.
+   file/prefix let it stamp editor paths into any data file. */
+function pageHero(o, file, prefix, short) {
+  const p = k => edf(file, prefix ? prefix + '.' + k : k);
+  return `<section class="page-hero${short ? ' page-hero--short' : ''}" data-parallax>
+  ${amb('tr', 130)}
+  <img class="page-hero__img" src="${img(o.hero, 'f_auto,q_auto,w_1920')}" alt="">
+  <div class="page-hero__scrim"></div>
+  <div class="page-hero__inner">
+    <p class="eyebrow eyebrow--center" style="color:var(--gold-light)"${p('eyebrow')}>${esc(o.eyebrow)}</p>
+    <h1 class="script"${p('title')}>${esc(o.title)}</h1>
+  </div>
+</section>`;
+}
+
 /* ---------- HOME ---------- */
 function buildHome() {
   const H = pages.home;
-  const sw = (items, kind, file) => items.map((it, i) => {
-    const dot = it.colors.length > 1
-      ? `linear-gradient(135deg, ${it.colors[0]} 0 50%, ${it.colors[1]} 50% 100%)`
-      : it.colors[0];
-    const active = (kind === 'knot' ? swapper.defaultKnot : swapper.defaultTie) === it.id;
-    return `<button type="button" class="sw${active ? ' is-active' : ''}" data-sw="${kind}" data-id="${esc(it.id)}" aria-label="${esc(it.name)}"${edi(file, kind === 'knot' ? 'knots' : 'ties', i)}><span class="sw__dot" style="background:${dot}"></span><span class="sw__tip">${esc(it.name)}</span></button>`;
-  }).join('');
+  const strip = gallery.items.slice(0, gallery.stripCount || 9);
 
   const html = head({ title: H.seoTitle, desc: H.seoDesc }, '/') + `
 
@@ -225,11 +245,16 @@ function buildHome() {
     <source src="${vid(H.hero.video)}" type="video/mp4">
   </video>
   <div class="hero__scrim"></div>
-  <a class="hero__cue" href="#positioning" aria-label="Scroll"><span${ed('home.hero.cue')}>${esc(H.hero.cue)}</span><span class="line"></span></a>
+  <a class="hero__cue" href="#positioning" aria-label="Scroll">
+    <span class="hero__cue-label"${ed('home.hero.cue')}>${esc(H.hero.cue)}</span>
+    <span class="hero__cue-rail"><span class="hero__cue-draw"></span></span>
+    <span class="hero__cue-chev" aria-hidden="true"></span>
+  </a>
 </section>
 
 <section id="positioning" class="section">
-  ${amb('positioning')}
+  ${amb('tr', 150)}
+  ${mark('bl', -120)}
   <div class="wrap posn">
     <div class="reveal">
       <p class="eyebrow"${ed('home.positioning.eyebrow')}>${esc(H.positioning.eyebrow)}</p>
@@ -244,59 +269,61 @@ function buildHome() {
 </section>
 
 <section id="elevate" class="section on-alt">
-  ${amb('elevate')}
+  ${mark('tr', 140)}
   <div class="wrap split">
     <div class="split__copy reveal">
       <p class="eyebrow"${ed('home.split.eyebrow')}>${esc(H.split.eyebrow)}</p>
-      <h2 class="display display--sm"${ed('home.split.title')}>${esc(H.split.title)}</h2>
+      <h2 class="script split__script"${ed('home.split.title')}>${esc(H.split.title)}</h2>
       <p class="lead"${ed('home.split.lead')}>${esc(H.split.lead)}</p>
       <div style="margin-top:.5rem"><a class="btn btn--gold" href="${esc(H.split.ctaHref)}"><span${ed('home.split.ctaLabel')}>${esc(H.split.ctaLabel)}</span> <span class="arw-slot"></span></a></div>
     </div>
-    <div class="split__media reveal" data-delay="1" data-parallax>
-      <img src="${img(H.split.image, 'f_auto,q_auto,w_1200')}" alt="A GC knot and tie, in detail" loading="lazy">
+    <div class="split__media split__media--full reveal" data-delay="1">
+      <img src="${img(H.split.image, 'f_auto,q_auto,w_1600')}" alt="A GC knot and tie, in detail" loading="lazy">
     </div>
   </div>
 </section>
 
-<section id="customize" class="section cz on-dark" data-customizer>
-  ${amb('customize')}
+<section id="customize" class="section cz" data-customizer>
   <div class="wrap">
     <div class="cz__head reveal">
       <p class="eyebrow eyebrow--center"${edf('swapper.json', 'eyebrow')}>${esc(swapper.eyebrow)}</p>
       <h2 class="script cz__title"${edf('swapper.json', 'title')}>${esc(swapper.title)}</h2>
       <p class="lead cz__intro"${edf('swapper.json', 'intro')}>${esc(swapper.intro)}</p>
     </div>
-
-    <div class="cz__picker reveal">
-      <div class="cz__pick">
-        <div class="cz__rowlabel"><span class="k"${edf('swapper.json', 'knotsLabel')}>${esc(swapper.knotsLabel)}</span><span class="v" data-cz-knotname></span></div>
-        <div class="cz__row" data-cz-knots>${sw(swapper.knots, 'knot', 'swapper.json')}</div>
-      </div>
-      <div class="cz__pick">
-        <div class="cz__rowlabel"><span class="k"${edf('swapper.json', 'tiesLabel')}>${esc(swapper.tiesLabel)}</span><span class="v" data-cz-tiename></span></div>
-        <div class="cz__row" data-cz-ties>${sw(swapper.ties, 'tie', 'swapper.json')}</div>
-      </div>
-    </div>
-
     <div class="cz__grid">
       <div class="cz__stage reveal" data-cz-stage></div>
-      <aside class="cz__panel reveal" data-delay="1">
-        <p class="now">Your combination</p>
-        <p class="name" data-cz-combo></p>
-        <a class="btn btn--gold btn--ondark btn--block" data-cz-cta href="/shop"><span${edf('swapper.json', 'ctaLabel')}>${esc(swapper.ctaLabel)}</span> <span class="arw-slot"></span></a>
-        <p class="cz__count">${swapper.knots.length} knots &times; ${swapper.ties.length} ties<br><em>${swapper.knots.length * swapper.ties.length} combinations.</em></p>
-      </aside>
+      <div class="cz__side reveal" data-delay="1">
+        <div class="cz__picker">
+          <div class="cz__pick" data-cz-pick="knots">
+            <div class="cz__rowlabel"><span class="k"${edf('swapper.json', 'types.0.label')}>${esc(swapper.types[0].label)}</span><span class="v" data-cz-knotname></span></div>
+            <div class="cz__tabs" data-cz-designs="knots"></div>
+            <div class="cz__opts" data-cz-colors="knots"></div>
+          </div>
+          <div class="cz__pick" data-cz-pick="ties">
+            <div class="cz__rowlabel"><span class="k"${edf('swapper.json', 'types.1.label')}>${esc(swapper.types[1].label)}</span><span class="v" data-cz-tiename></span></div>
+            <div class="cz__tabs" data-cz-designs="ties"></div>
+            <div class="cz__opts" data-cz-colors="ties"></div>
+          </div>
+        </div>
+        <div class="cz__panel">
+          <p class="now">Your combination</p>
+          <p class="name" data-cz-combo></p>
+          <a class="btn btn--gold btn--ondark" data-cz-cta href="/shop"><span${edf('swapper.json', 'ctaLabel')}>${esc(swapper.ctaLabel)}</span> <span class="arw-slot"></span></a>
+          <p class="cz__count" data-cz-count></p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
 <section id="shop" class="section">
-  ${amb('shop')}
+  ${amb('bl', 120)}
+  ${mark('tr', 130)}
   <div class="wrap">
     <div class="prod-head reveal">
       <div>
         <p class="eyebrow"${ed('home.shop.eyebrow')}>${esc(H.shop.eyebrow)}</p>
-        <h2 class="display display--sm" style="margin-top:16px"${ed('home.shop.title')}>${esc(H.shop.title)}</h2>
+        <h2 class="script" style="margin-top:16px"${ed('home.shop.title')}>${esc(H.shop.title)}</h2>
       </div>
       <a class="btn" href="${esc(H.shop.ctaHref)}"><span${ed('home.shop.ctaLabel')}>${esc(H.shop.ctaLabel)}</span> <span class="arw-slot"></span></a>
     </div>
@@ -305,7 +332,7 @@ function buildHome() {
 </section>
 
 <section id="founder" class="section founder on-dark">
-  <img class="founder__art" src="${img(H.founder.artwork, 'f_auto,q_auto,w_1100')}" alt="" aria-hidden="true" data-amb data-speed="70">
+  <img class="founder__art" data-amb data-speed="64" src="${img(H.founder.artwork, 'f_auto,q_auto,w_1200')}" alt="" aria-hidden="true">
   <div class="wrap">
     <div class="founder__inner reveal">
       <p class="eyebrow"${ed('home.founder.eyebrow')}>${esc(H.founder.eyebrow)}</p>
@@ -317,36 +344,30 @@ function buildHome() {
 </section>
 
 <section id="gallery" class="section on-alt">
-  ${amb('gallery')}
-  <div class="wrap">
-    <div class="reveal" style="margin-bottom:var(--sp-5)">
+  ${amb('tr', 110)}
+  ${mark('bl', -130)}
+  <div class="wrap gstrip__head reveal">
+    <div>
       <p class="eyebrow"${edf('gallery.json', 'eyebrow')}>${esc(gallery.eyebrow)}</p>
-      <h2 class="display display--sm" style="margin-top:16px"${edf('gallery.json', 'title')}>${esc(gallery.title)}</h2>
+      <h2 class="script" style="margin-top:16px"${edf('gallery.json', 'title')}>${esc(gallery.title)}</h2>
     </div>
-    <div class="mosaic reveal" data-gallery>${gallery.items.map((g, i) => `<div class="mtile${g.span === 'tall' ? ' mtile--tall' : g.span === 'wide' ? ' mtile--wide' : ''}" data-lb="${i}" data-full="${img(g.src, 'f_auto,q_auto,w_1800')}"${edi('gallery.json', 'items', i)}><img src="${img(g.src, 'f_auto,q_auto,w_900')}" alt="${esc(g.alt)}" loading="lazy"></div>`).join('')}</div>
+    <div class="gstrip__ctrl">
+      <button class="gstrip__arw" data-gstrip-prev aria-label="Previous images"></button>
+      <button class="gstrip__arw" data-gstrip-next aria-label="Next images"></button>
+    </div>
+  </div>
+  <div class="gstrip reveal" data-delay="1" data-gallery data-gallery-strip>
+    <div class="gstrip__track" data-gstrip-track tabindex="0" role="region" aria-label="Gallery, scroll horizontally">${strip.map((g, i) => `<div class="gtile" data-lb="${i}" data-full="${img(g.src, 'f_auto,q_auto,w_1800')}"${edi('gallery.json', 'items', i)}><img src="${img(g.src, 'f_auto,q_auto,w_1000')}" alt="${esc(g.alt)}" loading="lazy"></div>`).join('')}</div>
+  </div>
+  <div class="wrap gstrip__more">
+    <a class="btn" href="/gallery"><span${edf('gallery.json', 'moreLabel')}>${esc(gallery.moreLabel)}</span> <span class="arw-slot"></span></a>
   </div>
 </section>
 
-<section id="newsletter" class="section">
-  ${amb('newsletter')}
-  <div class="wrap news reveal">
-    <p class="eyebrow eyebrow--center"${ed('home.newsletter.eyebrow')}>${esc(H.newsletter.eyebrow)}</p>
-    <h2 class="display display--sm" style="margin-top:16px"${ed('home.newsletter.title')}>${esc(H.newsletter.title)}</h2>
-    <p class="lead" style="margin:16px auto 0"${ed('home.newsletter.lead')}>${esc(H.newsletter.lead)}</p>
-    ${formOpen(H.newsletter.accessKey, 'GC Windsor - newsletter signup')}
-      <div class="field"><label>First name</label><input type="text" name="first_name" autocomplete="given-name"></div>
-      <div class="field"><label>Last name</label><input type="text" name="last_name" autocomplete="family-name"></div>
-      <div class="field"><label>Email</label><input type="email" name="email" required autocomplete="email"></div>
-      <button class="btn btn--solid" type="submit"${ed('home.newsletter.buttonLabel')}>${esc(H.newsletter.buttonLabel)}</button>
-    </form>
-    <p class="news__fine"${ed('home.newsletter.fine')}>${esc(H.newsletter.fine)}</p>
-  </div>
-</section>
+${newsletter()}
 
-<section id="contact-cta" class="cta-bleed">
-  <div class="cta-bleed__media" data-parallax>
-    <img class="cta-bleed__img" src="${img(H.contactCta.image, 'f_auto,q_auto,w_1920')}" alt="" loading="lazy">
-  </div>
+<section id="contact-cta" class="cta-bleed" data-parallax>
+  <img class="cta-bleed__img" src="${img(H.contactCta.image, 'f_auto,q_auto,w_1920')}" alt="" loading="lazy">
   <div class="cta-bleed__scrim"></div>
   <div class="cta-bleed__inner reveal">
     <p class="eyebrow eyebrow--center" style="color:var(--gold-light)"${ed('home.contactCta.eyebrow')}>${esc(H.contactCta.eyebrow)}</p>
@@ -358,28 +379,34 @@ function buildHome() {
   out('index.html', html);
 }
 
-/* ---------- a shared page hero ---------- */
-function pageHero(o, prefix, short) {
-  return `<section class="page-hero${short ? ' page-hero--short' : ''}">
-  ${amb('pagehero')}
-  <div class="page-hero__media" data-parallax>
-    <img class="page-hero__img" src="${img(o.hero, 'f_auto,q_auto,w_1920')}" alt="">
+/* ---------- GALLERY PAGE ---------- */
+function buildGallery() {
+  const P = gallery.page;
+  const html = head({ title: P.seoTitle, desc: P.seoDesc }, '/gallery')
+    + pageHero(P, 'gallery.json', 'page', false) + `
+
+<section class="section on-alt">
+  ${amb('tr', 120)}
+  ${mark('bl', -140)}
+  <div class="wrap">
+    <p class="lead reveal" style="max-width:680px;margin-bottom:var(--sp-5)"${edf('gallery.json', 'page.lead')}>${esc(P.lead)}</p>
+    <div class="mosaic reveal" data-gallery>${gallery.items.map((g, i) => `<div class="mtile${g.span === 'tall' ? ' mtile--tall' : g.span === 'wide' ? ' mtile--wide' : ''}" data-lb="${i}" data-full="${img(g.src, 'f_auto,q_auto,w_1800')}"${edi('gallery.json', 'items', i)}><img src="${img(g.src, 'f_auto,q_auto,w_900')}" alt="${esc(g.alt)}" loading="lazy"></div>`).join('')}</div>
   </div>
-  <div class="page-hero__scrim"></div>
-  <div class="page-hero__inner">
-    <p class="eyebrow eyebrow--center" style="color:var(--gold-light)"${ed(prefix + '.eyebrow')}>${esc(o.eyebrow)}</p>
-    <h1 class="display display--sm"${ed(prefix + '.title')}>${esc(o.title)}</h1>
-  </div>
-</section>`;
+</section>
+
+${newsletter()}
+` + foot();
+  out('gallery.html', html);
 }
 
 /* ---------- SHOP ---------- */
 function buildShop() {
   const S = pages.shop;
   const html = head({ title: S.seoTitle, desc: S.seoDesc }, '/shop')
-    + pageHero(S, 'shop', false) + `
+    + pageHero(S, 'pages.json', 'shop', false) + `
 <section class="section">
-  ${amb('shop')}
+  ${amb('bl', 120)}
+  ${mark('tr', 140)}
   <div class="wrap">
     <p class="lead reveal" style="max-width:720px;margin-bottom:var(--sp-5)"${ed('shop.lead')}>${esc(S.lead)}</p>
     <div class="grid-3">${products.items.map(card).join('')}</div>
@@ -412,6 +439,7 @@ function buildProducts() {
 
     const html = head({ title: p.name + ' - G.C Windsor', desc: p.blurb }, '/shop') + `
 <section class="section pdp" data-pdp data-product="${esc(p.id)}">
+  ${mark('tr', 120)}
   <div class="wrap pdp__grid">
     <div class="pdp__media">
       <div class="pdp__main" data-pdp-main><img src="${img(p.gallery[0], 'f_auto,q_auto,w_1600,c_fit')}" alt="${esc(p.name)}"></div>
@@ -433,9 +461,9 @@ function buildProducts() {
   </div>
 </section>
 <section class="section on-alt">
-  ${amb('shop')}
+  ${amb('bl', 120)}
   <div class="wrap">
-    <div class="prod-head reveal"><div><p class="eyebrow">More sets</p><h2 class="display display--sm" style="margin-top:16px">You may also like</h2></div></div>
+    <div class="prod-head reveal"><div><p class="eyebrow">More sets</p><h2 class="script" style="margin-top:16px">You may also like</h2></div></div>
     <div class="grid-3">${products.items.filter(x => x.id !== p.id).slice(0, 3).map(x => card(x, products.items.indexOf(x))).join('')}</div>
   </div>
 </section>
@@ -449,10 +477,10 @@ function buildAbout() {
   const A = pages.about;
   const story = A.story.body.map((para, i) => `<p class="lead"${ed(`about.story.body.${i}`)}>${esc(para)}</p>`).join('');
   const html = head({ title: A.seoTitle, desc: A.seoDesc }, '/about')
-    + pageHero(A, 'about', false) + `
+    + pageHero(A, 'pages.json', 'about', false) + `
 
 <section class="section">
-  ${amb('positioning')}
+  ${mark('tr', 140)}
   <div class="wrap" style="max-width:820px;text-align:center">
     <p class="lead reveal"${ed('about.lead')}>${esc(A.lead)}</p>
     <div class="reveal" style="margin-top:2rem"><a class="btn btn--gold" href="${esc(A.ctaHref)}"><span${ed('about.ctaLabel')}>${esc(A.ctaLabel)}</span> <span class="arw-slot"></span></a></div>
@@ -460,21 +488,22 @@ function buildAbout() {
 </section>
 
 <section class="section on-alt">
-  ${amb('story')}
+  ${amb('tr', 135)}
+  ${mark('bl', -130)}
   <div class="wrap split">
     <div class="split__copy reveal">
       <p class="eyebrow"${ed('about.story.eyebrow')}>${esc(A.story.eyebrow)}</p>
-      <h2 class="display display--sm"${ed('about.story.title')}>${esc(A.story.title)}</h2>
+      <h2 class="script"${ed('about.story.title')}>${esc(A.story.title)}</h2>
       ${story}
     </div>
-    <div class="split__media reveal" data-delay="1" data-parallax>
-      <img src="${img(A.story.image, 'f_auto,q_auto,w_1200')}" alt="The GC Windsor knot" loading="lazy">
+    <div class="split__media split__media--full reveal" data-delay="1">
+      <img src="${img(A.story.image, 'f_auto,q_auto,w_1600')}" alt="The GC Windsor knot" loading="lazy">
     </div>
   </div>
 </section>
 
 <section id="founder" class="section founder on-dark">
-  <img class="founder__art" src="${img(pages.home.founder.artwork, 'f_auto,q_auto,w_1100')}" alt="" aria-hidden="true" data-amb data-speed="70">
+  <img class="founder__art" data-amb data-speed="64" src="${img(pages.home.founder.artwork, 'f_auto,q_auto,w_1200')}" alt="" aria-hidden="true">
   <div class="wrap founder__split">
     <div class="founder__portrait reveal"><img src="${img(A.founder.portrait, 'f_auto,q_auto,w_1000')}" alt="${esc(A.founder.name)}" loading="lazy"></div>
     <div class="founder__inner reveal" data-delay="1">
@@ -489,32 +518,35 @@ function buildAbout() {
   out('about.html', html);
 }
 
-/* ---------- CONTACT ---------- */
+/* ---------- CONTACT ----------
+   The form now uses the same panel treatment as the newsletter. */
 function buildContact() {
   const C = pages.contact;
   const html = head({ title: C.seoTitle, desc: C.seoDesc }, '/contact')
-    + pageHero(C, 'contact', true) + `
+    + pageHero(C, 'pages.json', 'contact', true) + `
 
 <section class="section">
-  ${amb('newsletter')}
-  <div class="wrap news reveal">
-    <p class="lead" style="margin-bottom:2rem"${ed('contact.lead')}>${esc(C.lead)}</p>
-    ${formOpen(C.accessKey, 'GC Windsor - contact form')}
+  ${mark('tr', 140)}
+  <div class="wrap news news--wide reveal">
+    <p class="eyebrow eyebrow--center"${ed('contact.eyebrow')}>${esc(C.eyebrow)}</p>
+    <h2 class="display display--sm" style="margin-top:16px"${ed('contact.title')}>${esc(C.title)}</h2>
+    <p class="lead" style="margin:16px auto 0"${ed('contact.lead')}>${esc(C.lead)}</p>
+    ${formOpen(C.accessKey, 'GC Windsor - contact form', 'news__form news__form--contact')}
       <div class="field"><label>First name</label><input type="text" name="first_name" required></div>
       <div class="field"><label>Last name</label><input type="text" name="last_name" required></div>
       <div class="field"><label>Email</label><input type="email" name="email" required></div>
       <div class="field"><label>Subject</label><input type="text" name="subject_line" required></div>
       <div class="field field--full"><label>Message</label><textarea name="message" rows="5" required></textarea></div>
-      <button class="btn btn--solid" type="submit"${ed('contact.buttonLabel')}>${esc(C.buttonLabel)}</button>
+      <button class="btn btn--solid news__submit" type="submit"${ed('contact.buttonLabel')}>${esc(C.buttonLabel)}</button>
     </form>
   </div>
 </section>
 
 <section class="section on-alt">
-  ${amb('gallery')}
+  ${amb('bl', 120)}
   <div class="wrap" style="text-align:center">
     <p class="eyebrow eyebrow--center"${ed('contact.instagramTitle')}>${esc(C.instagramTitle)}</p>
-    <h2 class="display display--sm" style="margin-top:12px"><a href="${esc(G.social[0].href)}" target="_blank" rel="noopener"${ed('global.instagramHandle')}>${esc(G.instagramHandle)}</a></h2>
+    <h2 class="script" style="margin-top:12px"><a href="${esc(G.social[0].href)}" target="_blank" rel="noopener"${ed('global.instagramHandle')}>${esc(G.instagramHandle)}</a></h2>
   </div>
 </section>
 ` + foot();
@@ -523,8 +555,12 @@ function buildContact() {
 
 buildTheme();
 buildHome();
+buildGallery();
 buildShop();
 buildProducts();
 buildAbout();
 buildContact();
-console.log('\nOK - GC Windsor build complete:', products.items.length, 'products,', gallery.items.length, 'gallery items,', swapper.knots.length, 'knots x', swapper.ties.length, 'ties =', swapper.knots.length * swapper.ties.length, 'combinations');
+
+const combos = swapper.types[0].designs.reduce((n, d) => n + (d.status === 'available' ? d.colors.length : 0), 0)
+             * swapper.types[1].designs.reduce((n, d) => n + (d.status === 'available' ? d.colors.length : 0), 0);
+console.log('\nOK - GC Windsor build complete:', products.items.length, 'products,', gallery.items.length, 'gallery images,', combos, 'live combinations');

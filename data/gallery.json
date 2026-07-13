@@ -1,6 +1,18 @@
 {
   "eyebrow": "The Gallery",
-  "title": "Worn well",
+  "title": "Style with elegance",
+  "moreLabel": "See more",
+  "stripCount": 9,
+
+  "page": {
+    "seoTitle": "Gallery | G.C Windsor",
+    "seoDesc": "The GC Windsor knot and tie, worn and photographed.",
+    "eyebrow": "The Gallery",
+    "title": "Style with elegance",
+    "lead": "The knot, the tie, and the men who wear them.",
+    "hero": "CDN:gcwindsor/photos/circle-of-knots-1"
+  },
+
   "items": [
     { "src": "CDN:gcwindsor/photos/circle-of-knots-1", "span": "wide", "alt": "The full GC Windsor colour range" },
     { "src": "CDN:gcwindsor/photos/holding-something-special", "span": "tall", "alt": "A GC knot, held to camera" },
@@ -11,12 +23,27 @@
     { "src": "CDN:gcwindsor/photos/gc-knots-clover", "span": "std", "alt": "GC knots arranged in a clover" },
     { "src": "CDN:gcwindsor/photos-2/gc-windsor-finals-21", "span": "std", "alt": "GC Windsor detail" },
     { "src": "CDN:gcwindsor/photos/a-gc-knot-that-stands-out", "span": "wide", "alt": "A GC knot that stands out" },
+
     { "src": "CDN:gcwindsor/photos/gc-knot-in-green-glass", "span": "std", "alt": "GC knot in green glass" },
     { "src": "CDN:gcwindsor/photos/stand-tall", "span": "tall", "alt": "Stand tall" },
     { "src": "CDN:gcwindsor/photos-2/gc-windsor-finals-26", "span": "std", "alt": "GC Windsor, studio" },
     { "src": "CDN:gcwindsor/photos/red-box-gc-windsor", "span": "std", "alt": "The GC Windsor box" },
     { "src": "CDN:gcwindsor/photos/bartend", "span": "wide", "alt": "GC Windsor, after hours" },
     { "src": "CDN:gcwindsor/photos/gold-and-white-gc-eldredge-held-up", "span": "std", "alt": "Gold and white GC Eldredge" },
-    { "src": "CDN:gcwindsor/photos-2/gc-windsor-finals-31", "span": "std", "alt": "GC Windsor, finished" }
+    { "src": "CDN:gcwindsor/photos-2/gc-windsor-finals-31", "span": "tall", "alt": "GC Windsor, finished" },
+    { "src": "CDN:gcwindsor/photos/gc-flower-knots", "span": "wide", "alt": "GC knots in bloom" },
+    { "src": "CDN:gcwindsor/photos/gc-out-doors-line-up", "span": "std", "alt": "The line-up, outdoors" },
+    { "src": "CDN:gcwindsor/photos/purple-gc-eldredge", "span": "std", "alt": "Lavender GC Eldredge" },
+    { "src": "CDN:gcwindsor/photos/red-rose-gc-windsor", "span": "std", "alt": "Red GC Windsor on a rose" },
+    { "src": "CDN:gcwindsor/photos/gc-knot-in-the-rough", "span": "tall", "alt": "The knot in the rough" },
+    { "src": "CDN:gcwindsor/photos/3-peice-front-focus", "span": "std", "alt": "Three piece, front focus" },
+    { "src": "CDN:gcwindsor/photos/gold-and-black-duet", "span": "std", "alt": "Gold and black duet" },
+    { "src": "CDN:gcwindsor/photos/violet-triple", "span": "std", "alt": "Lavender, three ways" },
+    { "src": "CDN:gcwindsor/photos/red-tripple", "span": "wide", "alt": "Red, three ways" },
+    { "src": "CDN:gcwindsor/photos/black-and-orange-gc-eldredge", "span": "std", "alt": "Black and orange GC Eldredge" },
+    { "src": "CDN:gcwindsor/photos/circle-of-knots-2", "span": "std", "alt": "The circle of knots" },
+    { "src": "CDN:gcwindsor/photos/gc-solo", "span": "tall", "alt": "GC solo" },
+    { "src": "CDN:gcwindsor/photos/batch-1", "span": "std", "alt": "The first batch" },
+    { "src": "CDN:gcwindsor/photos-2/gc-windsor-finals-31", "span": "std", "alt": "GC Windsor, studio finish" }
   ]
 }
