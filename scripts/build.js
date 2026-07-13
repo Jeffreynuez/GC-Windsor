@@ -24,18 +24,35 @@ const out = (f, html) => {
   console.log('built', f);
 };
 
-/* CDN:<public_id> -> a transformed Cloudinary URL. Anything else passes through. */
-const img = (u, t) => {
+/* Expand a CDN: reference into a transformed Cloudinary URL.
+   Two forms are supported, because they come from two places:
+     1. "CDN:gcwindsor/products/red"                 - hand-authored (this repo)
+     2. "CDN:image/upload/v1234/gcwindsor/red.jpg"   - what the CMS writes after
+                                                       an upload (it keeps the
+                                                       resource type + version)
+   The transform must be injected AFTER "<type>/upload/", so form 2 is unpacked
+   rather than blindly appended - otherwise the URL 404s. */
+const CDN_RE = /^(image|video|raw)\/upload\/(.*)$/;
+
+function cdn(u, transform, kind) {
   if (!u) return '';
   u = String(u);
-  if (!u.startsWith('CDN:')) return u;
-  return IMG + (t || 'f_auto,q_auto') + '/' + u.slice(4);
-};
+  if (!u.startsWith('CDN:')) return u;               // already a full URL
+  const id = u.slice(4);
+  const m = id.match(CDN_RE);
+  const base = 'https://res.cloudinary.com/' + CLOUD + '/';
+  if (m) return base + m[1] + '/upload/' + transform + '/' + m[2];
+  return base + kind + '/upload/' + transform + '/' + id;
+}
+
+const img = (u, t) => cdn(u, t || 'f_auto,q_auto', 'image');
+
 const vid = (u, t) => {
   if (!u) return '';
   u = String(u);
   if (!u.startsWith('CDN:')) return u;
-  return VID + (t || 'q_auto') + '/' + u.slice(4) + '.mp4';
+  const out = cdn(u, t || 'q_auto', 'video');
+  return CDN_RE.test(u.slice(4)) ? out : out + '.mp4';  // bare ids need the ext
 };
 
 /* editor stamps */
