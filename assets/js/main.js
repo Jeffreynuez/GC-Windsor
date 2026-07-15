@@ -193,8 +193,8 @@
     }
 
     /* ---- paint the model from applied state ---- */
-    function applyStage(onlyPart) {
-      var animate = !!onlyPart;
+    function applyStage(onlyPart, instant) {
+      var animate = !!onlyPart && !instant;
       types.forEach(function (t) {
         var pk = partKeyOf(t.id);
         if (onlyPart && onlyPart !== pk) return;
@@ -311,14 +311,69 @@
         renderType(t);   /* coming-soon teaser; the model does not change */
       }
     }
-    function selectColor(typeKey, colorId) {
+    function selectColor(typeKey, colorId, instant) {
       var st = state[typeKey];
       if (st.appColorId === colorId && st.selDesignId === st.appDesignId) return;  /* clicking the active swatch does nothing */
       st.appColorId = colorId;
       st.appDesignId = st.selDesignId;
       renderOpts(typeById[typeKey]);
-      applyStage(partKeyOf(typeKey));
+      applyStage(partKeyOf(typeKey), instant);
     }
+
+    /* ---- press & drag on the model to scrub colours ----
+       Drag horizontally over the stage: the UPPER half cycles the knot, the
+       LOWER half cycles the tie (mirrors where the knot and tie actually sit).
+       Every ~step of travel advances to the next colour in that design, wrapping.
+       Uses instant swaps so the scrub feels direct. */
+    (function initDrag() {
+      var frame = stage.querySelector('.cz__frame');
+      if (!frame) return;
+      var STEP = 64;                       // px of drag per colour change
+      var dragging = false, part = null, lastX = 0, acc = 0;
+
+      function colorsOf(typeKey) {
+        var t = typeById[typeKey], st = state[typeKey];
+        var d = designById(t, st.appDesignId);
+        return (d && d.status === 'available' && d.colors && d.colors.length > 1) ? d.colors : null;
+      }
+      function cycle(typeKey, dir) {
+        var cols = colorsOf(typeKey); if (!cols) return;
+        var st = state[typeKey], idx = 0;
+        for (var i = 0; i < cols.length; i++) { if (cols[i].id === st.appColorId) { idx = i; break; } }
+        idx = (idx + dir + cols.length) % cols.length;
+        selectColor(typeKey, cols[idx].id, true);   // instant scrub
+      }
+      function partAt(clientY) {
+        var r = frame.getBoundingClientRect();
+        return (clientY - r.top) < r.height * 0.55 ? 'knots' : 'ties';
+      }
+      function down(e) {
+        dragging = true; acc = 0; lastX = e.clientX;
+        part = partAt(e.clientY);
+        frame.classList.add('is-grabbing');
+        if (frame.setPointerCapture && e.pointerId != null) { try { frame.setPointerCapture(e.pointerId); } catch (_) {} }
+      }
+      function move(e) {
+        if (!dragging) return;
+        acc += (e.clientX - lastX); lastX = e.clientX;
+        var fired = false;
+        while (acc >= STEP) { cycle(part, 1); acc -= STEP; fired = true; }
+        while (acc <= -STEP) { cycle(part, -1); acc += STEP; fired = true; }
+        if (fired && e.cancelable) e.preventDefault();
+      }
+      function up() { dragging = false; frame.classList.remove('is-grabbing'); }
+
+      if (window.PointerEvent) {
+        frame.addEventListener('pointerdown', down);
+        window.addEventListener('pointermove', move, { passive: false });
+        window.addEventListener('pointerup', up);
+        window.addEventListener('pointercancel', up);
+      } else {
+        frame.addEventListener('mousedown', down);
+        window.addEventListener('mousemove', move);
+        window.addEventListener('mouseup', up);
+      }
+    })();
 
     types.forEach(renderType);
     applyStage();
@@ -444,7 +499,7 @@
   }
 
   function initParallax() {
-    var layers = $all('[data-parallax] img');   /* photography + full-bleed — moves as a % of its own height */
+    var layers = $all('[data-parallax] img:not([data-amb])');   /* photography + full-bleed — moves as a % of its own height */
     var motifs = $all('[data-amb]');            /* rooster marks + founder emblem — move in px, by data-speed */
     if (reduceMotion || (!layers.length && !motifs.length)) return;
 

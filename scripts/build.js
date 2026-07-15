@@ -106,7 +106,7 @@ const head = (seo, page) => `<!DOCTYPE html>
 <meta property="og:description" content="${esc(seo.desc)}">
 <meta property="og:image" content="${OG}">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="${img(G.emblem, 'f_png,w_64,c_fit')}">
+<link rel="icon" href="${img(G.emblem, 'f_png,c_pad,w_64,h_64,b_transparent')}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="${FONTS}" rel="stylesheet">
@@ -308,7 +308,10 @@ function buildHome() {
       <p class="lead cz__intro"${edf('swapper.json', 'intro')}>${esc(swapper.intro)}</p>
     </div>
     <div class="cz__grid">
-      <div class="cz__stage reveal" data-cz-stage></div>
+      <div class="cz__stagewrap reveal">
+        <div class="cz__stage" data-cz-stage></div>
+        <p class="cz__hint">Drag across the image to change colours</p>
+      </div>
       <div class="cz__side reveal" data-delay="1">
         <div class="cz__picker">
           <div class="cz__pick" data-cz-pick="knots">
@@ -407,7 +410,7 @@ function buildGallery() {
   ${mark('bl', -140)}
   <div class="wrap">
     <p class="lead reveal" style="max-width:680px;margin-bottom:var(--sp-5)"${edf('gallery.json', 'page.lead')}>${esc(P.lead)}</p>
-    <div class="mosaic reveal" data-gallery>${gallery.items.map((g, i) => `<div class="mtile${g.span === 'tall' ? ' mtile--tall' : g.span === 'wide' ? ' mtile--wide' : ''}" data-lb="${i}" data-full="${img(g.src, 'f_auto,q_auto,w_1800')}"${edi('gallery.json', 'items', i)}><img src="${img(g.src, 'f_auto,q_auto,w_900')}" alt="${esc(g.alt)}" loading="lazy"></div>`).join('')}</div>
+    <div class="mosaic" data-gallery>${gallery.items.map((g, i) => `<div class="mtile reveal${g.span === 'tall' ? ' mtile--tall' : g.span === 'wide' ? ' mtile--wide' : ''}" style="transition-delay:${(i % 4) * 0.08}s" data-lb="${i}" data-full="${img(g.src, 'f_auto,q_auto,w_1800')}"${edi('gallery.json', 'items', i)}><img src="${img(g.src, 'f_auto,q_auto,w_900')}" alt="${esc(g.alt)}" loading="lazy"></div>`).join('')}</div>
   </div>
 </section>
 
