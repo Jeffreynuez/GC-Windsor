@@ -222,12 +222,14 @@ function newsletter() {
     <p class="eyebrow eyebrow--center"${ed('home.newsletter.eyebrow')}>${esc(N.eyebrow)}</p>
     <h2 class="display display--sm" style="margin-top:16px"${ed('home.newsletter.title')}>${esc(N.title)}</h2>
     <p class="lead" style="margin:16px auto 0"${ed('home.newsletter.lead')}>${esc(N.lead)}</p>
-    ${formOpen(N.accessKey, 'GC Windsor - newsletter signup')}
+    <form class="news__form" data-subscribe>
       <div class="field"><label>First name</label><input type="text" name="first_name" autocomplete="given-name"></div>
       <div class="field"><label>Last name</label><input type="text" name="last_name" autocomplete="family-name"></div>
       <div class="field"><label>Email</label><input type="email" name="email" required autocomplete="email"></div>
+      <input type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
       <button class="btn btn--solid news__submit" type="submit"${ed('home.newsletter.buttonLabel')}>${esc(N.buttonLabel)}</button>
     </form>
+    <p class="news__msg" data-subscribe-msg role="status" aria-live="polite"></p>
     <p class="news__fine"${ed('home.newsletter.fine')}>${esc(N.fine)}</p>
   </div>
 </section>`;

@@ -182,12 +182,14 @@
     <p class="eyebrow eyebrow--center" data-edit="pages.json#home.newsletter.eyebrow">Subscribe</p>
     <h2 class="display display--sm" style="margin-top:16px" data-edit="pages.json#home.newsletter.title">Join the house</h2>
     <p class="lead" style="margin:16px auto 0" data-edit="pages.json#home.newsletter.lead">Sign up with your email address to receive news and updates.</p>
-    <form class="news__form" data-demo>
+    <form class="news__form" data-subscribe>
       <div class="field"><label>First name</label><input type="text" name="first_name" autocomplete="given-name"></div>
       <div class="field"><label>Last name</label><input type="text" name="last_name" autocomplete="family-name"></div>
       <div class="field"><label>Email</label><input type="email" name="email" required autocomplete="email"></div>
+      <input type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
       <button class="btn btn--solid news__submit" type="submit" data-edit="pages.json#home.newsletter.buttonLabel">Sign up</button>
     </form>
+    <p class="news__msg" data-subscribe-msg role="status" aria-live="polite"></p>
     <p class="news__fine" data-edit="pages.json#home.newsletter.fine">We respect your privacy.</p>
   </div>
 </section>

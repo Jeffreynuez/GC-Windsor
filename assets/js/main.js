@@ -538,6 +538,44 @@
     update();
   }
 
+  /* ---- newsletter signup -> /api/subscribe -> Brevo ---- */
+  function initSubscribe() {
+    $all('form[data-subscribe]').forEach(function (f) {
+      var msg = $('[data-subscribe-msg]', f.parentNode) || $('[data-subscribe-msg]');
+      f.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var btn = $('button[type="submit"], .btn', f);
+        var label = btn ? btn.textContent : '';
+        var data = {
+          first_name: (f.querySelector('[name="first_name"]') || {}).value || '',
+          last_name: (f.querySelector('[name="last_name"]') || {}).value || '',
+          email: (f.querySelector('[name="email"]') || {}).value || '',
+          company: (f.querySelector('[name="company"]') || {}).value || ''
+        };
+        if (msg) { msg.textContent = ''; msg.className = 'news__msg'; }
+        if (btn) { btn.disabled = true; btn.textContent = 'Joining...'; }
+
+        fetch('/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        })
+          .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+          .then(function (res) {
+            if (!res.ok) throw new Error(res.j.error || 'Something went wrong.');
+            f.reset();
+            if (btn) { btn.textContent = 'Welcome'; }
+            if (msg) { msg.className = 'news__msg is-ok'; msg.textContent = 'You are on the list. Check your inbox.'; }
+            setTimeout(function () { if (btn) { btn.textContent = label; btn.disabled = false; } }, 3000);
+          })
+          .catch(function (err) {
+            if (btn) { btn.textContent = label; btn.disabled = false; }
+            if (msg) { msg.className = 'news__msg is-err'; msg.textContent = err.message; }
+          });
+      });
+    });
+  }
+
   /* ---- forms: local "thank you" when no Web3Forms key is wired yet ---- */
   function initForms() {
     $all('form[data-demo]').forEach(function (f) {
@@ -648,6 +686,7 @@
     initGalleryStrip();
     initPDP();
     initFilm();
+    initSubscribe();
     initForms();
     initReveal();
     initParallax();

@@ -1134,3 +1134,15 @@ html { scroll-behavior: smooth; scroll-padding-top: var(--nav-h); }
 .cta-bleed { overflow: hidden; }
 .cta-bleed__media { position: absolute; inset: auto; top: -20%; left: 0; width: 100%; height: 140%; }
 .cta-bleed__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; will-change: transform; }
+
+/* --- newsletter signup feedback (Brevo) --- */
+.news__msg {
+  min-height: 1.2em;
+  margin-top: var(--sp-2);
+  font-size: var(--fs-small);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.news__msg.is-ok  { color: var(--gold); }
+.news__msg.is-err { color: #b31220; }
