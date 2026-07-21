@@ -8,3 +8,6 @@ Keys.txt
 Keys/
 .env
 .env.*
+scripts/gh-token.txt
+scripts/gh2.txt
+scripts/.deploy-token

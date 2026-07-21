@@ -2,6 +2,8 @@
   "name": "gc-windsor-site",
   "private": true,
   "scripts": {
-    "build": "node scripts/build.js"
+    "build": "node scripts/build.js",
+    "push": "node scripts/push.js",
+    "ship": "node scripts/build.js && node scripts/push.js"
   }
 }
