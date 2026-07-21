@@ -576,6 +576,45 @@
     });
   }
 
+  /* ---- Web3Forms (contact page) -> fetch submit so the visitor stays put ---- */
+  function initWeb3Forms() {
+    $all('form[data-web3]').forEach(function (f) {
+      var msg = document.createElement('p');
+      msg.className = 'news__msg';
+      msg.setAttribute('role', 'status');
+      msg.setAttribute('aria-live', 'polite');
+      f.parentNode.insertBefore(msg, f.nextSibling);
+
+      f.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var btn = $('button[type="submit"], .btn', f);
+        var label = btn ? btn.textContent : '';
+        msg.textContent = ''; msg.className = 'news__msg';
+        if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+
+        fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { Accept: 'application/json' },
+          body: new FormData(f)
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (j) {
+            if (!j.success) throw new Error(j.message || 'Could not send your message.');
+            f.reset();
+            if (btn) btn.textContent = 'Sent';
+            msg.className = 'news__msg is-ok';
+            msg.textContent = 'Thank you. We will be in touch shortly.';
+            setTimeout(function () { if (btn) { btn.textContent = label; btn.disabled = false; } }, 3000);
+          })
+          .catch(function (err) {
+            if (btn) { btn.textContent = label; btn.disabled = false; }
+            msg.className = 'news__msg is-err';
+            msg.textContent = err.message;
+          });
+      });
+    });
+  }
+
   /* ---- forms: local "thank you" when no Web3Forms key is wired yet ---- */
   function initForms() {
     $all('form[data-demo]').forEach(function (f) {
@@ -687,6 +726,7 @@
     initPDP();
     initFilm();
     initSubscribe();
+    initWeb3Forms();
     initForms();
     initReveal();
     initParallax();

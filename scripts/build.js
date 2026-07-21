@@ -204,14 +204,17 @@ function card(p, i) {
 </a>`;
 }
 
-/* Web3Forms opener; falls back to a local "thank you" when no key is set. */
+/* Web3Forms opener. With a key it POSTs to Web3Forms - main.js upgrades it to a
+   fetch submit so the visitor stays on the page; without JS the plain form POST
+   still works. No key = local "thank you" demo mode. */
 function formOpen(key, subject, cls) {
   const c = cls || 'news__form';
   if (!key) return `<form class="${c}" data-demo>`;
-  return `<form class="${c}" action="https://api.web3forms.com/submit" method="POST">
+  return `<form class="${c}" data-web3 action="https://api.web3forms.com/submit" method="POST">
       <input type="hidden" name="access_key" value="${esc(key)}">
       <input type="hidden" name="subject" value="${esc(subject)}">
-      <input type="checkbox" name="botcheck" style="display:none">`;
+      <input type="hidden" name="from_name" value="GC Windsor website">
+      <input type="checkbox" name="botcheck" tabindex="-1" style="display:none" aria-hidden="true">`;
 }
 
 /* The newsletter block - reused on the home page and the gallery page. */

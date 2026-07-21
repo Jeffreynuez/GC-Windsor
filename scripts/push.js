@@ -23,13 +23,25 @@ const ROOT = path.join(__dirname, '..');
 const REPO = process.env.GITHUB_REPO || 'Jeffreynuez/GC-Windsor';
 const BRANCH = process.env.GITHUB_BRANCH || 'main';
 
+/* Look OUTSIDE the repo first. A token kept inside the repo can be wiped by
+   "discard all changes" in a git client, which is exactly what happened once.
+   Preferred home: <working folder>/gh-token.txt, two levels above the repo. */
 function token() {
   if (process.env.GH_DEPLOY_TOKEN) return process.env.GH_DEPLOY_TOKEN.trim();
-  for (const n of ['gh-token.txt', 'gh2.txt', '.deploy-token']) {
-    const p = path.join(__dirname, n);
-    if (fs.existsSync(p)) { const t = fs.readFileSync(p, 'utf8').trim(); if (t) return t; }
+  const candidates = [
+    path.join(ROOT, '..', '..', 'gh-token.txt'),   // GC Windsor/gh-token.txt  <- preferred
+    path.join(ROOT, '..', 'gh-token.txt'),         // GC Windsor/Site/gh-token.txt
+    path.join(__dirname, 'gh-token.txt'),          // inside the repo (fragile)
+    path.join(__dirname, 'gh2.txt'),
+    path.join(__dirname, '.deploy-token')
+  ];
+  for (const p of candidates) {
+    try {
+      if (fs.existsSync(p)) { const t = fs.readFileSync(p, 'utf8').trim(); if (t) return t; }
+    } catch (e) { /* keep looking */ }
   }
-  console.error('No token found.\nPut a fine-grained PAT (Contents R/W on ' + REPO + ')\nin scripts/gh-token.txt, or set GH_DEPLOY_TOKEN.');
+  console.error('No token found. Looked in:\n  ' + candidates.join('\n  ') +
+    '\n\nPut a fine-grained PAT (Contents R/W on ' + REPO + ') in the first path,\nor set GH_DEPLOY_TOKEN.');
   process.exit(1);
 }
 const TOK = token();

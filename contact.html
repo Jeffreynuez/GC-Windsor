@@ -44,7 +44,11 @@
     <p class="eyebrow eyebrow--center" data-edit="pages.json#contact.eyebrow">Contact</p>
     <h2 class="display display--sm" style="margin-top:16px" data-edit="pages.json#contact.title">Get in touch</h2>
     <p class="lead" style="margin:16px auto 0" data-edit="pages.json#contact.lead">Please fill out the form below and we will get back as soon as possible.</p>
-    <form class="news__form news__form--contact" data-demo>
+    <form class="news__form news__form--contact" data-web3 action="https://api.web3forms.com/submit" method="POST">
+      <input type="hidden" name="access_key" value="707f20a2-e010-49fa-85aa-de36e63a64c9">
+      <input type="hidden" name="subject" value="GC Windsor - contact form">
+      <input type="hidden" name="from_name" value="GC Windsor website">
+      <input type="checkbox" name="botcheck" tabindex="-1" style="display:none" aria-hidden="true">
       <div class="field"><label>First name</label><input type="text" name="first_name" required></div>
       <div class="field"><label>Last name</label><input type="text" name="last_name" required></div>
       <div class="field"><label>Email</label><input type="email" name="email" required></div>
