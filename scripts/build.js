@@ -63,6 +63,7 @@ const edi = (file, arr, i) => ` data-edit-item="${file}#${arr}#${i}"`;
 const pages = D('pages.json');
 const products = D('products.json');
 const swapper = D('swapper.json');
+const spin = D('spin.json');
 const gallery = D('gallery.json');
 const theme = D('theme.json');
 const G = pages.global;
@@ -140,6 +141,12 @@ const gcw = () => JSON.stringify({
       }))
     })),
     products: products.items.map(p => ({ id: p.id, slug: p.slug, knot: p.knot, tie: p.tie, name: p.name }))
+  },
+  spin: {
+    base: IMG,
+    baseSpeed: spin.baseSpeed,
+    dragDir: spin.dragDir,
+    knots: spin.knots.map(k => ({ id: k.id, label: k.label, folder: k.folder, count: k.count }))
   },
   film: {
     src: vid(pages.about.founder.film),
@@ -338,6 +345,25 @@ function buildHome() {
         </div>
       </div>
     </div>
+  </div>
+</section>
+
+<section id="spin" class="section on-dark spin" data-spin>
+  <div class="wrap">
+    <div class="spin__head reveal">
+      <p class="eyebrow eyebrow--center"${edf('spin.json', 'eyebrow')}>${esc(spin.eyebrow)}</p>
+      <h2 class="script cz__title"${edf('spin.json', 'title')}>${esc(spin.title)}</h2>
+      <p class="lead cz__intro"${edf('spin.json', 'intro')}>${esc(spin.intro)}</p>
+    </div>
+    <div class="spin__thumbs reveal" data-delay="1">
+      ${spin.knots.map((k, i) => `<button class="spin__thumb${i === 0 ? ' is-active' : ''}" type="button" data-spin-thumb="${i}" aria-label="Show the ${esc(k.label)} knot"${edi('spin.json', 'knots', i)}><span class="spin__thumbimg" style="background-image:url('${IMG}f_auto,q_auto,w_200/${esc(k.folder)}/f-001')"></span><span class="spin__thumblabel"${edf('spin.json', `knots.${i}.label`)}>${esc(k.label)}</span></button>`).join('')}
+    </div>
+    <div class="spin__stagewrap reveal" data-delay="2">
+      <img class="spin__amb" src="${img(ROOSTER, 'f_auto,q_auto,w_900')}" alt="" aria-hidden="true" loading="lazy">
+      <div class="spin__stages" data-spin-stages></div>
+      <div class="spin__load" data-spin-load><i></i></div>
+    </div>
+    <p class="spin__hint"${edf('spin.json', 'hint')}>${esc(spin.hint)}</p>
   </div>
 </section>
 

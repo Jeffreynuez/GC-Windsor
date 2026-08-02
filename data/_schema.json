@@ -2,11 +2,26 @@
   "cloudName": "dlgc3fj6w",
   "mediaFolder": "gcwindsor",
   "pages": [
-    ["index.html", "Home"],
-    ["shop.html", "Shop"],
-    ["gallery.html", "Gallery"],
-    ["about.html", "About"],
-    ["contact.html", "Contact"]
+    [
+      "index.html",
+      "Home"
+    ],
+    [
+      "shop.html",
+      "Shop"
+    ],
+    [
+      "gallery.html",
+      "Gallery"
+    ],
+    [
+      "about.html",
+      "About"
+    ],
+    [
+      "contact.html",
+      "Contact"
+    ]
   ],
   "sections": [
     {
@@ -19,15 +34,45 @@
           "kind": "obj",
           "path": "global",
           "fields": [
-            { "k": "brand", "l": "Brand wordmark (nav)" },
-            { "k": "tagline", "l": "Footer tagline" },
-            { "k": "seoTitle", "l": "Default SEO title" },
-            { "k": "seoDesc", "l": "Default SEO description", "type": "area" },
-            { "k": "email", "l": "Contact email" },
-            { "k": "instagramHandle", "l": "Instagram handle" },
-            { "k": "copyright", "l": "Copyright line" },
-            { "k": "logo", "l": "Logo", "type": "media" },
-            { "k": "emblem", "l": "Emblem (footer + favicon)", "type": "media" }
+            {
+              "k": "brand",
+              "l": "Brand wordmark (nav)"
+            },
+            {
+              "k": "tagline",
+              "l": "Footer tagline"
+            },
+            {
+              "k": "seoTitle",
+              "l": "Default SEO title"
+            },
+            {
+              "k": "seoDesc",
+              "l": "Default SEO description",
+              "type": "area"
+            },
+            {
+              "k": "email",
+              "l": "Contact email"
+            },
+            {
+              "k": "instagramHandle",
+              "l": "Instagram handle"
+            },
+            {
+              "k": "copyright",
+              "l": "Copyright line"
+            },
+            {
+              "k": "logo",
+              "l": "Logo",
+              "type": "media"
+            },
+            {
+              "k": "emblem",
+              "l": "Emblem (footer + favicon)",
+              "type": "media"
+            }
           ]
         },
         {
@@ -36,8 +81,14 @@
           "path": "global.nav",
           "titleField": "label",
           "fields": [
-            { "k": "label", "l": "Label" },
-            { "k": "href", "l": "Link" }
+            {
+              "k": "label",
+              "l": "Label"
+            },
+            {
+              "k": "href",
+              "l": "Link"
+            }
           ]
         },
         {
@@ -46,17 +97,32 @@
           "path": "global.social",
           "titleField": "label",
           "fields": [
-            { "k": "label", "l": "Label" },
-            { "k": "icon", "l": "Icon", "type": "select", "opts": ["instagram", "facebook", "x", "tiktok"] },
-            { "k": "href", "l": "URL" }
+            {
+              "k": "label",
+              "l": "Label"
+            },
+            {
+              "k": "icon",
+              "l": "Icon",
+              "type": "select",
+              "opts": [
+                "instagram",
+                "facebook",
+                "x",
+                "tiktok"
+              ]
+            },
+            {
+              "k": "href",
+              "l": "URL"
+            }
           ]
         }
       ]
     },
-
     {
       "id": "home-hero",
-      "label": "Home · Hero video",
+      "label": "Home \u00b7 Hero video",
       "file": "pages.json",
       "blocks": [
         {
@@ -64,17 +130,32 @@
           "kind": "obj",
           "path": "home.hero",
           "fields": [
-            { "k": "video", "l": "Hero video (desktop)", "type": "media" },
-            { "k": "videoMobile", "l": "Hero video (mobile)", "type": "media" },
-            { "k": "poster", "l": "Poster image", "type": "media" },
-            { "k": "cue", "l": "Scroll cue label" }
+            {
+              "k": "video",
+              "l": "Hero video (desktop)",
+              "type": "media"
+            },
+            {
+              "k": "videoMobile",
+              "l": "Hero video (mobile)",
+              "type": "media"
+            },
+            {
+              "k": "poster",
+              "l": "Poster image",
+              "type": "media"
+            },
+            {
+              "k": "cue",
+              "l": "Scroll cue label"
+            }
           ]
         }
       ]
     },
     {
       "id": "home-positioning",
-      "label": "Home · Positioning",
+      "label": "Home \u00b7 Positioning",
       "file": "pages.json",
       "blocks": [
         {
@@ -82,19 +163,38 @@
           "kind": "obj",
           "path": "home.positioning",
           "fields": [
-            { "k": "eyebrow", "l": "Eyebrow" },
-            { "k": "title", "l": "Display title" },
-            { "k": "sub", "l": "Subheading" },
-            { "k": "lead", "l": "Body copy", "type": "area" },
-            { "k": "ctaLabel", "l": "Button label" },
-            { "k": "ctaHref", "l": "Button link" }
+            {
+              "k": "eyebrow",
+              "l": "Eyebrow"
+            },
+            {
+              "k": "title",
+              "l": "Display title"
+            },
+            {
+              "k": "sub",
+              "l": "Subheading"
+            },
+            {
+              "k": "lead",
+              "l": "Body copy",
+              "type": "area"
+            },
+            {
+              "k": "ctaLabel",
+              "l": "Button label"
+            },
+            {
+              "k": "ctaHref",
+              "l": "Button link"
+            }
           ]
         }
       ]
     },
     {
       "id": "home-split",
-      "label": "Home · The idea (split)",
+      "label": "Home \u00b7 The idea (split)",
       "file": "pages.json",
       "blocks": [
         {
@@ -102,19 +202,39 @@
           "kind": "obj",
           "path": "home.split",
           "fields": [
-            { "k": "eyebrow", "l": "Eyebrow" },
-            { "k": "title", "l": "Heading" },
-            { "k": "lead", "l": "Body copy", "type": "area" },
-            { "k": "ctaLabel", "l": "Button label" },
-            { "k": "ctaHref", "l": "Button link" },
-            { "k": "image", "l": "Image (parallax)", "type": "media" }
+            {
+              "k": "eyebrow",
+              "l": "Eyebrow"
+            },
+            {
+              "k": "title",
+              "l": "Heading"
+            },
+            {
+              "k": "lead",
+              "l": "Body copy",
+              "type": "area"
+            },
+            {
+              "k": "ctaLabel",
+              "l": "Button label"
+            },
+            {
+              "k": "ctaHref",
+              "l": "Button link"
+            },
+            {
+              "k": "image",
+              "l": "Image (parallax)",
+              "type": "media"
+            }
           ]
         }
       ]
     },
     {
       "id": "home-founder",
-      "label": "Home · Founder band",
+      "label": "Home \u00b7 Founder band",
       "file": "pages.json",
       "blocks": [
         {
@@ -122,19 +242,40 @@
           "kind": "obj",
           "path": "home.founder",
           "fields": [
-            { "k": "eyebrow", "l": "Eyebrow" },
-            { "k": "quote", "l": "Pull quote", "type": "area" },
-            { "k": "bio", "l": "Bio", "type": "area" },
-            { "k": "ctaLabel", "l": "Button label" },
-            { "k": "ctaHref", "l": "Button link" },
-            { "k": "artwork", "l": "Gold filigree artwork", "type": "media" }
+            {
+              "k": "eyebrow",
+              "l": "Eyebrow"
+            },
+            {
+              "k": "quote",
+              "l": "Pull quote",
+              "type": "area"
+            },
+            {
+              "k": "bio",
+              "l": "Bio",
+              "type": "area"
+            },
+            {
+              "k": "ctaLabel",
+              "l": "Button label"
+            },
+            {
+              "k": "ctaHref",
+              "l": "Button link"
+            },
+            {
+              "k": "artwork",
+              "l": "Gold filigree artwork",
+              "type": "media"
+            }
           ]
         }
       ]
     },
     {
       "id": "home-newsletter",
-      "label": "Home · Newsletter",
+      "label": "Home \u00b7 Newsletter",
       "file": "pages.json",
       "blocks": [
         {
@@ -142,19 +283,38 @@
           "kind": "obj",
           "path": "home.newsletter",
           "fields": [
-            { "k": "eyebrow", "l": "Eyebrow" },
-            { "k": "title", "l": "Heading" },
-            { "k": "lead", "l": "Body copy", "type": "area" },
-            { "k": "buttonLabel", "l": "Button label" },
-            { "k": "fine", "l": "Fine print" },
-            { "k": "accessKey", "l": "Web3Forms access key (blank = demo mode)" }
+            {
+              "k": "eyebrow",
+              "l": "Eyebrow"
+            },
+            {
+              "k": "title",
+              "l": "Heading"
+            },
+            {
+              "k": "lead",
+              "l": "Body copy",
+              "type": "area"
+            },
+            {
+              "k": "buttonLabel",
+              "l": "Button label"
+            },
+            {
+              "k": "fine",
+              "l": "Fine print"
+            },
+            {
+              "k": "accessKey",
+              "l": "Web3Forms access key (blank = demo mode)"
+            }
           ]
         }
       ]
     },
     {
       "id": "home-contact-cta",
-      "label": "Home · Contact CTA + Shop heading",
+      "label": "Home \u00b7 Contact CTA + Shop heading",
       "file": "pages.json",
       "blocks": [
         {
@@ -162,10 +322,22 @@
           "kind": "obj",
           "path": "home.shop",
           "fields": [
-            { "k": "eyebrow", "l": "Eyebrow" },
-            { "k": "title", "l": "Heading" },
-            { "k": "ctaLabel", "l": "Button label" },
-            { "k": "ctaHref", "l": "Button link" }
+            {
+              "k": "eyebrow",
+              "l": "Eyebrow"
+            },
+            {
+              "k": "title",
+              "l": "Heading"
+            },
+            {
+              "k": "ctaLabel",
+              "l": "Button label"
+            },
+            {
+              "k": "ctaHref",
+              "l": "Button link"
+            }
           ]
         },
         {
@@ -173,16 +345,31 @@
           "kind": "obj",
           "path": "home.contactCta",
           "fields": [
-            { "k": "eyebrow", "l": "Eyebrow" },
-            { "k": "title", "l": "Heading" },
-            { "k": "ctaLabel", "l": "Button label" },
-            { "k": "ctaHref", "l": "Button link" },
-            { "k": "image", "l": "Background image", "type": "media" }
+            {
+              "k": "eyebrow",
+              "l": "Eyebrow"
+            },
+            {
+              "k": "title",
+              "l": "Heading"
+            },
+            {
+              "k": "ctaLabel",
+              "l": "Button label"
+            },
+            {
+              "k": "ctaHref",
+              "l": "Button link"
+            },
+            {
+              "k": "image",
+              "l": "Background image",
+              "type": "media"
+            }
           ]
         }
       ]
     },
-
     {
       "id": "customizer",
       "label": "The Customizer (knots & ties)",
@@ -193,15 +380,45 @@
           "kind": "obj",
           "path": "",
           "fields": [
-            { "k": "eyebrow", "l": "Eyebrow" },
-            { "k": "title", "l": "Heading (script face)" },
-            { "k": "intro", "l": "Intro copy", "type": "area" },
-            { "k": "ctaLabel", "l": "Button label" },
-            { "k": "soonLabel", "l": "Coming-soon chip label" },
-            { "k": "soonNote", "l": "Coming-soon note", "type": "area" },
-            { "k": "base", "l": "Base photo (model)", "type": "media" },
-            { "k": "defaultKnotColor", "l": "Default knot colour id" },
-            { "k": "defaultTieColor", "l": "Default tie colour id" }
+            {
+              "k": "eyebrow",
+              "l": "Eyebrow"
+            },
+            {
+              "k": "title",
+              "l": "Heading (script face)"
+            },
+            {
+              "k": "intro",
+              "l": "Intro copy",
+              "type": "area"
+            },
+            {
+              "k": "ctaLabel",
+              "l": "Button label"
+            },
+            {
+              "k": "soonLabel",
+              "l": "Coming-soon chip label"
+            },
+            {
+              "k": "soonNote",
+              "l": "Coming-soon note",
+              "type": "area"
+            },
+            {
+              "k": "base",
+              "l": "Base photo (model)",
+              "type": "media"
+            },
+            {
+              "k": "defaultKnotColor",
+              "l": "Default knot colour id"
+            },
+            {
+              "k": "defaultTieColor",
+              "l": "Default tie colour id"
+            }
           ]
         },
         {
@@ -210,9 +427,23 @@
           "path": "types.0.designs",
           "titleField": "label",
           "fields": [
-            { "k": "id", "l": "ID (do not reuse)" },
-            { "k": "label", "l": "Design name" },
-            { "k": "status", "l": "Status", "type": "select", "opts": ["available", "coming-soon"] }
+            {
+              "k": "id",
+              "l": "ID (do not reuse)"
+            },
+            {
+              "k": "label",
+              "l": "Design name"
+            },
+            {
+              "k": "status",
+              "l": "Status",
+              "type": "select",
+              "opts": [
+                "available",
+                "coming-soon"
+              ]
+            }
           ]
         },
         {
@@ -222,9 +453,19 @@
           "titleField": "name",
           "thumbField": "img",
           "fields": [
-            { "k": "id", "l": "ID (products reference this - do not reuse)" },
-            { "k": "name", "l": "Colour name" },
-            { "k": "img", "l": "Layer PNG (transparent, 7010x4674)", "type": "media" }
+            {
+              "k": "id",
+              "l": "ID (products reference this - do not reuse)"
+            },
+            {
+              "k": "name",
+              "l": "Colour name"
+            },
+            {
+              "k": "img",
+              "l": "Layer PNG (transparent, 7010x4674)",
+              "type": "media"
+            }
           ]
         },
         {
@@ -233,9 +474,23 @@
           "path": "types.1.designs",
           "titleField": "label",
           "fields": [
-            { "k": "id", "l": "ID (do not reuse)" },
-            { "k": "label", "l": "Design name" },
-            { "k": "status", "l": "Status", "type": "select", "opts": ["available", "coming-soon"] }
+            {
+              "k": "id",
+              "l": "ID (do not reuse)"
+            },
+            {
+              "k": "label",
+              "l": "Design name"
+            },
+            {
+              "k": "status",
+              "l": "Status",
+              "type": "select",
+              "opts": [
+                "available",
+                "coming-soon"
+              ]
+            }
           ]
         },
         {
@@ -245,14 +500,86 @@
           "titleField": "name",
           "thumbField": "img",
           "fields": [
-            { "k": "id", "l": "ID (products reference this - do not reuse)" },
-            { "k": "name", "l": "Colour name" },
-            { "k": "img", "l": "Layer PNG (transparent, 7010x4674)", "type": "media" }
+            {
+              "k": "id",
+              "l": "ID (products reference this - do not reuse)"
+            },
+            {
+              "k": "name",
+              "l": "Colour name"
+            },
+            {
+              "k": "img",
+              "l": "Layer PNG (transparent, 7010x4674)",
+              "type": "media"
+            }
           ]
         }
       ]
     },
-
+    {
+      "id": "spin",
+      "label": "360 Knot Viewer",
+      "file": "spin.json",
+      "blocks": [
+        {
+          "bt": "Section copy",
+          "kind": "obj",
+          "path": "",
+          "fields": [
+            {
+              "k": "eyebrow",
+              "l": "Eyebrow"
+            },
+            {
+              "k": "title",
+              "l": "Heading (script face)"
+            },
+            {
+              "k": "intro",
+              "l": "Intro copy",
+              "type": "area"
+            },
+            {
+              "k": "hint",
+              "l": "Drag hint (under the knot)"
+            },
+            {
+              "k": "baseSpeed",
+              "l": "Auto-rotate speed (frames/sec, 15 = real)"
+            },
+            {
+              "k": "dragDir",
+              "l": "Drag direction (-1 or 1)"
+            }
+          ]
+        },
+        {
+          "bt": "Knots",
+          "kind": "arr",
+          "path": "knots",
+          "titleField": "label",
+          "fields": [
+            {
+              "k": "label",
+              "l": "Label"
+            },
+            {
+              "k": "id",
+              "l": "Id (slug)"
+            },
+            {
+              "k": "folder",
+              "l": "Cloudinary frame folder"
+            },
+            {
+              "k": "count",
+              "l": "Frame count"
+            }
+          ]
+        }
+      ]
+    },
     {
       "id": "products",
       "label": "Products & sales switch",
@@ -263,8 +590,19 @@
           "kind": "obj",
           "path": "",
           "fields": [
-            { "k": "salesPaused", "l": "Pause ALL sales", "type": "select", "opts": ["true", "false"] },
-            { "k": "shippingNote", "l": "Shipping note" }
+            {
+              "k": "salesPaused",
+              "l": "Pause ALL sales",
+              "type": "select",
+              "opts": [
+                "true",
+                "false"
+              ]
+            },
+            {
+              "k": "shippingNote",
+              "l": "Shipping note"
+            }
           ]
         },
         {
@@ -273,9 +611,18 @@
           "path": "sizes",
           "titleField": "label",
           "fields": [
-            { "k": "id", "l": "ID" },
-            { "k": "label", "l": "Label" },
-            { "k": "spec", "l": "Spec (length + height range)" }
+            {
+              "k": "id",
+              "l": "ID"
+            },
+            {
+              "k": "label",
+              "l": "Label"
+            },
+            {
+              "k": "spec",
+              "l": "Spec (length + height range)"
+            }
           ]
         },
         {
@@ -285,23 +632,66 @@
           "titleField": "name",
           "thumbField": "image",
           "fields": [
-            { "k": "name", "l": "Name" },
-            { "k": "slug", "l": "URL slug" },
-            { "k": "price", "l": "Price (USD)" },
-            { "k": "status", "l": "Status", "type": "select", "opts": ["coming-soon", "live"] },
-            { "k": "blurb", "l": "Short description", "type": "area" },
-            { "k": "contents", "l": "What's in the set", "type": "area" },
-            { "k": "image", "l": "Card image", "type": "media" },
-            { "k": "sku", "l": "SKU" },
-            { "k": "knot", "l": "Matching knot id (customizer)" },
-            { "k": "tie", "l": "Matching tie id (customizer)" },
-            { "k": "stripePriceIdRegular", "l": "Stripe price id — Regular" },
-            { "k": "stripePriceIdTall", "l": "Stripe price id — Tall" }
+            {
+              "k": "name",
+              "l": "Name"
+            },
+            {
+              "k": "slug",
+              "l": "URL slug"
+            },
+            {
+              "k": "price",
+              "l": "Price (USD)"
+            },
+            {
+              "k": "status",
+              "l": "Status",
+              "type": "select",
+              "opts": [
+                "coming-soon",
+                "live"
+              ]
+            },
+            {
+              "k": "blurb",
+              "l": "Short description",
+              "type": "area"
+            },
+            {
+              "k": "contents",
+              "l": "What's in the set",
+              "type": "area"
+            },
+            {
+              "k": "image",
+              "l": "Card image",
+              "type": "media"
+            },
+            {
+              "k": "sku",
+              "l": "SKU"
+            },
+            {
+              "k": "knot",
+              "l": "Matching knot id (customizer)"
+            },
+            {
+              "k": "tie",
+              "l": "Matching tie id (customizer)"
+            },
+            {
+              "k": "stripePriceIdRegular",
+              "l": "Stripe price id \u2014 Regular"
+            },
+            {
+              "k": "stripePriceIdTall",
+              "l": "Stripe price id \u2014 Tall"
+            }
           ]
         }
       ]
     },
-
     {
       "id": "gallery",
       "label": "Gallery",
@@ -312,10 +702,22 @@
           "kind": "obj",
           "path": "",
           "fields": [
-            { "k": "eyebrow", "l": "Eyebrow" },
-            { "k": "title", "l": "Heading (script face)" },
-            { "k": "moreLabel", "l": "'See more' button label" },
-            { "k": "stripCount", "l": "How many images in the home strip" }
+            {
+              "k": "eyebrow",
+              "l": "Eyebrow"
+            },
+            {
+              "k": "title",
+              "l": "Heading (script face)"
+            },
+            {
+              "k": "moreLabel",
+              "l": "'See more' button label"
+            },
+            {
+              "k": "stripCount",
+              "l": "How many images in the home strip"
+            }
           ]
         },
         {
@@ -323,12 +725,33 @@
           "kind": "obj",
           "path": "page",
           "fields": [
-            { "k": "seoTitle", "l": "SEO title" },
-            { "k": "seoDesc", "l": "SEO description", "type": "area" },
-            { "k": "eyebrow", "l": "Eyebrow" },
-            { "k": "title", "l": "Heading" },
-            { "k": "lead", "l": "Intro copy", "type": "area" },
-            { "k": "hero", "l": "Hero image", "type": "media" }
+            {
+              "k": "seoTitle",
+              "l": "SEO title"
+            },
+            {
+              "k": "seoDesc",
+              "l": "SEO description",
+              "type": "area"
+            },
+            {
+              "k": "eyebrow",
+              "l": "Eyebrow"
+            },
+            {
+              "k": "title",
+              "l": "Heading"
+            },
+            {
+              "k": "lead",
+              "l": "Intro copy",
+              "type": "area"
+            },
+            {
+              "k": "hero",
+              "l": "Hero image",
+              "type": "media"
+            }
           ]
         },
         {
@@ -338,14 +761,29 @@
           "titleField": "alt",
           "thumbField": "src",
           "fields": [
-            { "k": "src", "l": "Image", "type": "media" },
-            { "k": "alt", "l": "Caption / alt text" },
-            { "k": "span", "l": "Tile size", "type": "select", "opts": ["std", "wide", "tall"] }
+            {
+              "k": "src",
+              "l": "Image",
+              "type": "media"
+            },
+            {
+              "k": "alt",
+              "l": "Caption / alt text"
+            },
+            {
+              "k": "span",
+              "l": "Tile size",
+              "type": "select",
+              "opts": [
+                "std",
+                "wide",
+                "tall"
+              ]
+            }
           ]
         }
       ]
     },
-
     {
       "id": "shop-page",
       "label": "Shop page",
@@ -356,17 +794,37 @@
           "kind": "obj",
           "path": "shop",
           "fields": [
-            { "k": "seoTitle", "l": "SEO title" },
-            { "k": "seoDesc", "l": "SEO description", "type": "area" },
-            { "k": "eyebrow", "l": "Eyebrow" },
-            { "k": "title", "l": "Heading" },
-            { "k": "lead", "l": "Intro copy", "type": "area" },
-            { "k": "hero", "l": "Hero image", "type": "media" }
+            {
+              "k": "seoTitle",
+              "l": "SEO title"
+            },
+            {
+              "k": "seoDesc",
+              "l": "SEO description",
+              "type": "area"
+            },
+            {
+              "k": "eyebrow",
+              "l": "Eyebrow"
+            },
+            {
+              "k": "title",
+              "l": "Heading"
+            },
+            {
+              "k": "lead",
+              "l": "Intro copy",
+              "type": "area"
+            },
+            {
+              "k": "hero",
+              "l": "Hero image",
+              "type": "media"
+            }
           ]
         }
       ]
     },
-
     {
       "id": "about-page",
       "label": "About page",
@@ -377,14 +835,41 @@
           "kind": "obj",
           "path": "about",
           "fields": [
-            { "k": "seoTitle", "l": "SEO title" },
-            { "k": "seoDesc", "l": "SEO description", "type": "area" },
-            { "k": "eyebrow", "l": "Eyebrow" },
-            { "k": "title", "l": "Heading" },
-            { "k": "lead", "l": "Intro copy", "type": "area" },
-            { "k": "hero", "l": "Hero image", "type": "media" },
-            { "k": "ctaLabel", "l": "Button label" },
-            { "k": "ctaHref", "l": "Button link" }
+            {
+              "k": "seoTitle",
+              "l": "SEO title"
+            },
+            {
+              "k": "seoDesc",
+              "l": "SEO description",
+              "type": "area"
+            },
+            {
+              "k": "eyebrow",
+              "l": "Eyebrow"
+            },
+            {
+              "k": "title",
+              "l": "Heading"
+            },
+            {
+              "k": "lead",
+              "l": "Intro copy",
+              "type": "area"
+            },
+            {
+              "k": "hero",
+              "l": "Hero image",
+              "type": "media"
+            },
+            {
+              "k": "ctaLabel",
+              "l": "Button label"
+            },
+            {
+              "k": "ctaHref",
+              "l": "Button link"
+            }
           ]
         },
         {
@@ -392,17 +877,31 @@
           "kind": "obj",
           "path": "about.story",
           "fields": [
-            { "k": "eyebrow", "l": "Eyebrow" },
-            { "k": "title", "l": "Heading" },
-            { "k": "image", "l": "Image", "type": "media" }
+            {
+              "k": "eyebrow",
+              "l": "Eyebrow"
+            },
+            {
+              "k": "title",
+              "l": "Heading"
+            },
+            {
+              "k": "image",
+              "l": "Image",
+              "type": "media"
+            }
           ]
         },
         {
-          "bt": "Our story — paragraphs",
+          "bt": "Our story \u2014 paragraphs",
           "kind": "arr",
           "path": "about.story.body",
           "fields": [
-            { "k": "", "l": "Paragraph", "type": "area" }
+            {
+              "k": "",
+              "l": "Paragraph",
+              "type": "area"
+            }
           ]
         },
         {
@@ -410,18 +909,42 @@
           "kind": "obj",
           "path": "about.founder",
           "fields": [
-            { "k": "eyebrow", "l": "Eyebrow" },
-            { "k": "name", "l": "Name" },
-            { "k": "bio", "l": "Bio", "type": "area" },
-            { "k": "portrait", "l": "Portrait", "type": "media" },
-            { "k": "filmLabel", "l": "Film button label" },
-            { "k": "film", "l": "Film video", "type": "media" },
-            { "k": "filmPoster", "l": "Film poster", "type": "media" }
+            {
+              "k": "eyebrow",
+              "l": "Eyebrow"
+            },
+            {
+              "k": "name",
+              "l": "Name"
+            },
+            {
+              "k": "bio",
+              "l": "Bio",
+              "type": "area"
+            },
+            {
+              "k": "portrait",
+              "l": "Portrait",
+              "type": "media"
+            },
+            {
+              "k": "filmLabel",
+              "l": "Film button label"
+            },
+            {
+              "k": "film",
+              "l": "Film video",
+              "type": "media"
+            },
+            {
+              "k": "filmPoster",
+              "l": "Film poster",
+              "type": "media"
+            }
           ]
         }
       ]
     },
-
     {
       "id": "contact-page",
       "label": "Contact page",
@@ -432,23 +955,52 @@
           "kind": "obj",
           "path": "contact",
           "fields": [
-            { "k": "seoTitle", "l": "SEO title" },
-            { "k": "seoDesc", "l": "SEO description", "type": "area" },
-            { "k": "eyebrow", "l": "Eyebrow" },
-            { "k": "title", "l": "Heading" },
-            { "k": "lead", "l": "Intro copy", "type": "area" },
-            { "k": "buttonLabel", "l": "Submit button label" },
-            { "k": "accessKey", "l": "Web3Forms access key (blank = demo mode)" },
-            { "k": "instagramTitle", "l": "Instagram heading" },
-            { "k": "hero", "l": "Hero image", "type": "media" }
+            {
+              "k": "seoTitle",
+              "l": "SEO title"
+            },
+            {
+              "k": "seoDesc",
+              "l": "SEO description",
+              "type": "area"
+            },
+            {
+              "k": "eyebrow",
+              "l": "Eyebrow"
+            },
+            {
+              "k": "title",
+              "l": "Heading"
+            },
+            {
+              "k": "lead",
+              "l": "Intro copy",
+              "type": "area"
+            },
+            {
+              "k": "buttonLabel",
+              "l": "Submit button label"
+            },
+            {
+              "k": "accessKey",
+              "l": "Web3Forms access key (blank = demo mode)"
+            },
+            {
+              "k": "instagramTitle",
+              "l": "Instagram heading"
+            },
+            {
+              "k": "hero",
+              "l": "Hero image",
+              "type": "media"
+            }
           ]
         }
       ]
     },
-
     {
       "id": "theme",
-      "label": "Theme · Design tokens",
+      "label": "Theme \u00b7 Design tokens",
       "file": "theme.json",
       "blocks": [
         {
@@ -456,15 +1008,51 @@
           "kind": "obj",
           "path": "",
           "fields": [
-            { "k": "black", "l": "Black (dark sections)", "type": "color" },
-            { "k": "ink", "l": "Ink (body text)", "type": "color" },
-            { "k": "bg", "l": "Background", "type": "color" },
-            { "k": "bg-alt", "l": "Alt background", "type": "color" },
-            { "k": "gold", "l": "Gold (the accent)", "type": "color" },
-            { "k": "gold-light", "l": "Gold light", "type": "color" },
-            { "k": "gold-deep", "l": "Gold deep (press)", "type": "color" },
-            { "k": "muted", "l": "Muted text", "type": "color" },
-            { "k": "line", "l": "Hairline", "type": "color" }
+            {
+              "k": "black",
+              "l": "Black (dark sections)",
+              "type": "color"
+            },
+            {
+              "k": "ink",
+              "l": "Ink (body text)",
+              "type": "color"
+            },
+            {
+              "k": "bg",
+              "l": "Background",
+              "type": "color"
+            },
+            {
+              "k": "bg-alt",
+              "l": "Alt background",
+              "type": "color"
+            },
+            {
+              "k": "gold",
+              "l": "Gold (the accent)",
+              "type": "color"
+            },
+            {
+              "k": "gold-light",
+              "l": "Gold light",
+              "type": "color"
+            },
+            {
+              "k": "gold-deep",
+              "l": "Gold deep (press)",
+              "type": "color"
+            },
+            {
+              "k": "muted",
+              "l": "Muted text",
+              "type": "color"
+            },
+            {
+              "k": "line",
+              "l": "Hairline",
+              "type": "color"
+            }
           ]
         },
         {
@@ -472,12 +1060,30 @@
           "kind": "obj",
           "path": "",
           "fields": [
-            { "k": "font-display", "l": "Display font (Poppins italic)" },
-            { "k": "font-sans", "l": "Body font (Jost)" },
-            { "k": "font-script", "l": "Script font (Pinyon Script)" },
-            { "k": "fs-display", "l": "Display size" },
-            { "k": "fs-script", "l": "Script size" },
-            { "k": "ls-display", "l": "Display letter-spacing" }
+            {
+              "k": "font-display",
+              "l": "Display font (Poppins italic)"
+            },
+            {
+              "k": "font-sans",
+              "l": "Body font (Jost)"
+            },
+            {
+              "k": "font-script",
+              "l": "Script font (Pinyon Script)"
+            },
+            {
+              "k": "fs-display",
+              "l": "Display size"
+            },
+            {
+              "k": "fs-script",
+              "l": "Script size"
+            },
+            {
+              "k": "ls-display",
+              "l": "Display letter-spacing"
+            }
           ]
         },
         {
@@ -485,11 +1091,26 @@
           "kind": "obj",
           "path": "",
           "fields": [
-            { "k": "maxw", "l": "Max content width" },
-            { "k": "radius", "l": "Corner radius" },
-            { "k": "section-y", "l": "Section padding" },
-            { "k": "ease", "l": "Easing curve" },
-            { "k": "dur", "l": "Motion duration" }
+            {
+              "k": "maxw",
+              "l": "Max content width"
+            },
+            {
+              "k": "radius",
+              "l": "Corner radius"
+            },
+            {
+              "k": "section-y",
+              "l": "Section padding"
+            },
+            {
+              "k": "ease",
+              "l": "Easing curve"
+            },
+            {
+              "k": "dur",
+              "l": "Motion duration"
+            }
           ]
         }
       ]

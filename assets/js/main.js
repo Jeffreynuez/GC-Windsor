@@ -716,11 +716,190 @@
     if (v.readyState >= 2) reveal();
   }
 
+
+  /* ---------- 360 spin viewer (#spin) ----------
+     Canvas frame-sequence player fed by Cloudinary frames (GCW.spin).
+     Auto-rotates; pointer-drag scrubs 1:1 with flick inertia, then eases
+     back to auto speed. Thumbs swap knots with a slide transition.
+     Loading is lazy (IntersectionObserver) and progressive (coarse->fine). */
+  function initSpin() {
+    var host = $('[data-spin]');
+    if (!host || !window.GCW || !GCW.spin || !GCW.spin.knots || !GCW.spin.knots.length) return;
+    var S = GCW.spin;
+    var stages = $('[data-spin-stages]', host);
+    if (!stages) return;
+    var barBox = $('[data-spin-load]', host);
+    var bar = barBox ? $('i', barBox) : null;
+    var thumbs = $all('[data-spin-thumb]', host);
+
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var BASE = reduced ? 0 : (S.baseSpeed || 15);      /* frames per second */
+    var DIRC = S.dragDir || -1;
+    var RESUME_MS = 1200;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var px = (stages.clientWidth || 640) * dpr;
+    var W = px <= 850 ? 800 : (px <= 1250 ? 1200 : 1500);
+
+    function pad3(n) { n = String(n); while (n.length < 3) n = '0' + n; return n; }
+    function frameURL(k, i) { return S.base + 'f_auto,q_auto:good,w_' + W + '/' + k.folder + '/f-' + pad3(i + 1); }
+
+    var cur = 0, viewers = [], started = false, visible = false;
+
+    function makeViewer(k, idx) {
+      var v = { k: k, frames: new Array(k.count), loaded: 0, frame: 0, vel: BASE,
+                releaseVel: BASE, dragging: false, resumeT: null, loading: false };
+      v.el = el('div', 'spin__stage' + (idx ? ' no-anim is-off-r' : ''));
+      v.cv = document.createElement('canvas');
+      v.cv.width = W; v.cv.height = W;
+      v.ctx = v.cv.getContext('2d');
+      v.el.appendChild(v.cv);
+      stages.appendChild(v.el);
+
+      v.preload = function () {
+        if (v.loading) return; v.loading = true;
+        var order = [], seen = {};
+        [6, 3, 1].forEach(function (step) {
+          for (var i = 0; i < k.count; i += step) if (!seen[i]) { seen[i] = 1; order.push(i); }
+        });
+        var inflight = 0, qi = 0;
+        function prog() {
+          if (viewers[cur] === v && bar) {
+            bar.style.width = (100 * v.loaded / k.count) + '%';
+            if (v.loaded >= k.count && barBox) barBox.classList.add('is-done');
+          }
+          if (v.loaded >= k.count) {
+            var next = viewers[(idx + 1) % viewers.length];
+            if (next && !next.loading) next.preload();   /* warm the other knot */
+          }
+        }
+        function pump() {
+          while (inflight < 8 && qi < order.length) {
+            (function (i) {
+              inflight++;
+              var im = new Image();
+              im.onload = function () { v.frames[i] = im; v.loaded++; inflight--; prog(); pump(); };
+              im.onerror = function () { inflight--; pump(); };
+              im.src = frameURL(k, i);
+            })(order[qi++]);
+          }
+        }
+        pump();
+      };
+
+      v.nearest = function (i) {
+        if (v.frames[i]) return v.frames[i];
+        for (var d = 1; d < k.count; d++) {
+          var a = (i + d) % k.count, b = (i - d + k.count) % k.count;
+          if (v.frames[b]) return v.frames[b];
+          if (v.frames[a]) return v.frames[a];
+        }
+        return null;
+      };
+
+      v.draw = function () {
+        var n = k.count;
+        var i = ((Math.floor(v.frame) % n) + n) % n;
+        var im = v.nearest(i);
+        if (im) { v.ctx.clearRect(0, 0, W, W); v.ctx.drawImage(im, 0, 0, W, W); }
+      };
+
+      v.tick = function (dt) {
+        if (!v.dragging) {
+          if (v.resumeT !== null) {
+            v.resumeT += dt * 1000;
+            var t = Math.min(1, v.resumeT / RESUME_MS);
+            var e = 1 - Math.pow(1 - t, 3);
+            v.vel = v.releaseVel + (BASE - v.releaseVel) * e;
+            if (t >= 1) v.resumeT = null;
+          }
+          v.frame += v.vel * dt;
+        }
+        v.draw();
+      };
+
+      var lastX = 0, lastT = 0, mv = 0, SENSV = k.count / 900;
+      v.cv.addEventListener('pointerdown', function (e) {
+        v.cv.setPointerCapture(e.pointerId);
+        v.dragging = true; v.resumeT = null; mv = 0;
+        v.cv.classList.add('is-grabbing');
+        lastX = e.clientX; lastT = performance.now();
+      });
+      v.cv.addEventListener('pointermove', function (e) {
+        if (!v.dragging) return;
+        var now = performance.now();
+        var dx = e.clientX - lastX;
+        v.frame += DIRC * dx * SENSV;
+        var dt = Math.max(1, now - lastT) / 1000;
+        mv = 0.7 * mv + 0.3 * (DIRC * dx * SENSV / dt);
+        lastX = e.clientX; lastT = now;
+        v.draw();
+      });
+      function up() {
+        if (!v.dragging) return;
+        v.dragging = false;
+        v.cv.classList.remove('is-grabbing');
+        v.releaseVel = Math.max(-140, Math.min(140, mv));
+        v.vel = v.releaseVel; v.resumeT = 0;
+      }
+      v.cv.addEventListener('pointerup', up);
+      v.cv.addEventListener('pointercancel', up);
+      return v;
+    }
+
+    S.knots.forEach(function (k, i) { viewers.push(makeViewer(k, i)); });
+
+    function swapTo(to) {
+      if (to === cur || !viewers[to]) return;
+      var out = viewers[cur], inn = viewers[to];
+      if (!inn.loading) inn.preload();
+      inn.el.classList.add('no-anim');
+      inn.el.classList.remove('is-off-r');
+      inn.el.classList.add('is-off-l');
+      inn.el.getBoundingClientRect();                 /* force reflow */
+      inn.el.classList.remove('no-anim');
+      requestAnimationFrame(function () {
+        out.el.classList.remove('is-off-l');
+        out.el.classList.add('is-off-r');             /* exit right */
+        inn.el.classList.remove('is-off-l');          /* enter from left */
+      });
+      cur = to;
+      thumbs.forEach(function (t, i) { t.classList.toggle('is-active', i === to); });
+      if (barBox) barBox.classList.toggle('is-done', inn.loaded >= inn.k.count);
+      if (bar) bar.style.width = (100 * inn.loaded / inn.k.count) + '%';
+    }
+    thumbs.forEach(function (t) {
+      t.addEventListener('click', function () { swapTo(parseInt(t.getAttribute('data-spin-thumb'), 10) || 0); });
+    });
+
+    var last = 0;
+    function loop(now) {
+      var dt = Math.min(0.05, (now - last) / 1000); last = now;
+      if (visible) for (var i = 0; i < viewers.length; i++) viewers[i].tick(dt);
+      requestAnimationFrame(loop);
+    }
+    function start() {
+      if (started) return; started = true;
+      viewers[0].preload();
+      last = performance.now();
+      requestAnimationFrame(loop);
+    }
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          visible = en.isIntersecting;
+          if (en.isIntersecting) start();
+        });
+      }, { rootMargin: '600px 0px' });
+      io.observe(host);
+    } else { visible = true; start(); }
+  }
+
   function boot() {
     fillIcons();
     initHero();
     initNav();
     initCustomizer();
+    initSpin();
     initLightbox();
     initGalleryStrip();
     initPDP();

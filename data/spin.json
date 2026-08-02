@@ -1,0 +1,12 @@
+{
+  "eyebrow": "The 360 View",
+  "title": "See it from every angle",
+  "intro": "A GC Knot in the round. Let it spin, or take hold and turn it yourself.",
+  "hint": "Drag to rotate - release to resume",
+  "baseSpeed": 15,
+  "dragDir": -1,
+  "knots": [
+    { "id": "eldredge-gold", "label": "Gold", "folder": "gcwindsor/spin/eldredge-gold", "count": 295 },
+    { "id": "eldredge-gold-black", "label": "Gold & Black", "folder": "gcwindsor/spin/eldredge-gold-black", "count": 295 }
+  ]
+}
