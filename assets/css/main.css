@@ -1178,49 +1178,76 @@ html { scroll-behavior: smooth; scroll-padding-top: var(--nav-h); }
    PASS 5 — customizer polish
    1. Colour selects CROSSFADE (no slide): .is-fade drives an opacity-only
       transition; the old layer holds still underneath.
-   2. Mobile: design tabs + colour rows become side-scrollers (.hs shell)
-      with edge fades and directional arrows that vanish at the ends.
-   3. Smaller swatches on mobile.
+   2. Colour rows are side-scrollers (.hs shell) at EVERY width — edge
+      fades + directional arrows that appear only when that direction can
+      scroll, finger-drag on touch, mouse-drag + arrows on desktop.
+      Design tabs join in on mobile.
+   3. Mobile: tighter spacing + smaller swatches so the model and every
+      selection row fit on one screen.
    ===================================================================== */
 .cz__layer.is-fade { transition: opacity .38s var(--ease); }
 
-/* the .hs shell is inert on desktop: no overflow, no fades, no arrows */
-.hs { position: relative; min-width: 0; }
-.hs__arrow { display: none; }
+/* ---- the .hs shell ------------------------------------------------- */
+.hs { position: relative; min-width: 0; max-width: 100%; }
 
+/* CRITICAL: without these, the nowrap rows blow the grid/flex ancestors
+   out to the row's full width (nothing scrolls, the page overflows and
+   the whole section gets cut off on phones). Every ancestor between the
+   scroller and the section must be allowed to shrink. */
+.cz__side, .cz__picker, .cz__pick, .cz__opts, .cz__tabs { min-width: 0; max-width: 100%; }
+.cz__grid { grid-template-columns: minmax(0, 1fr) var(--cz-side-w); }
+@media (max-width: 1024px) {
+  .cz__grid { grid-template-columns: minmax(0, 1fr); }
+  .cz__picker { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* colour rows: one line, scrolls sideways — all screen sizes */
+.hs > .cz__opts { overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y; }
+.hs > .cz__opts::-webkit-scrollbar { display: none; }
+.hs > .cz__opts .cz__row { flex-wrap: nowrap; width: max-content; padding: 6px 2px; }
+.hs.has-l > .cz__opts, .hs.has-r > .cz__opts { cursor: grab; }
+.hs.is-panning > .cz__opts, .hs.is-panning > .cz__tabs { cursor: grabbing; }
+
+/* edge fades — only on the side that can still scroll */
+.hs::before, .hs::after {
+  content: ''; position: absolute; top: 0; bottom: 0; width: 36px; z-index: 2;
+  pointer-events: none; opacity: 0; transition: opacity .3s var(--ease);
+}
+.hs::before { left: 0; background: linear-gradient(90deg, var(--black), transparent); }
+.hs::after  { right: 0; background: linear-gradient(270deg, var(--black), transparent); }
+.hs.has-l::before, .hs.has-r::after { opacity: 1; }
+
+/* directional arrows — appear only when that direction can scroll */
+.hs__arrow {
+  display: flex; align-items: center; justify-content: center;
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 3;
+  width: 26px; height: 26px; padding: 0; border-radius: 50%;
+  background: rgba(13,13,13,.72); border: 1px solid rgba(201,162,39,.45);
+  color: var(--gold); cursor: pointer;
+  opacity: 0; pointer-events: none; transition: opacity .3s var(--ease);
+}
+.hs__arrow svg { width: 14px; height: 14px; }
+.hs__arrow--l { left: -2px; }
+.hs__arrow--r { right: -2px; }
+.hs.has-l .hs__arrow--l, .hs.has-r .hs__arrow--r { opacity: 1; pointer-events: auto; }
+
+/* design tabs scroll too on small screens (desktop keeps them wrapped) */
 @media (max-width: 700px) {
-  /* rows stop wrapping and scroll sideways instead */
-  .hs > .cz__tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding-right: 26px; }
+  .hs > .cz__tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y; padding-right: 26px; }
   .hs > .cz__tabs::-webkit-scrollbar { display: none; }
   .hs > .cz__tabs .cz__tab { flex: 0 0 auto; white-space: nowrap; }
-  .hs > .cz__opts { overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-  .hs > .cz__opts::-webkit-scrollbar { display: none; }
-  .hs > .cz__opts .cz__row { flex-wrap: nowrap; width: max-content; padding: 6px 2px; }
 
-  /* edge fades — only on the side that can still scroll */
-  .hs::before, .hs::after {
-    content: ''; position: absolute; top: 0; bottom: 0; width: 36px; z-index: 2;
-    pointer-events: none; opacity: 0; transition: opacity .3s var(--ease);
-  }
-  .hs::before { left: 0; background: linear-gradient(90deg, var(--black), transparent); }
-  .hs::after  { right: 0; background: linear-gradient(270deg, var(--black), transparent); }
-  .hs.has-l::before, .hs.has-r::after { opacity: 1; }
-
-  /* directional arrows — appear only when that direction can scroll */
-  .hs__arrow {
-    display: flex; align-items: center; justify-content: center;
-    position: absolute; top: 50%; transform: translateY(-50%); z-index: 3;
-    width: 26px; height: 26px; padding: 0; border-radius: 50%;
-    background: rgba(13,13,13,.72); border: 1px solid rgba(201,162,39,.45);
-    color: var(--gold); cursor: pointer;
-    opacity: 0; pointer-events: none; transition: opacity .3s var(--ease);
-  }
-  .hs__arrow svg { width: 14px; height: 14px; }
-  .hs__arrow--l { left: -2px; }
-  .hs__arrow--r { right: -2px; }
-  .hs.has-l .hs__arrow--l, .hs.has-r .hs__arrow--r { opacity: 1; pointer-events: auto; }
-
-  /* smaller colour swatches on mobile */
+  /* consolidate: tighter rhythm + smaller swatches so the model AND both
+     selection rows share one screen */
+  .cz__head { margin-bottom: var(--sp-3); }
+  .cz__intro { margin-top: 8px; }
+  .cz__grid { gap: var(--sp-3); }
+  .cz__side { gap: var(--sp-3); }
+  .cz__picker { gap: 14px; padding-bottom: var(--sp-3); margin-bottom: 0; }
+  .cz__rowlabel { margin-bottom: 8px; }
+  .cz__tabs { margin-bottom: 10px; gap: 16px; }
+  .cz__opts { min-height: 34px; }
+  .cz__hint { margin-top: 6px; font-size: 9px; letter-spacing: .2em; }
   .sw__dot { width: 24px; height: 24px; }
   .cz__row { gap: 12px; }
 }

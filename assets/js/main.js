@@ -394,9 +394,34 @@
     }
     container.addEventListener('scroll', update, { passive: true });
     window.addEventListener('resize', update, { passive: true });
+    window.addEventListener('load', update);
     if ('MutationObserver' in window) new MutationObserver(update).observe(container, { childList: true, subtree: true });
     update();
     setTimeout(update, 350);   /* fonts/images can change widths after load */
+
+    /* mouse users can grab-and-slide the row, same as a finger on touch
+       (touch itself uses native overflow scrolling). A real drag swallows
+       the click so letting go doesn't accidentally pick a swatch. */
+    if (window.PointerEvent) {
+      var panning = false, moved = false, panX = 0, panL = 0;
+      container.addEventListener('pointerdown', function (e) {
+        if (e.pointerType !== 'mouse' || e.button !== 0) return;
+        if (container.scrollWidth - container.clientWidth <= 4) return;
+        panning = true; moved = false; panX = e.clientX; panL = container.scrollLeft;
+      });
+      window.addEventListener('pointermove', function (e) {
+        if (!panning) return;
+        var dx = e.clientX - panX;
+        if (Math.abs(dx) > 5) { moved = true; wrap.classList.add('is-panning'); }
+        container.scrollLeft = panL - dx;
+      });
+      window.addEventListener('pointerup', function () {
+        panning = false; wrap.classList.remove('is-panning');
+      });
+      container.addEventListener('click', function (e) {
+        if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; }
+      }, true);
+    }
   }
 
   /* ---- gallery: a horizontal scrolling strip (tiles are server-rendered) ---- */
