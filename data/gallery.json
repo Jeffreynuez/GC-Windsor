@@ -13,6 +13,11 @@
  },
  "items": [
   {
+   "src": "CDN:image/upload/c_crop,x_0,y_0,w_1368,h_2603/v1785723964/gcwindsor/yklugslvqztlnfwcn1de.jpg",
+   "alt": "Stand tall GC Windsor Blue & Gold",
+   "span": "tall"
+  },
+  {
    "src": "CDN:gcwindsor/photos/circle-of-knots-1",
    "span": "wide",
    "alt": "The full GC Windsor colour range"
