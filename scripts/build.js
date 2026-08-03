@@ -307,7 +307,7 @@ function buildHome() {
       <div style="margin-top:.5rem"><a class="btn btn--gold" href="${esc(H.split.ctaHref)}"><span${ed('home.split.ctaLabel')}>${esc(H.split.ctaLabel)}</span> <span class="arw-slot"></span></a></div>
     </div>
     <div class="split__media split__media--full reveal" data-delay="1">
-      <img src="${img(H.split.image, 'f_auto,q_auto,w_1600')}" alt="A GC knot and tie, in detail" loading="lazy">
+      <img src="${img(H.split.image, 'f_auto,q_auto,w_1600')}"${ed('home.split.image')} data-edit-media="image" alt="A GC knot and tie, in detail" loading="lazy">
     </div>
   </div>
 </section>
@@ -417,8 +417,8 @@ function buildHome() {
 
 ${newsletter()}
 
-<section id="contact-cta" class="cta-bleed" data-parallax>
-  <img class="cta-bleed__img" src="${img(H.contactCta.image, 'f_auto,q_auto,w_1920')}" alt="" loading="lazy">
+<section id="contact-cta" class="cta-bleed" data-parallax data-parallax-strength="30">
+  <img class="cta-bleed__img" src="${img(H.contactCta.image, 'f_auto,q_auto,w_1920')}"${ed('home.contactCta.image')} data-edit-media="image" alt="" loading="lazy">
   <div class="cta-bleed__scrim"></div>
   <div class="cta-bleed__inner reveal">
     <p class="eyebrow eyebrow--center" style="color:var(--gold-light)"${ed('home.contactCta.eyebrow')}>${esc(H.contactCta.eyebrow)}</p>

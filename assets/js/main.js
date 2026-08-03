@@ -104,38 +104,20 @@
         '<filter id="czBlurTie" x="-30%" y="-10%" width="160%" height="120%"><feGaussianBlur data-cz-blur="tie" in="SourceGraphic" stdDeviation="0 0"></feGaussianBlur></filter>' +
       '</svg>';
 
-    var gleam = $('[data-cz-gleam]', stage);
-    var MAXBLUR = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cz-blur-max')) || 16;
     var PART = {
-      knot: { a: '[data-cz-knot-a]', b: '[data-cz-knot-b]', filter: 'url(#czBlurKnot)', blur: stage.querySelector('[data-cz-blur="knot"]') },
-      tie:  { a: '[data-cz-tie-a]',  b: '[data-cz-tie-b]',  filter: 'url(#czBlurTie)',  blur: stage.querySelector('[data-cz-blur="tie"]') }
+      knot: { a: '[data-cz-knot-a]', b: '[data-cz-knot-b]', blur: stage.querySelector('[data-cz-blur="knot"]') },
+      tie:  { a: '[data-cz-tie-a]',  b: '[data-cz-tie-b]',  blur: stage.querySelector('[data-cz-blur="tie"]') }
     };
 
-    function runGleam() {
-      if (reduceMotion || !gleam) return;
-      gleam.classList.remove('is-running');
-      void gleam.offsetWidth;
-      gleam.classList.add('is-running');
-    }
     function setBlur(node, px) { if (node) node.setAttribute('stdDeviation', (px > 0 ? px.toFixed(2) : '0') + ' 0'); }
-    function txOf(el) {
-      var t = getComputedStyle(el).transform;
-      if (!t || t === 'none') return 0;
-      var m = t.match(/matrix\(([^)]+)\)/);
-      if (m) { var p = m[1].split(','); return Math.abs(parseFloat(p[4]) || 0); }
-      var m3 = t.match(/matrix3d\(([^)]+)\)/);
-      if (m3) { var q = m3[1].split(','); return Math.abs(parseFloat(q[12]) || 0); }
-      return 0;
-    }
     function resetLayer(el) {
-      el.classList.remove('is-on', 'is-anim');
-      el.style.transition = ''; el.style.transform = ''; el.style.opacity = ''; el.style.filter = '';
+      el.classList.remove('is-on', 'is-anim', 'is-fade');
+      el.style.transition = ''; el.style.transform = ''; el.style.opacity = ''; el.style.filter = ''; el.style.zIndex = '';
     }
 
-    /* the incoming layer slides in from the LEFT and settles pixel-exact; the
-       outgoing layer slides out to the RIGHT and fades — same direction, like a
-       card pushed from a slot. The incoming layer carries a horizontal motion
-       blur that peaks at velocity and resolves to zero as it lands. */
+    /* selecting a colour CROSSFADES: the old layer holds still underneath while
+       the new one fades in on top — the same quiet dissolve as the drag scrub,
+       no sliding, no motion blur. */
     function swap(partKey, src, animate) {
       var P = PART[partKey];
       var a = $(P.a, stage), b = $(P.b, stage);
@@ -151,42 +133,35 @@
 
         if (!animate || reduceMotion) {
           resetLayer(outgoing);
-          incoming.classList.remove('is-anim');
+          incoming.classList.remove('is-anim', 'is-fade');
           incoming.style.transition = ''; incoming.style.transform = ''; incoming.style.opacity = ''; incoming.style.filter = '';
           incoming.classList.add('is-on');
           return;
         }
 
-        incoming.classList.add('is-on'); incoming.classList.remove('is-anim');
-        incoming.style.transition = 'none'; incoming.style.opacity = '1';
-        incoming.style.transform = 'translateX(-100%)'; incoming.style.filter = P.filter;
-
-        outgoing.classList.add('is-on'); outgoing.classList.remove('is-anim');
-        outgoing.style.transition = 'none'; outgoing.style.opacity = '1'; outgoing.style.transform = 'translateX(0)'; outgoing.style.filter = '';
-
+        outgoing.style.zIndex = '1';
+        incoming.style.zIndex = '2';
+        incoming.classList.remove('is-anim', 'is-fade');
+        incoming.style.transition = 'none'; incoming.style.transform = ''; incoming.style.filter = '';
+        incoming.style.opacity = '0';
+        incoming.classList.add('is-on');
         void incoming.offsetWidth;
-        setBlur(P.blur, MAXBLUR);
 
         requestAnimationFrame(function () {
-          incoming.classList.add('is-anim'); incoming.style.transition = ''; incoming.style.transform = 'translateX(0)';
-          outgoing.classList.add('is-anim'); outgoing.style.transition = ''; outgoing.style.transform = 'translateX(100%)'; outgoing.style.opacity = '0';
-
-          var frameW = incoming.getBoundingClientRect().width || 1;
-          var running = true;
-          (function tick() {
-            if (!running) return;
-            setBlur(P.blur, (txOf(incoming) / frameW) * MAXBLUR);   /* blur tracks distance from rest */
-            requestAnimationFrame(tick);
-          })();
-
+          incoming.classList.add('is-fade');
+          incoming.style.transition = ''; incoming.style.opacity = '1';
+          var settled = false;
           var done = function (e) {
-            if (e.propertyName !== 'transform') return;
-            outgoing.removeEventListener('transitionend', done);
-            running = false; setBlur(P.blur, 0);
-            incoming.style.filter = ''; incoming.classList.remove('is-anim');
+            if (settled) return;
+            if (e && e.propertyName && e.propertyName !== 'opacity') return;
+            settled = true;
+            incoming.removeEventListener('transitionend', done);
+            incoming.classList.remove('is-fade');
+            incoming.style.opacity = ''; incoming.style.zIndex = '';
             resetLayer(outgoing);
           };
-          outgoing.addEventListener('transitionend', done);
+          incoming.addEventListener('transitionend', done);
+          setTimeout(done, 650);   /* safety: settle even if transitionend is swallowed */
         });
       };
       probe.src = src;
@@ -203,7 +178,6 @@
         var c = colorById(d, st.appColorId);
         swap(pk, c ? c.img : null, animate);
       });
-      if (animate) runGleam();
       updatePanel();
     }
 
@@ -377,6 +351,52 @@
 
     types.forEach(renderType);
     applyStage();
+
+    /* on small screens the design tabs + colour rows become side-scrollers
+       (edge fades + arrows appear only in the direction that can scroll) */
+    $all('[data-cz-designs], [data-cz-colors]', root).forEach(makeHscroll);
+  }
+
+  /* ---- generic horizontal scroller: edge fades + directional arrows ----
+     Wraps `container` in a .hs shell. The container itself scrolls; the shell
+     carries the fade masks and the two arrow buttons. Arrows/fades only show
+     when there is actually somewhere to scroll in that direction, and vanish
+     at the ends. Content re-renders inside the container are picked up via a
+     MutationObserver. All of it is inert on desktop (CSS gates the overflow). */
+  function makeHscroll(container) {
+    if (!container || (container.parentElement && container.parentElement.classList.contains('hs'))) return;
+    var wrap = document.createElement('div');
+    wrap.className = 'hs';
+    container.parentNode.insertBefore(wrap, container);
+    wrap.appendChild(container);
+
+    function arrow(dir) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'hs__arrow hs__arrow--' + dir;
+      b.setAttribute('aria-label', dir === 'l' ? 'Scroll left' : 'Scroll right');
+      b.innerHTML = dir === 'l' ? ICONS.chevL : ICONS.chevR;
+      b.addEventListener('click', function () {
+        var step = Math.max(120, container.clientWidth * 0.7) * (dir === 'l' ? -1 : 1);
+        if (container.scrollBy) container.scrollBy({ left: step, behavior: 'smooth' });
+        else container.scrollLeft += step;
+      });
+      return b;
+    }
+    wrap.appendChild(arrow('l'));
+    wrap.appendChild(arrow('r'));
+
+    function update() {
+      var max = container.scrollWidth - container.clientWidth;
+      var x = container.scrollLeft;
+      wrap.classList.toggle('has-l', max > 4 && x > 4);
+      wrap.classList.toggle('has-r', max > 4 && x < max - 4);
+    }
+    container.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    if ('MutationObserver' in window) new MutationObserver(update).observe(container, { childList: true, subtree: true });
+    update();
+    setTimeout(update, 350);   /* fonts/images can change widths after load */
   }
 
   /* ---- gallery: a horizontal scrolling strip (tiles are server-rendered) ---- */
@@ -499,25 +519,33 @@
   }
 
   function initParallax() {
-    var layers = $all('[data-parallax] img:not([data-amb])');   /* photography + full-bleed — moves as a % of its own height */
+    var layerEls = $all('[data-parallax] img:not([data-amb])'); /* photography + full-bleed — moves as a % of its own height */
     var motifs = $all('[data-amb]');            /* rooster marks + founder emblem — move in px, by data-speed */
-    if (reduceMotion || (!layers.length && !motifs.length)) return;
+    if (reduceMotion || (!layerEls.length && !motifs.length)) return;
 
     /* travel strengths are tokens on :root, so the CMS theme controls them */
     var cs = getComputedStyle(document.documentElement);
     var MEDIA = parseFloat(cs.getPropertyValue('--parallax-media')) || 18;   /* % of image height */
     var MOTIF = parseFloat(cs.getPropertyValue('--parallax-motif')) || 1.8;  /* multiplier */
 
+    /* a section can boost its own travel via data-parallax-strength="30" */
+    var layers = layerEls.map(function (img) {
+      var host = img.closest('[data-parallax]');
+      var s = host ? parseFloat(host.getAttribute('data-parallax-strength')) : NaN;
+      return { img: img, strength: (s && s > 0) ? s : MEDIA };
+    });
+
     var ticking = false;
     function update() {
       var vh = window.innerHeight;
 
-      layers.forEach(function (img) {
+      layers.forEach(function (L) {
+        var img = L.img;
         var r = img.parentElement.getBoundingClientRect();
         if (r.bottom < -300 || r.top > vh + 300) return;
         var p = (r.top + r.height / 2 - vh / 2) / vh;   /* -0.5 .. 0.5 across the viewport */
         if (p > 0.5) p = 0.5; else if (p < -0.5) p = -0.5;
-        img.style.transform = 'translate3d(0,' + (p * -MEDIA).toFixed(2) + '%,0)';
+        img.style.transform = 'translate3d(0,' + (p * -L.strength).toFixed(2) + '%,0)';
       });
 
       motifs.forEach(function (m) {
@@ -928,14 +956,19 @@
     '[data-edit],[data-edit-item]{cursor:pointer}' +
     '[data-edit]:hover{outline:2px dashed #c9a227;outline-offset:2px}' +
     '[data-edit-item]:hover{outline:2px dashed #e3c766;outline-offset:3px}' +
-    '[data-edit].jrd-sel{outline:2px solid #c9a227;outline-offset:2px}';
+    '[data-edit].jrd-sel{outline:2px solid #c9a227;outline-offset:2px}' +
+    '.jrd-drop{outline:3px solid #c9a227 !important;outline-offset:3px}' +
+    '.jrd-drag{opacity:.35}';
   document.head.appendChild(st);
 
   var selEl = null;
   function select(el) {
     if (selEl) { selEl.classList.remove('jrd-sel'); selEl.removeAttribute('contenteditable'); }
     selEl = el;
-    if (selEl) { selEl.classList.add('jrd-sel'); selEl.setAttribute('contenteditable', 'true'); selEl.focus(); }
+    if (selEl) {
+      selEl.classList.add('jrd-sel');
+      if (!selEl.hasAttribute('data-edit-media')) { selEl.setAttribute('contenteditable', 'true'); selEl.focus(); }
+    }
   }
 
   document.addEventListener('click', function (e) {
@@ -949,7 +982,8 @@
       jrd: 'select',
       edit: leaf ? leaf.getAttribute('data-edit') : null,
       item: item ? item.getAttribute('data-edit-item') : null,
-      text: leaf ? leaf.textContent : null
+      media: (leaf && leaf.hasAttribute('data-edit-media')) ? (leaf.getAttribute('data-edit-media') || 'image') : null,
+      text: (leaf && !leaf.hasAttribute('data-edit-media')) ? leaf.textContent : null
     }, '*');
   }, true);
 
@@ -993,7 +1027,197 @@
         if (d.align) el.style.setProperty('text-align', d.align, 'important'); else el.style.removeProperty('text-align');
       });
     }
+    /* a media field changed in the panel -> live-swap the image/video on the page */
+    if (d.jrd === 'media-apply' && d.edit && d.url) {
+      document.querySelectorAll('[data-edit="' + d.edit + '"]').forEach(function (el) {
+        var m = (el.tagName === 'IMG' || el.tagName === 'VIDEO') ? el : el.querySelector('img,video');
+        if (m) { m.src = d.url; if (m.tagName === 'VIDEO' && m.load) m.load(); }
+      });
+    }
+    /* an item's image was replaced (panel upload or file dropped on its tile) */
+    if (d.jrd === 'item-media' && d.file && d.arr != null && typeof d.idx === 'number' && d.url) {
+      var host = document.querySelector('[data-edit-item="' + d.file + '#' + d.arr + '#' + d.idx + '"]');
+      if (host) {
+        var hm = (host.tagName === 'IMG' || host.tagName === 'VIDEO') ? host : host.querySelector('img,video');
+        if (hm) { hm.src = d.url; if (hm.tagName === 'VIDEO' && hm.load) hm.load(); }
+        if (host.hasAttribute('data-full')) host.setAttribute('data-full', d.url);
+      }
+    }
+    /* a new item was added at the TOP of a list (file dropped on the section):
+       clone the first tile as a stand-in preview and shift every stamp up one */
+    if (d.jrd === 'item-add' && d.file && d.arr != null && d.url) {
+      var pref2 = d.file + '#' + d.arr + '#';
+      var editPref2 = d.file + '#' + d.arr + '.';
+      var first = document.querySelector('[data-edit-item="' + pref2 + '0"]');
+      var clone = first ? first.cloneNode(true) : null;
+      document.querySelectorAll('[data-edit-item]').forEach(function (el2) {
+        var v = el2.getAttribute('data-edit-item');
+        if (v.indexOf(pref2) === 0) el2.setAttribute('data-edit-item', pref2 + (parseInt(v.slice(pref2.length), 10) + 1));
+      });
+      document.querySelectorAll('[data-edit]').forEach(function (el2) {
+        var v = el2.getAttribute('data-edit');
+        if (v.indexOf(editPref2) === 0) {
+          var rest = v.slice(editPref2.length), m2 = rest.match(/^(\d+)(\..*)?$/);
+          if (m2) el2.setAttribute('data-edit', editPref2 + (parseInt(m2[1], 10) + 1) + (m2[2] || ''));
+        }
+      });
+      if (clone && first) {
+        var cm = (clone.tagName === 'IMG' || clone.tagName === 'VIDEO') ? clone : clone.querySelector('img,video');
+        if (cm) { cm.src = d.url; if (cm.tagName === 'VIDEO' && cm.load) cm.load(); }
+        if (clone.hasAttribute('data-full')) clone.setAttribute('data-full', d.url);
+        first.parentNode.insertBefore(clone, first);
+      }
+      markDraggables();
+    }
   });
+
+  /* ============================================================
+     ON-PAGE MEDIA DROPS + DRAG-TO-REORDER (edit mode only)
+     - drop an image file from your computer ONTO a tile  -> replace it
+     - drop it into the open area of a list's section     -> add it
+     - drag a tile onto a sibling                          -> reorder
+     The upload itself happens in the /admin parent (it holds the auth);
+     the page just reports what was dropped where.
+     ============================================================ */
+  function stampBase(v) { return v.slice(0, v.lastIndexOf('#')); }
+  function stampIdx(v) { return parseInt(v.slice(v.lastIndexOf('#') + 1), 10); }
+
+  function markDraggables() {
+    var counts = {};
+    document.querySelectorAll('[data-edit-item]').forEach(function (el) {
+      var b = stampBase(el.getAttribute('data-edit-item'));
+      counts[b] = (counts[b] || 0) + 1;
+    });
+    document.querySelectorAll('[data-edit-item]').forEach(function (el) {
+      if (counts[stampBase(el.getAttribute('data-edit-item'))] > 1) el.setAttribute('draggable', 'true');
+    });
+  }
+
+  /* remap stamps after moving index `from` -> `to` inside base (file#arr) */
+  function remapMove(base, from, to) {
+    var pref = base + '#';
+    var editPref = base + '.';   /* leaf stamps: file#arr.idx.field */
+    function newIdx(n) {
+      if (n === from) return to;
+      if (from < to && n > from && n <= to) return n - 1;
+      if (to < from && n >= to && n < from) return n + 1;
+      return n;
+    }
+    document.querySelectorAll('[data-edit-item]').forEach(function (el) {
+      var v = el.getAttribute('data-edit-item');
+      if (stampBase(v) === base) el.setAttribute('data-edit-item', pref + newIdx(stampIdx(v)));
+    });
+    document.querySelectorAll('[data-edit]').forEach(function (el) {
+      var v = el.getAttribute('data-edit');
+      if (v.indexOf(editPref) === 0) {
+        var rest = v.slice(editPref.length), m = rest.match(/^(\d+)(\..*)?$/);
+        if (m) el.setAttribute('data-edit', editPref + newIdx(parseInt(m[1], 10)) + (m[2] || ''));
+      }
+    });
+  }
+
+  function isFileDrag(e) {
+    var t = e.dataTransfer && e.dataTransfer.types;
+    return !!t && Array.prototype.indexOf.call(t, 'Files') >= 0;
+  }
+  /* walking up from `node`, find the nearest ancestor whose stamped items all
+     belong to ONE list — that list is the add-target for a loose file drop */
+  function arrTargetOf(node) {
+    var el = node && node.nodeType === 1 ? node : (node && node.parentElement);
+    while (el && el !== document.body) {
+      var stamped = el.querySelectorAll('[data-edit-item]');
+      if (stamped.length) {
+        var base = null;
+        for (var i = 0; i < stamped.length; i++) {
+          var b = stampBase(stamped[i].getAttribute('data-edit-item'));
+          if (base === null) base = b;
+          else if (b !== base) return null;   /* mixed lists here — no clear target */
+        }
+        return { el: el, arr: base };
+      }
+      el = el.parentElement;
+    }
+    return null;
+  }
+
+  var dropEl = null;
+  function clearDrop() { if (dropEl) { dropEl.classList.remove('jrd-drop'); dropEl = null; } }
+
+  var drag = null;      /* {el, base, idx} while a tile is being dragged */
+  var indEl = null;
+  function clearInd() { if (indEl) { indEl.style.boxShadow = ''; indEl = null; } }
+  function dropPos(over, e) {
+    var r = over.getBoundingClientRect();
+    var pw = (over.parentElement && over.parentElement.clientWidth) || r.width;
+    var useY = r.width > pw * 0.8;   /* full-width rows stack vertically */
+    var after = useY ? ((e.clientY - r.top) > r.height / 2) : ((e.clientX - r.left) > r.width / 2);
+    return { useY: useY, after: after };
+  }
+
+  document.addEventListener('dragstart', function (e) {
+    var el = e.target && e.target.closest && e.target.closest('[data-edit-item]');
+    if (!el || !el.hasAttribute('draggable')) return;
+    var v = el.getAttribute('data-edit-item');
+    drag = { el: el, base: stampBase(v), idx: stampIdx(v) };
+    el.classList.add('jrd-drag');
+    try { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', v); } catch (_) {}
+  });
+  document.addEventListener('dragend', function () {
+    if (drag) drag.el.classList.remove('jrd-drag');
+    drag = null; clearInd(); clearDrop();
+  });
+
+  document.addEventListener('dragover', function (e) {
+    if (isFileDrag(e)) {
+      e.preventDefault();
+      var t = e.target.closest && e.target.closest('[data-edit-item]');
+      var el = t || (function () { var a = arrTargetOf(e.target); return a && a.el; })();
+      if (el !== dropEl) { clearDrop(); if (el) { dropEl = el; el.classList.add('jrd-drop'); } }
+      return;
+    }
+    if (!drag) return;
+    var over = e.target.closest && e.target.closest('[data-edit-item]');
+    if (!over || over === drag.el || stampBase(over.getAttribute('data-edit-item')) !== drag.base) { clearInd(); return; }
+    e.preventDefault();
+    try { e.dataTransfer.dropEffect = 'move'; } catch (_) {}
+    var pos = dropPos(over, e);
+    if (indEl !== over) clearInd();
+    indEl = over;
+    over.style.boxShadow = pos.useY
+      ? (pos.after ? 'inset 0 -3px 0 0 #c9a227' : 'inset 0 3px 0 0 #c9a227')
+      : (pos.after ? 'inset -3px 0 0 0 #c9a227' : 'inset 3px 0 0 0 #c9a227');
+  });
+
+  document.addEventListener('drop', function (e) {
+    if (isFileDrag(e)) {
+      e.preventDefault();
+      var files = Array.prototype.slice.call(e.dataTransfer.files || []);
+      var t = e.target.closest && e.target.closest('[data-edit-item]');
+      var msg = null;
+      if (t) msg = { jrd: 'files-drop', item: t.getAttribute('data-edit-item'), files: files };
+      else { var a = arrTargetOf(e.target); if (a) msg = { jrd: 'files-drop', arr: a.arr, files: files }; }
+      clearDrop();
+      if (msg && files.length) parent.postMessage(msg, '*');
+      return;
+    }
+    if (!drag) return;
+    var over = e.target.closest && e.target.closest('[data-edit-item]');
+    clearInd();
+    if (!over || over === drag.el || stampBase(over.getAttribute('data-edit-item')) !== drag.base) return;
+    e.preventDefault();
+    var overIdx = stampIdx(over.getAttribute('data-edit-item'));
+    var pos = dropPos(over, e);
+    var to = overIdx + (pos.after ? 1 : 0);
+    if (drag.idx < to) to--;
+    if (to === drag.idx) return;
+    if (pos.after) over.parentNode.insertBefore(drag.el, over.nextSibling);
+    else over.parentNode.insertBefore(drag.el, over);
+    var fa = drag.base.split('#');
+    remapMove(drag.base, drag.idx, to);
+    parent.postMessage({ jrd: 'item-move', file: fa[0], arr: fa[1], from: drag.idx, to: to }, '*');
+  });
+
+  markDraggables();
 
   parent.postMessage({ jrd: 'ready', page: location.pathname }, '*');
 })();
