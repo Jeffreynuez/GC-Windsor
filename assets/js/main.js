@@ -139,30 +139,39 @@
           return;
         }
 
-        outgoing.style.zIndex = '1';
-        incoming.style.zIndex = '2';
-        incoming.classList.remove('is-anim', 'is-fade');
-        incoming.style.transition = 'none'; incoming.style.transform = ''; incoming.style.filter = '';
-        incoming.style.opacity = '0';
-        incoming.classList.add('is-on');
-        void incoming.offsetWidth;
+        /* WAIT for the layer to actually hold the new bitmap before showing
+           it — an <img> keeps painting its previous image until the new src
+           is decoded, which is what caused the old colour to flash for a
+           frame at the start of the fade. */
+        var begin = function () {
+          if (incoming.getAttribute('src') !== src) return;   /* superseded by a newer selection */
+          outgoing.style.zIndex = '1';
+          incoming.style.zIndex = '2';
+          incoming.classList.remove('is-anim', 'is-fade');
+          incoming.style.transition = 'none'; incoming.style.transform = ''; incoming.style.filter = '';
+          incoming.style.opacity = '0';
+          incoming.classList.add('is-on');
+          void incoming.offsetWidth;
 
-        requestAnimationFrame(function () {
-          incoming.classList.add('is-fade');
-          incoming.style.transition = ''; incoming.style.opacity = '1';
-          var settled = false;
-          var done = function (e) {
-            if (settled) return;
-            if (e && e.propertyName && e.propertyName !== 'opacity') return;
-            settled = true;
-            incoming.removeEventListener('transitionend', done);
-            incoming.classList.remove('is-fade');
-            incoming.style.opacity = ''; incoming.style.zIndex = '';
-            resetLayer(outgoing);
-          };
-          incoming.addEventListener('transitionend', done);
-          setTimeout(done, 650);   /* safety: settle even if transitionend is swallowed */
-        });
+          requestAnimationFrame(function () {
+            incoming.classList.add('is-fade');
+            incoming.style.transition = ''; incoming.style.opacity = '1';
+            var settled = false;
+            var done = function (e) {
+              if (settled) return;
+              if (e && e.propertyName && e.propertyName !== 'opacity') return;
+              settled = true;
+              incoming.removeEventListener('transitionend', done);
+              incoming.classList.remove('is-fade');
+              incoming.style.opacity = ''; incoming.style.zIndex = '';
+              resetLayer(outgoing);
+            };
+            incoming.addEventListener('transitionend', done);
+            setTimeout(done, 650);   /* safety: settle even if transitionend is swallowed */
+          });
+        };
+        if (incoming.decode) incoming.decode().then(begin, begin);
+        else begin();
       };
       probe.src = src;
     }
