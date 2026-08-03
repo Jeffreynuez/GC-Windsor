@@ -966,6 +966,27 @@
         if (el !== selEl || !el.isContentEditable) el.textContent = d.value;
       });
     }
+    if (d.jrd === 'item-remove' && d.file && d.arr != null && typeof d.idx === 'number') {
+      var pref = d.file + '#' + d.arr + '#';
+      var editPref = d.file + '#' + d.arr + '.';
+      var victim = document.querySelector('[data-edit-item="' + pref + d.idx + '"]');
+      if (victim) victim.remove();
+      /* re-index the stamps after the removed item so further edits hit the right slots */
+      document.querySelectorAll('[data-edit-item]').forEach(function (el2) {
+        var v = el2.getAttribute('data-edit-item');
+        if (v.indexOf(pref) === 0) {
+          var n = parseInt(v.slice(pref.length), 10);
+          if (n > d.idx) el2.setAttribute('data-edit-item', pref + (n - 1));
+        }
+      });
+      document.querySelectorAll('[data-edit]').forEach(function (el2) {
+        var v = el2.getAttribute('data-edit');
+        if (v.indexOf(editPref) === 0) {
+          var rest = v.slice(editPref.length), m2 = rest.match(/^(\d+)(\..*)?$/);
+          if (m2) { var n2 = parseInt(m2[1], 10); if (n2 > d.idx) el2.setAttribute('data-edit', editPref + (n2 - 1) + (m2[2] || '')); }
+        }
+      });
+    }
     if (d.jrd === 'styleapply' && d.edit) {
       document.querySelectorAll('[data-edit="' + d.edit + '"]').forEach(function (el) {
         if (d.color) el.style.setProperty('color', d.color, 'important'); else el.style.removeProperty('color');
