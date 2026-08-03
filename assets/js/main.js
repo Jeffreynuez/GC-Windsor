@@ -151,11 +151,17 @@
           incoming.style.transition = 'none'; incoming.style.transform = ''; incoming.style.filter = '';
           incoming.style.opacity = '0';
           incoming.classList.add('is-on');
+          outgoing.classList.remove('is-anim', 'is-fade');
+          outgoing.style.transition = 'none'; outgoing.style.opacity = '1';
           void incoming.offsetWidth;
 
+          /* a quick TRUE dissolve: the old colour fades OUT as the new one
+             fades in — the old one never lingers underneath. */
           requestAnimationFrame(function () {
             incoming.classList.add('is-fade');
+            outgoing.classList.add('is-fade');
             incoming.style.transition = ''; incoming.style.opacity = '1';
+            outgoing.style.transition = ''; outgoing.style.opacity = '0';
             var settled = false;
             var done = function (e) {
               if (settled) return;
@@ -167,7 +173,7 @@
               resetLayer(outgoing);
             };
             incoming.addEventListener('transitionend', done);
-            setTimeout(done, 650);   /* safety: settle even if transitionend is swallowed */
+            setTimeout(done, 450);   /* safety: settle even if transitionend is swallowed */
           });
         };
         if (incoming.decode) incoming.decode().then(begin, begin);

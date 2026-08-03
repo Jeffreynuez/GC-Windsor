@@ -1185,7 +1185,7 @@ html { scroll-behavior: smooth; scroll-padding-top: var(--nav-h); }
    3. Mobile: tighter spacing + smaller swatches so the model and every
       selection row fit on one screen.
    ===================================================================== */
-.cz__layer.is-fade { transition: opacity .38s var(--ease); }
+.cz__layer.is-fade { transition: opacity .22s var(--ease); }
 
 /* ---- the .hs shell ------------------------------------------------- */
 .hs { position: relative; min-width: 0; max-width: 100%; }
