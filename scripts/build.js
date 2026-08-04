@@ -86,6 +86,23 @@ const gallery = D('gallery.json');
 const theme = D('theme.json');
 const G = pages.global;
 
+/* editor text styles (colour / alignment picked in the CMS selection panel).
+   Stored per data-edit key in data/styles.json; baked here as attribute-
+   selector rules so they apply to the exact stamped elements. Optional. */
+let styles = {};
+try { styles = D('styles.json'); } catch (e) { styles = {}; }
+function styleTag() {
+  let css = '';
+  for (const k in styles) {
+    const v = styles[k] || {};
+    const d = [];
+    if (v.color && /^#[0-9a-fA-F]{3,8}$/.test(String(v.color))) d.push('color:' + v.color + ' !important');
+    if (v.align && ['left', 'center', 'right'].includes(String(v.align))) d.push('text-align:' + v.align + ' !important');
+    if (d.length) css += `[data-edit="${k}"]{${d.join(';')}}\n`;
+  }
+  return css ? `<style>/* editor styles - data/styles.json */\n${css}</style>\n` : '';
+}
+
 /* ---------- ambient parallax layers ----------
    amb()  = the gold rooster mark, for DARK / photographic sections.
    mark() = the large black GC logo, a low-opacity watermark for LIGHT sections.
@@ -131,7 +148,7 @@ const head = (seo, page) => `<!DOCTYPE html>
 <link href="${FONTS}" rel="stylesheet">
 <link rel="stylesheet" href="/assets/css/theme.css">
 <link rel="stylesheet" href="/assets/css/main.css">
-</head>
+${styleTag()}</head>
 <body data-page="${page}">
 ${navHTML(page)}`;
 
