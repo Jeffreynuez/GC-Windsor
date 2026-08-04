@@ -1111,6 +1111,11 @@
         if (m) { m.src = d.url; if (m.tagName === 'VIDEO' && m.load) m.load(); }
       });
     }
+    /* a non-media field of an item changed in the panel — mirror what we can */
+    if (d.jrd === 'item-field' && d.file && d.arr != null && typeof d.idx === 'number' && d.key) {
+      applyItemField(document.querySelector('[data-edit-item="' + d.file + '#' + d.arr + '#' + d.idx + '"]'),
+        d.file + '#' + d.arr, d.key, d.value);
+    }
     /* an item's image was replaced (panel upload or file dropped on its tile) */
     if (d.jrd === 'item-media' && d.file && d.arr != null && typeof d.idx === 'number' && d.url) {
       var host = document.querySelector('[data-edit-item="' + d.file + '#' + d.arr + '#' + d.idx + '"]');
@@ -1142,11 +1147,27 @@
         var cm = (clone.tagName === 'IMG' || clone.tagName === 'VIDEO') ? clone : clone.querySelector('img,video');
         if (cm) { cm.src = d.url; if (cm.tagName === 'VIDEO' && cm.load) cm.load(); }
         if (clone.hasAttribute('data-full')) clone.setAttribute('data-full', d.url);
+        /* the clone inherited the donor tile's look — normalise it to the
+           NEW item's actual field values (size, caption, ...) */
+        if (d.item && typeof d.item === 'object') {
+          Object.keys(d.item).forEach(function (k) { applyItemField(clone, d.file + '#' + d.arr, k, d.item[k]); });
+        }
         first.parentNode.insertBefore(clone, first);
       }
       markDraggables();
     }
   });
+
+  /* map an item's data fields onto its visible tile where that makes sense */
+  function applyItemField(host, base, key, value) {
+    if (!host) return;
+    if (key === 'alt') { var im = host.querySelector('img'); if (im) im.alt = value || ''; }
+    if (base === 'gallery.json#items' && key === 'span') {
+      host.classList.remove('mtile--tall', 'mtile--wide');
+      if (value === 'tall') host.classList.add('mtile--tall');
+      else if (value === 'wide') host.classList.add('mtile--wide');
+    }
+  }
 
   /* ============================================================
      ON-PAGE MEDIA DROPS + DRAG-TO-REORDER (edit mode only)

@@ -41,7 +41,18 @@ function cdn(u, transform, kind) {
   const id = u.slice(4);
   const m = id.match(CDN_RE);
   const base = 'https://res.cloudinary.com/' + CLOUD + '/';
-  if (m) return base + m[1] + '/upload/' + transform + '/' + m[2];
+  if (m) {
+    /* the CMS may have stored transforms of its own ahead of the version
+       segment (the crop tool writes c_crop,x_,y_,w_,h_ in ORIGINAL pixels).
+       Those must stay FIRST in the chain - injecting our delivery transform
+       before them would scale the image down and push the crop coordinates
+       out of bounds, silently discarding the crop. */
+    const parts = m[2].split('/');
+    const vi = parts.findIndex(s => /^v\d+$/.test(s));
+    if (vi > 0)
+      return base + m[1] + '/upload/' + parts.slice(0, vi).join('/') + '/' + transform + '/' + parts.slice(vi).join('/');
+    return base + m[1] + '/upload/' + transform + '/' + m[2];
+  }
   return base + kind + '/upload/' + transform + '/' + id;
 }
 
