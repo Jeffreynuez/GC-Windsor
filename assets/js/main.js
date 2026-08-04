@@ -1108,7 +1108,7 @@
     if (d.jrd === 'media-apply' && d.edit && d.url) {
       document.querySelectorAll('[data-edit="' + d.edit + '"]').forEach(function (el) {
         var m = (el.tagName === 'IMG' || el.tagName === 'VIDEO') ? el : el.querySelector('img,video');
-        if (m) { m.src = d.url; if (m.tagName === 'VIDEO' && m.load) m.load(); }
+        if (m) { m.src = d.url; if (m.tagName === 'VIDEO' && m.load) m.load(); setFocal(m, d.focal); }
       });
     }
     /* a non-media field of an item changed in the panel — mirror what we can */
@@ -1121,7 +1121,7 @@
       var host = document.querySelector('[data-edit-item="' + d.file + '#' + d.arr + '#' + d.idx + '"]');
       if (host) {
         var hm = (host.tagName === 'IMG' || host.tagName === 'VIDEO') ? host : host.querySelector('img,video');
-        if (hm) { hm.src = d.url; if (hm.tagName === 'VIDEO' && hm.load) hm.load(); }
+        if (hm) { hm.src = d.url; if (hm.tagName === 'VIDEO' && hm.load) hm.load(); setFocal(hm, d.focal); }
         if (host.hasAttribute('data-full')) host.setAttribute('data-full', d.url);
       }
     }
@@ -1145,7 +1145,7 @@
       });
       if (clone && first) {
         var cm = (clone.tagName === 'IMG' || clone.tagName === 'VIDEO') ? clone : clone.querySelector('img,video');
-        if (cm) { cm.src = d.url; if (cm.tagName === 'VIDEO' && cm.load) cm.load(); }
+        if (cm) { cm.src = d.url; if (cm.tagName === 'VIDEO' && cm.load) cm.load(); setFocal(cm, d.focal); }
         if (clone.hasAttribute('data-full')) clone.setAttribute('data-full', d.url);
         /* the clone inherited the donor tile's look — normalise it to the
            NEW item's actual field values (size, caption, ...) */
@@ -1157,6 +1157,11 @@
       markDraggables();
     }
   });
+
+  function setFocal(im, f) {
+    if (!im) return;
+    im.style.objectPosition = (f && typeof f.x === 'number') ? (f.x + '% ' + f.y + '%') : '';
+  }
 
   /* map an item's data fields onto its visible tile where that makes sense */
   function applyItemField(host, base, key, value) {

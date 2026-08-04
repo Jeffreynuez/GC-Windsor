@@ -34,9 +34,16 @@ const out = (f, html) => {
    rather than blindly appended - otherwise the URL 404s. */
 const CDN_RE = /^(image|video|raw)\/upload\/(.*)$/;
 
+/* Focal point: a media value may end in "#fp=X,Y" (percentages, set by the
+   CMS focal picker). It never reaches the URL; templates read it via fps()
+   to keep that spot centred when CSS cover-crops the image. */
+const fpOf = u => { const m = String(u || '').match(/#fp=([\d.]+),([\d.]+)$/); return m ? { x: +m[1], y: +m[2] } : null; };
+const stripFp = u => String(u || '').replace(/#fp=[\d.]+,[\d.]+$/, '');
+const fps = u => { const f = fpOf(u); return f ? ` style="object-position:${f.x}% ${f.y}%"` : ''; };
+
 function cdn(u, transform, kind) {
   if (!u) return '';
-  u = String(u);
+  u = stripFp(String(u));
   if (!u.startsWith('CDN:')) return u;               // already a full URL
   const id = u.slice(4);
   const m = id.match(CDN_RE);
@@ -60,7 +67,7 @@ const img = (u, t) => cdn(u, t || 'f_auto,q_auto', 'image');
 
 const vid = (u, t) => {
   if (!u) return '';
-  u = String(u);
+  u = stripFp(String(u));
   if (!u.startsWith('CDN:')) return u;
   const out = cdn(u, t || 'q_auto', 'video');
   return CDN_RE.test(u.slice(4)) ? out : out + '.mp4';  // bare ids need the ext
@@ -262,7 +269,7 @@ function pageHero(o, file, prefix, short) {
   const p = k => edf(file, prefix ? prefix + '.' + k : k);
   return `<section class="page-hero${short ? ' page-hero--short' : ''}" data-parallax>
   ${amb('tr', 130)}
-  <img class="page-hero__img" src="${img(o.hero, 'f_auto,q_auto,w_1920')}" alt="">
+  <img class="page-hero__img" src="${img(o.hero, 'f_auto,q_auto,w_1920')}"${fps(o.hero)} alt="">
   <div class="page-hero__scrim"></div>
   <div class="page-hero__inner">
     <p class="eyebrow eyebrow--center" style="color:var(--gold-light)"${p('eyebrow')}>${esc(o.eyebrow)}</p>
@@ -318,7 +325,7 @@ function buildHome() {
       <div style="margin-top:.5rem"><a class="btn btn--gold" href="${esc(H.split.ctaHref)}"><span${ed('home.split.ctaLabel')}>${esc(H.split.ctaLabel)}</span> <span class="arw-slot"></span></a></div>
     </div>
     <div class="split__media split__media--full reveal" data-delay="1">
-      <img src="${img(H.split.image, 'f_auto,q_auto,w_1600')}"${ed('home.split.image')} data-edit-media="image" alt="A GC knot and tie, in detail" loading="lazy">
+      <img src="${img(H.split.image, 'f_auto,q_auto,w_1600')}"${fps(H.split.image)}${ed('home.split.image')} data-edit-media="image" alt="A GC knot and tie, in detail" loading="lazy">
     </div>
   </div>
 </section>
@@ -419,7 +426,7 @@ function buildHome() {
     </div>
   </div>
   <div class="gstrip reveal" data-delay="1" data-gallery data-gallery-strip>
-    <div class="gstrip__track" data-gstrip-track tabindex="0" role="region" aria-label="Gallery, scroll horizontally">${strip.map((g, i) => `<div class="gtile" data-lb="${i}" data-full="${img(g.src, 'f_auto,q_auto,w_1800')}"${edi('gallery.json', 'items', i)}><img src="${img(g.src, 'f_auto,q_auto,w_1000')}" alt="${esc(g.alt)}" loading="lazy"></div>`).join('')}</div>
+    <div class="gstrip__track" data-gstrip-track tabindex="0" role="region" aria-label="Gallery, scroll horizontally">${strip.map((g, i) => `<div class="gtile" data-lb="${i}" data-full="${img(g.src, 'f_auto,q_auto,w_1800')}"${edi('gallery.json', 'items', i)}><img src="${img(g.src, 'f_auto,q_auto,w_1000')}"${fps(g.src)} alt="${esc(g.alt)}" loading="lazy"></div>`).join('')}</div>
   </div>
   <div class="wrap gstrip__more">
     <a class="btn" href="/gallery"><span${edf('gallery.json', 'moreLabel')}>${esc(gallery.moreLabel)}</span> <span class="arw-slot"></span></a>
@@ -429,7 +436,7 @@ function buildHome() {
 ${newsletter()}
 
 <section id="contact-cta" class="cta-bleed" data-parallax data-parallax-strength="30">
-  <img class="cta-bleed__img" src="${img(H.contactCta.image, 'f_auto,q_auto,w_1920')}"${ed('home.contactCta.image')} data-edit-media="image" alt="" loading="lazy">
+  <img class="cta-bleed__img" src="${img(H.contactCta.image, 'f_auto,q_auto,w_1920')}"${fps(H.contactCta.image)}${ed('home.contactCta.image')} data-edit-media="image" alt="" loading="lazy">
   <div class="cta-bleed__scrim"></div>
   <div class="cta-bleed__inner reveal">
     <p class="eyebrow eyebrow--center" style="color:var(--gold-light)"${ed('home.contactCta.eyebrow')}>${esc(H.contactCta.eyebrow)}</p>
@@ -452,7 +459,7 @@ function buildGallery() {
   ${mark('bl', -140)}
   <div class="wrap">
     <p class="lead reveal" style="max-width:680px;margin-bottom:var(--sp-5)"${edf('gallery.json', 'page.lead')}>${esc(P.lead)}</p>
-    <div class="mosaic" data-gallery>${gallery.items.map((g, i) => `<div class="mtile reveal${g.span === 'tall' ? ' mtile--tall' : g.span === 'wide' ? ' mtile--wide' : ''}" style="transition-delay:${(i % 4) * 0.08}s" data-lb="${i}" data-full="${img(g.src, 'f_auto,q_auto,w_1800')}"${edi('gallery.json', 'items', i)}><img src="${img(g.src, 'f_auto,q_auto,w_900')}" alt="${esc(g.alt)}" loading="lazy"></div>`).join('')}</div>
+    <div class="mosaic" data-gallery>${gallery.items.map((g, i) => `<div class="mtile reveal${g.span === 'tall' ? ' mtile--tall' : g.span === 'wide' ? ' mtile--wide' : ''}" style="transition-delay:${(i % 4) * 0.08}s" data-lb="${i}" data-full="${img(g.src, 'f_auto,q_auto,w_1800')}"${edi('gallery.json', 'items', i)}><img src="${img(g.src, 'f_auto,q_auto,w_900')}"${fps(g.src)} alt="${esc(g.alt)}" loading="lazy"></div>`).join('')}</div>
   </div>
 </section>
 
