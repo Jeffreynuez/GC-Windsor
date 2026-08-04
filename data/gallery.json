@@ -8,7 +8,7 @@
   "seoDesc": "The GC Windsor knot and tie, worn and photographed.",
   "eyebrow": "The Gallery",
   "title": "Style with elegance",
-  "lead": "The knot, the tie, and the men who wear them.",
+  "lead": "The GC knot, the GC tie, and the men who wear them.",
   "hero": "CDN:gcwindsor/photos/circle-of-knots-1"
  },
  "items": [
@@ -28,6 +28,11 @@
    "alt": "Gold GC Eldredge knot"
   },
   {
+   "src": "CDN:gcwindsor/photos/gc-knots-clover",
+   "span": "std",
+   "alt": "GC knots arranged in a clover"
+  },
+  {
    "src": "CDN:gcwindsor/photos/holding-something-special",
    "span": "tall",
    "alt": "A GC knot, held to camera"
@@ -41,11 +46,6 @@
    "src": "CDN:gcwindsor/photos-2/gc-windsor-finals-13",
    "span": "std",
    "alt": "GC Windsor, worn"
-  },
-  {
-   "src": "CDN:gcwindsor/photos/gc-knots-clover",
-   "span": "std",
-   "alt": "GC knots arranged in a clover"
   },
   {
    "src": "CDN:gcwindsor/photos-2/gc-windsor-finals-21",
@@ -68,14 +68,14 @@
    "alt": "GC Windsor on the move"
   },
   {
-   "src": "CDN:gcwindsor/photos/gc-knot-in-green-glass",
-   "span": "std",
-   "alt": "GC knot in green glass"
-  },
-  {
    "src": "CDN:gcwindsor/photos/stand-tall",
    "span": "tall",
    "alt": "Stand tall"
+  },
+  {
+   "src": "CDN:gcwindsor/photos/gc-knot-in-green-glass",
+   "span": "std",
+   "alt": "GC knot in green glass"
   },
   {
    "src": "CDN:gcwindsor/photos-2/gc-windsor-finals-26",
