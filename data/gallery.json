@@ -39,7 +39,7 @@
   },
   {
    "src": "CDN:gcwindsor/photos/walk-of-the-boss",
-   "span": "wide",
+   "span": "tall",
    "alt": "GC Windsor on the move"
   },
   {
@@ -94,7 +94,7 @@
   },
   {
    "src": "CDN:gcwindsor/photos/gc-flower-knots",
-   "span": "wide",
+   "span": "std",
    "alt": "GC knots in bloom"
   },
   {
@@ -144,7 +144,7 @@
   },
   {
    "src": "CDN:gcwindsor/photos/circle-of-knots-2",
-   "span": "std",
+   "span": "wide",
    "alt": "The circle of knots"
   },
   {
