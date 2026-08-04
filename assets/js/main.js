@@ -998,8 +998,45 @@
     '[data-edit-item]:hover{outline:2px dashed #e3c766;outline-offset:3px}' +
     '[data-edit].jrd-sel{outline:2px solid #c9a227;outline-offset:2px}' +
     '.jrd-drop{outline:3px solid #c9a227 !important;outline-offset:3px}' +
-    '.jrd-drag{opacity:.35}';
+    '.jrd-drop-add{outline:3px dashed #c9a227 !important;outline-offset:4px}' +
+    '.jrd-drag{opacity:.35}' +
+    '#jrd-ins{position:fixed;z-index:2147483000;background:linear-gradient(180deg,#e3c766,#c9a227);border-radius:3px;box-shadow:0 0 0 1px rgba(13,13,13,.6),0 0 12px rgba(201,162,39,.85);pointer-events:none;display:none}' +
+    '#jrd-badge{position:fixed;z-index:2147483001;transform:translate(-50%,-50%);background:rgba(13,13,13,.92);color:#e3c766;border:1px solid #c9a227;padding:7px 14px;font:600 11px/1.3 system-ui,sans-serif;letter-spacing:.1em;text-transform:uppercase;border-radius:999px;pointer-events:none;display:none;white-space:nowrap}';
   document.head.appendChild(st);
+
+  /* floating drag helpers: a gold insertion divider (reorder) and a pill
+     badge that says what a file drop will do — the pattern every polished
+     CMS (Squarespace etc.) uses so you always know where things will land */
+  var insBar = document.createElement('div'); insBar.id = 'jrd-ins';
+  var badge = document.createElement('div'); badge.id = 'jrd-badge';
+  function mountHelpers() { document.body.appendChild(insBar); document.body.appendChild(badge); }
+  if (document.body) mountHelpers(); else document.addEventListener('DOMContentLoaded', mountHelpers);
+
+  function showIns(over, useY, after) {
+    var r = over.getBoundingClientRect();
+    /* centre the bar in the gap next to the tile's edge */
+    if (useY) {
+      insBar.style.left = (r.left + 2) + 'px';
+      insBar.style.width = (r.width - 4) + 'px';
+      insBar.style.height = '4px';
+      insBar.style.top = ((after ? r.bottom + 4 : r.top - 8)) + 'px';
+    } else {
+      insBar.style.top = (r.top + 2) + 'px';
+      insBar.style.height = (r.height - 4) + 'px';
+      insBar.style.width = '4px';
+      insBar.style.left = ((after ? r.right + 4 : r.left - 8)) + 'px';
+    }
+    insBar.style.display = 'block';
+  }
+  function hideIns() { insBar.style.display = 'none'; }
+  function showBadge(el, text) {
+    var r = el.getBoundingClientRect();
+    badge.textContent = text;
+    badge.style.left = (r.left + r.width / 2) + 'px';
+    badge.style.top = Math.max(30, Math.min(window.innerHeight - 30, r.top + r.height / 2)) + 'px';
+    badge.style.display = 'block';
+  }
+  function hideBadge() { badge.style.display = 'none'; }
 
   var selEl = null;
   function select(el) {
@@ -1181,11 +1218,10 @@
   }
 
   var dropEl = null;
-  function clearDrop() { if (dropEl) { dropEl.classList.remove('jrd-drop'); dropEl = null; } }
+  function clearDrop() { if (dropEl) { dropEl.classList.remove('jrd-drop', 'jrd-drop-add'); dropEl = null; } hideBadge(); }
 
   var drag = null;      /* {el, base, idx} while a tile is being dragged */
-  var indEl = null;
-  function clearInd() { if (indEl) { indEl.style.boxShadow = ''; indEl = null; } }
+  function clearInd() { hideIns(); }
   function dropPos(over, e) {
     var r = over.getBoundingClientRect();
     var pw = (over.parentElement && over.parentElement.clientWidth) || r.width;
@@ -1206,13 +1242,24 @@
     if (drag) drag.el.classList.remove('jrd-drag');
     drag = null; clearInd(); clearDrop();
   });
+  /* the drag left the page entirely (OS files pulled back out) — clean up */
+  document.addEventListener('dragleave', function (e) {
+    if (!e.relatedTarget && (e.target === document.documentElement || e.target === document.body)) { clearDrop(); clearInd(); }
+  });
 
   document.addEventListener('dragover', function (e) {
     if (isFileDrag(e)) {
       e.preventDefault();
       var t = e.target.closest && e.target.closest('[data-edit-item]');
-      var el = t || (function () { var a = arrTargetOf(e.target); return a && a.el; })();
-      if (el !== dropEl) { clearDrop(); if (el) { dropEl = el; el.classList.add('jrd-drop'); } }
+      if (t) {
+        if (t !== dropEl) { clearDrop(); dropEl = t; t.classList.add('jrd-drop'); }
+        showBadge(t, 'Drop to replace this image');
+      } else {
+        var a = arrTargetOf(e.target);
+        var el = a && a.el;
+        if (el !== dropEl) { clearDrop(); if (el) { dropEl = el; el.classList.add('jrd-drop-add'); } }
+        if (el) showBadge(el, 'Drop to add');
+      }
       return;
     }
     if (!drag) return;
@@ -1221,11 +1268,7 @@
     e.preventDefault();
     try { e.dataTransfer.dropEffect = 'move'; } catch (_) {}
     var pos = dropPos(over, e);
-    if (indEl !== over) clearInd();
-    indEl = over;
-    over.style.boxShadow = pos.useY
-      ? (pos.after ? 'inset 0 -3px 0 0 #c9a227' : 'inset 0 3px 0 0 #c9a227')
-      : (pos.after ? 'inset -3px 0 0 0 #c9a227' : 'inset 3px 0 0 0 #c9a227');
+    showIns(over, pos.useY, pos.after);   /* the gold divider marks the exact slot */
   });
 
   document.addEventListener('drop', function (e) {
@@ -1233,11 +1276,23 @@
       e.preventDefault();
       var files = Array.prototype.slice.call(e.dataTransfer.files || []);
       var t = e.target.closest && e.target.closest('[data-edit-item]');
-      var msg = null;
-      if (t) msg = { jrd: 'files-drop', item: t.getAttribute('data-edit-item'), files: files };
-      else { var a = arrTargetOf(e.target); if (a) msg = { jrd: 'files-drop', arr: a.arr, files: files }; }
+      var target = null;
+      if (t) target = { item: t.getAttribute('data-edit-item') };
+      else { var a = arrTargetOf(e.target); if (a) target = { arr: a.arr }; }
       clearDrop();
-      if (msg && files.length) parent.postMessage(msg, '*');
+      if (!target || !files.length) return;
+      /* Read the bytes HERE and transfer raw buffers to /admin. Passing the
+         File objects themselves can fail later with "Failed to fetch" —
+         Chromium sometimes can't re-read a cross-document cloned file handle
+         at upload time. Buffers are copied up front, so they always work. */
+      Promise.all(files.map(function (f) {
+        return f.arrayBuffer().then(function (buf) {
+          return { name: f.name, type: f.type, size: f.size, buf: buf };
+        });
+      })).then(function (payload) {
+        var msg = { jrd: 'files-drop', item: target.item || null, arr: target.arr || null, files: payload };
+        parent.postMessage(msg, '*', payload.map(function (p) { return p.buf; }));
+      }).catch(function () { /* unreadable file — nothing to send */ });
       return;
     }
     if (!drag) return;
