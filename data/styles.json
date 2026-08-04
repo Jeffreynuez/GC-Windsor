@@ -1,1 +1,6 @@
-{}
+{
+ "gallery.json#page.lead": {
+  "align": "left",
+  "color": "#a09522"
+ }
+}
