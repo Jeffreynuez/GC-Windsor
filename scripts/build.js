@@ -347,41 +347,7 @@ function buildHome() {
   </div>
 </section>
 
-<section id="customize" class="section cz" data-customizer>
-  <div class="wrap">
-    <div class="cz__head reveal">
-      <p class="eyebrow eyebrow--center"${edf('swapper.json', 'eyebrow')}>${esc(swapper.eyebrow)}</p>
-      <h2 class="script cz__title"${edf('swapper.json', 'title')}>${esc(swapper.title)}</h2>
-      <p class="lead cz__intro"${edf('swapper.json', 'intro')}>${esc(swapper.intro)}</p>
-    </div>
-    <div class="cz__grid">
-      <div class="cz__stagewrap reveal">
-        <div class="cz__stage" data-cz-stage></div>
-        <p class="cz__hint">Drag across the image to change colours</p>
-      </div>
-      <div class="cz__side reveal" data-delay="1">
-        <div class="cz__picker">
-          <div class="cz__pick" data-cz-pick="knots">
-            <div class="cz__rowlabel"><span class="k"${edf('swapper.json', 'types.0.label')}>${esc(swapper.types[0].label)}</span><span class="v" data-cz-knotname></span></div>
-            <div class="cz__tabs" data-cz-designs="knots"></div>
-            <div class="cz__opts" data-cz-colors="knots"></div>
-          </div>
-          <div class="cz__pick" data-cz-pick="ties">
-            <div class="cz__rowlabel"><span class="k"${edf('swapper.json', 'types.1.label')}>${esc(swapper.types[1].label)}</span><span class="v" data-cz-tiename></span></div>
-            <div class="cz__tabs" data-cz-designs="ties"></div>
-            <div class="cz__opts" data-cz-colors="ties"></div>
-          </div>
-        </div>
-        <div class="cz__panel">
-          <p class="now">Your combination</p>
-          <p class="name" data-cz-combo></p>
-          <a class="btn btn--gold btn--ondark" data-cz-cta href="/shop"><span${edf('swapper.json', 'ctaLabel')}>${esc(swapper.ctaLabel)}</span> <span class="arw-slot"></span></a>
-          <p class="cz__count" data-cz-count></p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+${customizerHTML()}
 
 <section id="spin" class="section on-dark spin" data-spin>
   <div class="wrap">
@@ -463,6 +429,114 @@ ${newsletter()}
 </section>
 ` + foot();
   out('index.html', html);
+}
+
+/* ---------- THE CUSTOMIZER, RENDERED ONCE ----------
+
+   Used by the home page AND by /embed/customizer, which jrdanimation.com
+   frames as a live demo. One function, so the thing being shown off is the
+   thing that ships — a copy would drift the first time a swatch row changed.
+
+   In embed mode the section head goes (the framing page has its own heading)
+   and so do the data-edit stamps: the CMS reaches this site by iframing it,
+   and an edit stamp inside a frame on someone else's domain is a control
+   surface nobody asked for. */
+function customizerHTML(opts) {
+  const embed = !!(opts && opts.embed);
+  const E = (stamp) => embed ? '' : stamp;
+
+  const head = embed ? '' : `    <div class="cz__head reveal">
+      <p class="eyebrow eyebrow--center"${edf('swapper.json', 'eyebrow')}>${esc(swapper.eyebrow)}</p>
+      <h2 class="script cz__title"${edf('swapper.json', 'title')}>${esc(swapper.title)}</h2>
+      <p class="lead cz__intro"${edf('swapper.json', 'intro')}>${esc(swapper.intro)}</p>
+    </div>
+`;
+
+  return `<section id="customize" class="section cz${embed ? ' cz--embed' : ''}" data-customizer>
+  <div class="wrap">
+${head}    <div class="cz__grid">
+      <div class="cz__stagewrap${embed ? '' : ' reveal'}">
+        <div class="cz__stage" data-cz-stage></div>
+        <p class="cz__hint">Drag across the image to change colours</p>
+      </div>
+      <div class="cz__side${embed ? '' : ' reveal'}" data-delay="1">
+        <div class="cz__picker">
+          <div class="cz__pick" data-cz-pick="knots">
+            <div class="cz__rowlabel"><span class="k"${E(edf('swapper.json', 'types.0.label'))}>${esc(swapper.types[0].label)}</span><span class="v" data-cz-knotname></span></div>
+            <div class="cz__tabs" data-cz-designs="knots"></div>
+            <div class="cz__opts" data-cz-colors="knots"></div>
+          </div>
+          <div class="cz__pick" data-cz-pick="ties">
+            <div class="cz__rowlabel"><span class="k"${E(edf('swapper.json', 'types.1.label'))}>${esc(swapper.types[1].label)}</span><span class="v" data-cz-tiename></span></div>
+            <div class="cz__tabs" data-cz-designs="ties"></div>
+            <div class="cz__opts" data-cz-colors="ties"></div>
+          </div>
+        </div>
+        <div class="cz__panel">
+          <p class="now">Your combination</p>
+          <p class="name" data-cz-combo></p>
+          <a class="btn btn--gold btn--ondark" data-cz-cta href="/shop"${embed ? ' target="_top"' : ''}><span${E(edf('swapper.json', 'ctaLabel'))}>${esc(swapper.ctaLabel)}</span> <span class="arw-slot"></span></a>
+          <p class="cz__count" data-cz-count></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>`;
+}
+
+/* ---------- /embed/customizer ----------
+
+   Chrome-free: no nav, no footer, no newsletter, nothing but the customizer
+   and the script that drives it. Framing the real home page would drag the
+   whole site in behind an anchor jump, which is not a demo of a customizer,
+   it is a demo of a website.
+
+   noindex, because two URLs serving the same customizer is one of them
+   competing with the other in search. */
+function buildEmbedCustomizer() {
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>${esc(G.brand)} — customizer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="${FONTS}">
+<link rel="stylesheet" href="/assets/css/theme.css">
+<link rel="stylesheet" href="/assets/css/main.css">
+<style>
+  /* The section is built to sit in a page with a nav above it and a footer
+     below. In a frame it IS the page, so the vertical rhythm that separates
+     it from its neighbours is just dead space around the only thing here. */
+  html, body { background: transparent; }
+  body { margin: 0; }
+  .cz--embed { padding: 12px 0; margin: 0; min-height: 100vh; display: flex; align-items: center; }
+  .cz--embed .wrap { width: 100%; max-width: 1240px; }
+  /* reveal animations are scroll-triggered; in a frame there is no scroll and
+     they would simply never fire, leaving the whole thing at opacity 0. */
+  .cz--embed .reveal { opacity: 1; transform: none; }
+  /* The stage is 4:5 — portrait — so at full width it alone is taller than the
+     frame. Let its HEIGHT lead and the aspect ratio pick the width. */
+  .cz--embed .cz__stagewrap { min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .cz--embed .cz__stage { width: auto; max-width: 100%; height: min(calc(100vh - 132px), 430px); aspect-ratio: 4 / 5; }
+  .cz--embed .cz__hint { margin: 10px 0 0; }
+  /* The side column spreads to fill a full page. In a frame that turns into a
+     block of nothing between the swatches and the combination panel. */
+  .cz--embed .cz__side { gap: 12px; justify-content: center; }
+  .cz--embed .cz__picker { flex: 0 0 auto; }
+  .cz--embed .cz__panel { padding: 16px 20px; }
+  .cz--embed .cz__panel .name { margin: 6px 0 12px; }
+</style>
+</head>
+<body data-page="/embed/customizer">
+${customizerHTML({ embed: true })}
+<script>window.GCW=${gcw()}</script>
+<script src="/assets/js/main.js"></script>
+</body>
+</html>`;
+  out('embed/customizer.html', html);
 }
 
 /* ---------- GALLERY PAGE ---------- */
@@ -646,6 +720,7 @@ buildShop();
 buildProducts();
 buildAbout();
 buildContact();
+buildEmbedCustomizer();
 
 const combos = swapper.types[0].designs.reduce((n, d) => n + (d.status === 'available' ? d.colors.length : 0), 0)
              * swapper.types[1].designs.reduce((n, d) => n + (d.status === 'available' ? d.colors.length : 0), 0);

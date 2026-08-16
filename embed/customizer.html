@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>G.C. WINDSOR — customizer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;1,200;1,300&family=Jost:wght@200;300;400;500&family=Pinyon+Script&display=swap">
+<link rel="stylesheet" href="/assets/css/theme.css">
+<link rel="stylesheet" href="/assets/css/main.css">
+<style>
+  /* The section is built to sit in a page with a nav above it and a footer
+     below. In a frame it IS the page, so the vertical rhythm that separates
+     it from its neighbours is just dead space around the only thing here. */
+  html, body { background: transparent; }
+  body { margin: 0; }
+  .cz--embed { padding: 12px 0; margin: 0; min-height: 100vh; display: flex; align-items: center; }
+  .cz--embed .wrap { width: 100%; max-width: 1240px; }
+  /* reveal animations are scroll-triggered; in a frame there is no scroll and
+     they would simply never fire, leaving the whole thing at opacity 0. */
+  .cz--embed .reveal { opacity: 1; transform: none; }
+  /* The stage is 4:5 — portrait — so at full width it alone is taller than the
+     frame. Let its HEIGHT lead and the aspect ratio pick the width. */
+  .cz--embed .cz__stagewrap { min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .cz--embed .cz__stage { width: auto; max-width: 100%; height: min(calc(100vh - 132px), 430px); aspect-ratio: 4 / 5; }
+  .cz--embed .cz__hint { margin: 10px 0 0; }
+  /* The side column spreads to fill a full page. In a frame that turns into a
+     block of nothing between the swatches and the combination panel. */
+  .cz--embed .cz__side { gap: 12px; justify-content: center; }
+  .cz--embed .cz__picker { flex: 0 0 auto; }
+  .cz--embed .cz__panel { padding: 16px 20px; }
+  .cz--embed .cz__panel .name { margin: 6px 0 12px; }
+</style>
+</head>
+<body data-page="/embed/customizer">
+<section id="customize" class="section cz cz--embed" data-customizer>
+  <div class="wrap">
+    <div class="cz__grid">
+      <div class="cz__stagewrap">
+        <div class="cz__stage" data-cz-stage></div>
+        <p class="cz__hint">Drag across the image to change colours</p>
+      </div>
+      <div class="cz__side" data-delay="1">
+        <div class="cz__picker">
+          <div class="cz__pick" data-cz-pick="knots">
+            <div class="cz__rowlabel"><span class="k">GC Knots</span><span class="v" data-cz-knotname></span></div>
+            <div class="cz__tabs" data-cz-designs="knots"></div>
+            <div class="cz__opts" data-cz-colors="knots"></div>
+          </div>
+          <div class="cz__pick" data-cz-pick="ties">
+            <div class="cz__rowlabel"><span class="k">GC Ties</span><span class="v" data-cz-tiename></span></div>
+            <div class="cz__tabs" data-cz-designs="ties"></div>
+            <div class="cz__opts" data-cz-colors="ties"></div>
+          </div>
+        </div>
+        <div class="cz__panel">
+          <p class="now">Your combination</p>
+          <p class="name" data-cz-combo></p>
+          <a class="btn btn--gold btn--ondark" data-cz-cta href="/shop" target="_top"><span>Shop this combination</span> <span class="arw-slot"></span></a>
+          <p class="cz__count" data-cz-count></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script>window.GCW={"brand":"G.C. WINDSOR","salesPaused":true,"customizer":{"base":"https://res.cloudinary.com/dlgc3fj6w/image/upload/f_auto,q_auto,w_1600/gcwindsor/swapper/main","defaultKnotColor":"k-gold-black","defaultTieColor":"t-black","soonLabel":"Coming soon","soonNote":"A new design, arriving soon. Join the house below and you will be the first to see it.","types":[{"id":"knots","label":"GC Knots","designs":[{"id":"eldredge","label":"Eldredge Knot","status":"available","colors":[{"id":"k-black","name":"Black","colors":["#0a0a0a"],"img":"https://res.cloudinary.com/dlgc3fj6w/image/upload/f_auto,q_auto,w_1600/gcwindsor/swapper/knots/black"},{"id":"k-black-gold","name":"Black & Gold","colors":["#0a0a0a","#c9a227"],"img":"https://res.cloudinary.com/dlgc3fj6w/image/upload/f_auto,q_auto,w_1600/gcwindsor/swapper/knots/black-and-gold"},{"id":"k-black-silver","name":"Black & Silver","colors":["#0a0a0a","#c9ccd1"],"img":"https://res.cloudinary.com/dlgc3fj6w/image/upload/f_auto,q_auto,w_1600/gcwindsor/swapper/knots/black-and-silver"},{"id":"k-blue","name":"Navy","colors":["#1c3f8f"],"img":"https://res.cloudinary.com/dlgc3fj6w/image/upload/f_auto,q_auto,w_1600/gcwindsor/swapper/knots/blue"},{"id":"k-blue-gold","name":"Navy & Gold","colors":["#1c3f8f","#c9a227"],"img":"https://res.cloudinary.com/dlgc3fj6w/image/upload/f_auto,q_auto,w_1600/gcwindsor/swapper/knots/blue-and-gold"},{"id":"k-gold","name":"Gold","colors":["#c9a227"],"img":"https://res.cloudinary.com/dlgc3fj6w/image/upload/f_auto,q_auto,w_1600/gcwindsor/swapper/knots/gold"},{"id":"k-gold-black","name":"Gold & Black","colors":["#c9a227","#0a0a0a"],"img":"https://res.cloudinary.com/dlgc3fj6w/image/upload/f_auto,q_auto,w_1600/gcwindsor/swapper/knots/gold-and-black"},{"id":"k-red","name":"Red","colors":["#b31220"],"img":"https://res.cloudinary.com/dlgc3fj6w/image/upload/f_auto,q_auto,w_1600/gcwindsor/swapper/knots/red"},{"id":"k-red-black","name":"Red & Black","colors":["#b31220","#0a0a0a"],"img":"https://res.cloudinary.com/dlgc3fj6w/image/upload/f_auto,q_auto,w_1600/gcwindsor/swapper/knots/red-and-black"},{"id":"k-silver","name":"Silver","colors":["#c9ccd1"],"img":"https://res.cloudinary.com/dlgc3fj6w/image/upload/f_auto,q_auto,w_1600/gcwindsor/swapper/knots/silver"},{"id":"k-violet","name":"Lavender","colors":["#5b2a86"],"img":"https://res.cloudinary.com/dlgc3fj6w/image/upload/f_auto,q_auto,w_1600/gcwindsor/swapper/knots/violet"},{"id":"k-violet-black","name":"Lavender & Black","colors":["#5b2a86","#0a0a0a"],"img":"https://res.cloudinary.com/dlgc3fj6w/image/upload/f_auto,q_auto,w_1600/gcwindsor/swapper/knots/violet-and-black"}]},{"id":"double-windsor","label":"Double Windsor","status":"coming-soon","colors":[]},{"id":"flame","label":"Flame Knot","status":"coming-soon","colors":[]}]},{"id":"ties","label":"GC Ties","designs":[{"id":"solid","label":"Solid","status":"available","colors":[{"id":"t-black","name":"Black","colors":["#0a0a0a"],"img":"https://res.cloudinary.com/dlgc3fj6w/image/upload/f_auto,q_auto,w_1600/gcwindsor/swapper/ties/black"},{"id":"t-blue","name":"Navy","colors":["#1c3f8f"],"img":"https://res.cloudinary.com/dlgc3fj6w/image/upload/f_auto,q_auto,w_1600/gcwindsor/swapper/ties/blue"},{"id":"t-gold","name":"Gold","colors":["#c9a227"],"img":"https://res.cloudinary.com/dlgc3fj6w/image/upload/f_auto,q_auto,w_1600/gcwindsor/swapper/ties/gold"},{"id":"t-red","name":"Red","colors":["#b31220"],"img":"https://res.cloudinary.com/dlgc3fj6w/image/upload/f_auto,q_auto,w_1600/gcwindsor/swapper/ties/red"},{"id":"t-silver","name":"Silver","colors":["#c9ccd1"],"img":"https://res.cloudinary.com/dlgc3fj6w/image/upload/f_auto,q_auto,w_1600/gcwindsor/swapper/ties/silver"},{"id":"t-violet","name":"Lavender","colors":["#5b2a86"],"img":"https://res.cloudinary.com/dlgc3fj6w/image/upload/f_auto,q_auto,w_1600/gcwindsor/swapper/ties/violet"}]},{"id":"pinstripe","label":"Pin Stripe","status":"coming-soon","colors":[]},{"id":"pattern","label":"Pattern","status":"coming-soon","colors":[]}]}],"products":[{"id":"black-and-gold","slug":"black-and-gold-gc-windsor-combo","knot":"k-black-gold","tie":"t-black","name":"Black and Gold GC Windsor Combo"},{"id":"gold-and-black","slug":"gold-black-gc-windsor-combo","knot":"k-gold-black","tie":"t-black","name":"Gold & Black GC Windsor Combo"},{"id":"navy-and-gold","slug":"navy-gold-gc-windsor-combo","knot":"k-blue-gold","tie":"t-blue","name":"Navy & Gold GC Windsor Combo"},{"id":"red-and-black","slug":"red-black-gc-windsor-combo","knot":"k-red-black","tie":"t-black","name":"Red & Black GC Windsor Combo"},{"id":"lavender-and-black","slug":"lavender-black-gc-windsor-combo","knot":"k-violet-black","tie":"t-violet","name":"Lavender & Black GC Windsor Combo"},{"id":"silver-and-black","slug":"silver-black-gc-windsor-combo","knot":"k-black-silver","tie":"t-silver","name":"Silver & Black GC Windsor Combo"}]},"spin":{"base":"https://res.cloudinary.com/dlgc3fj6w/image/upload/","baseSpeed":15,"dragDir":-1,"knots":[{"id":"eldredge-gold","label":"Gold","folder":"gcwindsor/spin/eldredge-gold","count":295},{"id":"eldredge-gold-black","label":"Gold & Black","folder":"gcwindsor/spin/eldredge-gold-black","count":295}]},"film":{"src":"https://res.cloudinary.com/dlgc3fj6w/video/upload/q_auto/gcwindsor/video/interview-1080.mp4","poster":"https://res.cloudinary.com/dlgc3fj6w/image/upload/f_auto,q_auto,w_1600/gcwindsor/photos-2/gc-windsor-finals-21"}}</script>
+<script src="/assets/js/main.js"></script>
+</body>
+</html>
