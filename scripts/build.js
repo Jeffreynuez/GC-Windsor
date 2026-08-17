@@ -517,11 +517,23 @@ function buildEmbedCustomizer() {
   /* reveal animations are scroll-triggered; in a frame there is no scroll and
      they would simply never fire, leaving the whole thing at opacity 0. */
   .cz--embed .reveal { opacity: 1; transform: none; }
-  /* The stage is 4:5 — portrait — so at full width it alone is taller than the
-     frame. Let its HEIGHT lead and the aspect ratio pick the width. */
   .cz--embed .cz__stagewrap { min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .cz--embed .cz__stage { width: auto; max-width: 100%; height: min(calc(100vh - 132px), 430px); aspect-ratio: 4 / 5; }
   .cz--embed .cz__hint { margin: 10px 0 0; }
+  /* WIDE VIEWPORTS ONLY, and that qualifier is the whole fix.
+
+     The stage is 4:5 — portrait — so on a desktop-shaped frame it alone would
+     be taller than the frame. Letting its HEIGHT lead and the aspect ratio
+     pick the width is right there.
+
+     It is wrong below 620px, where main.css already sets aspect-ratio:auto
+     so the stage sizes to the render inside it. This rule was unscoped, so it
+     beat that on specificity and forced a 406px-tall box around a 190px-tall
+     image — 216px of dead black between the tie and the swatches, which is
+     exactly the gap in the JRD embed. Matching main.css's own 620px breakpoint
+     hands the narrow case back to the stylesheet that already gets it right. */
+  @media (min-width: 621px) {
+    .cz--embed .cz__stage { width: auto; max-width: 100%; height: min(calc(100vh - 132px), 430px); aspect-ratio: 4 / 5; }
+  }
   /* The side column spreads to fill a full page. In a frame that turns into a
      block of nothing between the swatches and the combination panel. */
   .cz--embed .cz__side { gap: 12px; justify-content: center; }
