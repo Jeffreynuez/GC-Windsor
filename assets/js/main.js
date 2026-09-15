@@ -1082,7 +1082,7 @@
            frame while the user is typing in the parent's panel. */
         var typingHere = el === selEl && el.isContentEditable &&
           document.hasFocus() && document.activeElement === el;
-        if (!typingHere) el.textContent = d.value;
+        if (d.force || !typingHere) el.textContent = d.value;
       });
     }
     if (d.jrd === 'item-remove' && d.file && d.arr != null && typeof d.idx === 'number') {
