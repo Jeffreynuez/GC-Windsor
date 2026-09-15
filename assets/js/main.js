@@ -1074,7 +1074,15 @@
     var d = ev.data || {};
     if (d.jrd === 'apply' && d.edit) {
       document.querySelectorAll('[data-edit="' + d.edit + '"]').forEach(function (el) {
-        if (el !== selEl || !el.isContentEditable) el.textContent = d.value;
+        /* Only refuse the update while the caret is genuinely in THIS element,
+           otherwise we would fight the typist. Selecting an element makes it
+           contentEditable, so testing selEl + isContentEditable alone silently
+           blocked every edit made from the CMS side panel, which is always the
+           panel of the selected element. document.hasFocus() is false in this
+           frame while the user is typing in the parent's panel. */
+        var typingHere = el === selEl && el.isContentEditable &&
+          document.hasFocus() && document.activeElement === el;
+        if (!typingHere) el.textContent = d.value;
       });
     }
     if (d.jrd === 'item-remove' && d.file && d.arr != null && typeof d.idx === 'number') {
