@@ -36,7 +36,7 @@ const CDN_RE = /^(image|video|raw)\/upload\/(.*)$/;
 
 /* Focal point: a media value may end in "#fp=X,Y" (percentages, set by the
    CMS focal picker). It never reaches the URL; templates read it via fps()
-   to keep that spot centred when CSS cover-crops the image. */
+   to keep that spot centered when CSS cover-crops the image. */
 const fpOf = u => { const m = String(u || '').match(/#fp=([\d.]+),([\d.]+)$/); return m ? { x: +m[1], y: +m[2] } : null; };
 const stripFp = u => String(u || '').replace(/#fp=[\d.]+,[\d.]+$/, '');
 const fps = u => { const f = fpOf(u); return f ? ` style="object-position:${f.x}% ${f.y}%"` : ''; };
@@ -86,7 +86,7 @@ const gallery = D('gallery.json');
 const theme = D('theme.json');
 const G = pages.global;
 
-/* editor text styles (colour / alignment picked in the CMS selection panel).
+/* editor text styles (color / alignment picked in the CMS selection panel).
    Stored per data-edit key in data/styles.json; baked here as attribute-
    selector rules so they apply to the exact stamped elements. Optional. */
 let styles = {};
@@ -457,7 +457,7 @@ function customizerHTML(opts) {
 ${head}    <div class="cz__grid">
       <div class="cz__stagewrap${embed ? '' : ' reveal'}">
         <div class="cz__stage" data-cz-stage></div>
-        <p class="cz__hint">Drag across the image to change colours</p>
+        <p class="cz__hint">Drag across the image to change colors</p>
       </div>
       <div class="cz__side${embed ? '' : ' reveal'}" data-delay="1">
         <div class="cz__picker">

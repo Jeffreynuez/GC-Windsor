@@ -584,7 +584,7 @@ button { font-family: inherit; }
 .menu     { z-index: var(--z-menu); }
 .lightbox { z-index: var(--z-lightbox); }
 
-/* --- NAV: taller, centred logo image, translucent on scroll --- */
+/* --- NAV: taller, centered logo image, translucent on scroll --- */
 .nav {
   height: var(--nav-h);
   background: transparent;
@@ -685,8 +685,8 @@ button { font-family: inherit; }
   transition: transform var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
 }
 .sw:hover .sw__dot { transform: scale(1.12); border-color: var(--gold-light); }
-/* concentric ring via outline: outline always tracks the dot's box centre and
-   follows its border-radius, so the ring is exactly centred at every size. */
+/* concentric ring via outline: outline always tracks the dot's box center and
+   follows its border-radius, so the ring is exactly centered at every size. */
 .sw.is-active .sw__dot {
   border-color: var(--gold);
   outline: var(--sw-ring-w) solid var(--gold);
@@ -892,10 +892,10 @@ html { scroll-behavior: smooth; scroll-padding-top: var(--nav-h); }
 
 /* =====================================================================
    PASS 3 — NAV LOGO, IMAGE FITS, BUTTON CENTRING, LIGHT NEWSLETTER, AND
-   THE THREE-LEVEL CUSTOMIZER (type → design → colour).
+   THE THREE-LEVEL CUSTOMIZER (type → design → color).
    ===================================================================== */
 
-/* --- 1: nav centre wordmark (bar chrome/scroll behaviour already tokenised) --- */
+/* --- 1: nav center wordmark (bar chrome/scroll behavior already tokenised) --- */
 .nav__brand { justify-self: center; display: flex; align-items: center; }
 .nav__logo { height: 46px; width: auto; display: block; transition: height var(--dur) var(--ease), opacity var(--dur) var(--ease); }
 .nav.is-solid .nav__logo { height: 38px; }
@@ -908,7 +908,7 @@ html { scroll-behavior: smooth; scroll-padding-top: var(--nav-h); }
 .card__media { aspect-ratio: 16 / 9; }
 .card__media img { object-fit: contain; }
 
-/* --- 6: optically centre the label (+arrow) group despite trailing tracking --- */
+/* --- 6: optically center the label (+arrow) group despite trailing tracking --- */
 .btn { justify-content: center; text-indent: var(--ls-button); }
 .badge { display: inline-block; text-indent: 0.22em; }
 
@@ -963,7 +963,7 @@ html { scroll-behavior: smooth; scroll-padding-top: var(--nav-h); }
 .cz__tab--soon { color: rgba(255,255,255,.52); }
 .cz__tab--soon:hover { color: var(--gold-light); }
 
-/* 7a level 3 — colours: a clean flex row, items never shrink or overlap */
+/* 7a level 3 — colors: a clean flex row, items never shrink or overlap */
 .cz__opts { min-height: 40px; }
 .cz__row { display: flex; flex-wrap: wrap; gap: 14px; }
 .sw { flex: 0 0 auto; background: none; border: 0; padding: 0; margin: 0; cursor: pointer; position: relative; line-height: 0; display: inline-flex; }
@@ -975,7 +975,7 @@ html { scroll-behavior: smooth; scroll-padding-top: var(--nav-h); }
   transition: transform var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
 }
 .sw:hover .sw__dot { transform: scale(1.12); border-color: var(--gold-light); }
-/* concentric ring via outline — always centred, follows the border-radius */
+/* concentric ring via outline — always centered, follows the border-radius */
 .sw.is-active .sw__dot { border-color: var(--gold); outline: var(--sw-ring-w) solid var(--gold); outline-offset: var(--sw-ring-gap); }
 
 /* 7c coming-soon — an enticing teaser, not a greyed-out field */
@@ -1084,7 +1084,7 @@ html { scroll-behavior: smooth; scroll-padding-top: var(--nav-h); }
 .card__media img { position: relative; z-index: 0; }
 .card__media .badge--onmedia { z-index: 4; }
 
-/* 3. Customizer: the stage is now draggable to scrub colours. */
+/* 3. Customizer: the stage is now draggable to scrub colors. */
 .cz__frame { cursor: grab; touch-action: pan-y; }
 .cz__frame.is-grabbing { cursor: grabbing; }
 .cz__frame img { user-select: none; -webkit-user-drag: none; }
@@ -1176,9 +1176,9 @@ html { scroll-behavior: smooth; scroll-padding-top: var(--nav-h); }
 
 /* =====================================================================
    PASS 5 — customizer polish
-   1. Colour selects CROSSFADE (no slide): .is-fade drives an opacity-only
+   1. Color selects CROSSFADE (no slide): .is-fade drives an opacity-only
       transition; the old layer holds still underneath.
-   2. Colour rows are side-scrollers (.hs shell) at EVERY width — edge
+   2. Color rows are side-scrollers (.hs shell) at EVERY width — edge
       fades + directional arrows that appear only when that direction can
       scroll, finger-drag on touch, mouse-drag + arrows on desktop.
       Design tabs join in on mobile.
@@ -1201,8 +1201,8 @@ html { scroll-behavior: smooth; scroll-padding-top: var(--nav-h); }
   .cz__picker { grid-template-columns: minmax(0, 1fr); }
 }
 
-/* colour rows AND design tabs: one line, scrolls sideways — all screen
-   sizes, so adding designs/colours never bloats the layout */
+/* color rows AND design tabs: one line, scrolls sideways — all screen
+   sizes, so adding designs/colors never bloats the layout */
 .hs > .cz__opts { overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y; }
 .hs > .cz__opts::-webkit-scrollbar { display: none; }
 .hs > .cz__opts .cz__row { flex-wrap: nowrap; width: max-content; padding: 6px 2px; }

@@ -46,7 +46,7 @@ module.exports = async function handler(req, res) {
   form.append('line_items[0][price]', priceId);
   form.append('line_items[0][quantity]', String(quantity));
   form.append('success_url', `${origin}/?checkout=success`);
-  form.append('cancel_url', `${origin}/product/${product.slug}?checkout=cancelled`);
+  form.append('cancel_url', `${origin}/product/${product.slug}?checkout=canceled`);
   form.append('shipping_address_collection[allowed_countries][0]', 'US');
   form.append('automatic_tax[enabled]', 'true');
   form.append('phone_number_collection[enabled]', 'true');

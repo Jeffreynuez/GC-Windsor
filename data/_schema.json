@@ -413,11 +413,11 @@
             },
             {
               "k": "defaultKnotColor",
-              "l": "Default knot colour id"
+              "l": "Default knot color id"
             },
             {
               "k": "defaultTieColor",
-              "l": "Default tie colour id"
+              "l": "Default tie color id"
             }
           ]
         },
@@ -447,7 +447,7 @@
           ]
         },
         {
-          "bt": "GC Knots - Eldredge colours",
+          "bt": "GC Knots - Eldredge colors",
           "kind": "arr",
           "path": "types.0.designs.0.colors",
           "titleField": "name",
@@ -459,7 +459,7 @@
             },
             {
               "k": "name",
-              "l": "Colour name"
+              "l": "Color name"
             },
             {
               "k": "img",
@@ -494,7 +494,7 @@
           ]
         },
         {
-          "bt": "GC Ties - Solid colours",
+          "bt": "GC Ties - Solid colors",
           "kind": "arr",
           "path": "types.1.designs.0.colors",
           "titleField": "name",
@@ -506,7 +506,7 @@
             },
             {
               "k": "name",
-              "l": "Colour name"
+              "l": "Color name"
             },
             {
               "k": "img",
@@ -1004,7 +1004,7 @@
       "file": "theme.json",
       "blocks": [
         {
-          "bt": "Colours",
+          "bt": "Colors",
           "kind": "obj",
           "path": "",
           "fields": [

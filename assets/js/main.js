@@ -1,5 +1,5 @@
 /* ============================================================
-   GC WINDSOR — site behaviour (vanilla, no deps)
+   GC WINDSOR — site behavior (vanilla, no deps)
    Markup is server-rendered by scripts/build.js; this file wires
    interaction only. window.GCW is injected by build.js.
    The ?edit=1 visual-editor bridge lives at the bottom.
@@ -115,7 +115,7 @@
       el.style.transition = ''; el.style.transform = ''; el.style.opacity = ''; el.style.filter = ''; el.style.zIndex = '';
     }
 
-    /* selecting a colour CROSSFADES: the old layer holds still underneath while
+    /* selecting a color CROSSFADES: the old layer holds still underneath while
        the new one fades in on top — the same quiet dissolve as the drag scrub,
        no sliding, no motion blur. */
     function swap(partKey, src, animate) {
@@ -141,7 +141,7 @@
 
         /* WAIT for the layer to actually hold the new bitmap before showing
            it — an <img> keeps painting its previous image until the new src
-           is decoded, which is what caused the old colour to flash for a
+           is decoded, which is what caused the old color to flash for a
            frame at the start of the fade. */
         var begin = function () {
           if (incoming.getAttribute('src') !== src) return;   /* superseded by a newer selection */
@@ -155,7 +155,7 @@
           outgoing.style.transition = 'none'; outgoing.style.opacity = '1';
           void incoming.offsetWidth;
 
-          /* a quick TRUE dissolve: the old colour fades OUT as the new one
+          /* a quick TRUE dissolve: the old color fades OUT as the new one
              fades in — the old one never lingers underneath. */
           requestAnimationFrame(function () {
             incoming.classList.add('is-fade');
@@ -228,7 +228,7 @@
       return n;
     }
 
-    /* ---- render level-2 tabs + level-3 colours (data-driven, any count) ---- */
+    /* ---- render level-2 tabs + level-3 colors (data-driven, any count) ---- */
     function renderType(t) {
       renderTabs(t);
       renderOpts(t);
@@ -309,15 +309,15 @@
       applyStage(partKeyOf(typeKey), instant);
     }
 
-    /* ---- press & drag on the model to scrub colours ----
+    /* ---- press & drag on the model to scrub colors ----
        Drag horizontally over the stage: the UPPER half cycles the knot, the
        LOWER half cycles the tie (mirrors where the knot and tie actually sit).
-       Every ~step of travel advances to the next colour in that design, wrapping.
+       Every ~step of travel advances to the next color in that design, wrapping.
        Uses instant swaps so the scrub feels direct. */
     (function initDrag() {
       var frame = stage.querySelector('.cz__frame');
       if (!frame) return;
-      var STEP = 64;                       // px of drag per colour change
+      var STEP = 64;                       // px of drag per color change
       var dragging = false, part = null, lastX = 0, acc = 0;
 
       function colorsOf(typeKey) {
@@ -367,7 +367,7 @@
     types.forEach(renderType);
     applyStage();
 
-    /* on small screens the design tabs + colour rows become side-scrollers
+    /* on small screens the design tabs + color rows become side-scrollers
        (edge fades + arrows appear only in the direction that can scroll) */
     $all('[data-cz-designs], [data-cz-colors]', root).forEach(makeHscroll);
   }
@@ -1014,7 +1014,7 @@
 
   function showIns(over, useY, after) {
     var r = over.getBoundingClientRect();
-    /* centre the bar in the gap next to the tile's edge */
+    /* center the bar in the gap next to the tile's edge */
     if (useY) {
       insBar.style.left = (r.left + 2) + 'px';
       insBar.style.width = (r.width - 4) + 'px';
@@ -1155,7 +1155,7 @@
         var cm = (clone.tagName === 'IMG' || clone.tagName === 'VIDEO') ? clone : clone.querySelector('img,video');
         if (cm) { cm.src = d.url; if (cm.tagName === 'VIDEO' && cm.load) cm.load(); setFocal(cm, d.focal); }
         if (clone.hasAttribute('data-full')) clone.setAttribute('data-full', d.url);
-        /* the clone inherited the donor tile's look — normalise it to the
+        /* the clone inherited the donor tile's look — normalize it to the
            NEW item's actual field values (size, caption, ...) */
         if (d.item && typeof d.item === 'object') {
           Object.keys(d.item).forEach(function (k) { applyItemField(clone, d.file + '#' + d.arr, k, d.item[k]); });

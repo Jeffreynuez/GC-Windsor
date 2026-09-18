@@ -21,7 +21,7 @@ scripts/
   build.js         Renders data -> HTML. Stamps data-edit hooks for the editor.
 assets/
   css/main.css     Site styles (theme.css is GENERATED — do not hand-edit).
-  js/main.js       Behaviour + the ?edit=1 visual-editor bridge.
+  js/main.js       Behavior + the ?edit=1 visual-editor bridge.
 api/
   checkout.js      Stripe Checkout session. Dormant while sales are paused.
 vercel.json        buildCommand: npm run build, cleanUrls
@@ -40,7 +40,7 @@ The hero autoplays `gcwindsor/video/hero-promo-1080` — silent, looping, with a
 
 ## The Customizer
 
-The centrepiece. A base photo of the model (`swapper/main`) with a **tie layer**
+The centerpiece. A base photo of the model (`swapper/main`) with a **tie layer**
 and a **knot layer** stacked on top as transparent PNGs. All three share the same
 7010×4674 frame, so they register exactly — no manual alignment. Clicking a swatch
 crossfades the relevant layer.
