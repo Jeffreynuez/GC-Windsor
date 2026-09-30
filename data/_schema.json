@@ -1,6 +1,7 @@
 {
   "cloudName": "dlgc3fj6w",
   "mediaFolder": "gcwindsor",
+  "bridge": ["apply", "styleapply", "media-apply", "item-field", "item-media", "item-add", "item-remove"],
   "pages": [
     [
       "index.html",
