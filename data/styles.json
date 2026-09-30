@@ -3,10 +3,10 @@
   "align": "left",
   "color": "#605a15"
  },
- "pages.json#home.positioning.title": {
-  "color": "#93782f"
- },
  "pages.json#home.positioning.sub": {
-  "color": "#cc2424"
+  "color": "#1a1a1a"
+ },
+ "pages.json#home.positioning.title": {
+  "color": "#1a1a1a"
  }
 }
