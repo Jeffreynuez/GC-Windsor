@@ -2,5 +2,11 @@
  "gallery.json#page.lead": {
   "align": "left",
   "color": "#605a15"
+ },
+ "pages.json#home.positioning.title": {
+  "color": "#b09121"
+ },
+ "pages.json#home.positioning.sub": {
+  "color": "#d32222"
  }
 }
