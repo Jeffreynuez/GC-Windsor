@@ -226,7 +226,10 @@ function footerHTML() {
       ${cols}
     </div>
     <div class="footer__bar">
-      <span class="footer__copy"${ed('global.copyright')}>${esc(G.copyright)}</span>
+      <div class="footer__legal">
+        <span class="footer__copy"${ed('global.copyright')}>${esc(G.copyright)}</span>${G.creditName ? `
+        <span class="footer__credit"><span${ed('global.creditLead')}>${esc(G.creditLead || '')}</span> <a href="${esc(G.creditUrl || 'https://jrdanimation.com')}" target="_blank" rel="noopener"${ed('global.creditName')}>${esc(G.creditName)}</a></span>` : ''}
+      </div>
       <div class="social">${social}</div>
     </div>
   </div>

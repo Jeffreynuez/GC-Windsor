@@ -65,6 +65,18 @@
               "l": "Copyright line"
             },
             {
+              "k": "creditLead",
+              "l": "Credit lead-in (Site built by)"
+            },
+            {
+              "k": "creditName",
+              "l": "Credit name (leave blank to hide the credit)"
+            },
+            {
+              "k": "creditUrl",
+              "l": "Credit link"
+            },
+            {
               "k": "logo",
               "l": "Logo",
               "type": "media"

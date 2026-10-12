@@ -89,7 +89,10 @@
     ]
    }
   ],
-  "copyright": "© 2026 GC Windsor LLC. All rights reserved."
+  "copyright": "© 2026 GC Windsor LLC. All rights reserved.",
+  "creditLead": "Site built by",
+  "creditName": "JRD Animation",
+  "creditUrl": "https://jrdanimation.com"
  },
  "home": {
   "seoTitle": "G.C Windsor | Contemporary Neckties & Men's Accessories",
